@@ -1,11 +1,11 @@
-/*import React, { Component } from 'react';
+import React, { Component } from 'react';
 import { StyleSheet, FlatList, ActivityIndicator, View, Text } from 'react-native';
 import { ListItem, Button } from 'react-native-elements';
 import Database from '../database/Database';
 
 const db = new Database();
 
-export default class Main extends Component {
+export default class Customers extends Component {
   static navigationOptions = ({ navigation }) => {
     return {
       title: 'Customer List',
@@ -139,36 +139,3 @@ const styles = StyleSheet.create({
     color: 'red'
   }
 });
-*/
-
-import React, { Component } from 'react';
-import { View, Text } from 'react-native';
-import MyButton from './components/MyButton';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import { SQLite, openDatabase } from 'react-native-sqlite-storage';
-
-const Stack = createStackNavigator();
-export default class Main extends Component {
-  constructor(props) {
-    super(props);              
-  }
-
-  render() {
-    return (
-      <View
-      style={{
-        flex: 1,
-        backgroundColor: 'white',
-        flexDirection: 'column',
-      }}>        
-      <MyButton
-          title="Clientes"
-          customClick={ () => this.props.navigation.navigate('Customers')} />
-      <MyButton
-          title="Vendas"
-          customClick={ () => this.props.navigation.navigate('Sales')} /> 
-    </View>
-    );
-  }
-}
