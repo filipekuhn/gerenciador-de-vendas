@@ -2,11 +2,12 @@ import React, { Component } from 'react';
 import { View, ScrollView, KeyboardAvoidingView, Alert, StyleSheet, Text } from 'react-native';
 import { Button, Icon } from 'react-native-elements';
 import MyButton from './components/MyButton';
+import CitiesSelectBox from './components/CitiesSelectBox';
 import moment from 'moment';
 import { TextInput, TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler';
-import Database from '../database/Database';
+import CustomerDatabase from '../database/Customer';
 
-const db = new Database();
+const db = new CustomerDatabase();
 
 export default class RegisterCostumer extends Component {
   static navigationOptions = {
@@ -24,8 +25,7 @@ export default class RegisterCostumer extends Component {
       idsellingway: '',
       registrationdate: '',
       isLoading: '',
-    };
-    db.initDB();    
+    };      
   }
   
   updateTextInput = (text, field) => {
@@ -83,22 +83,24 @@ export default class RegisterCostumer extends Component {
             style={{ flex: 1, justifyContent: 'space-between' }}>
               <TextInput
                 placeholder="Nome"
+                style={styles.textInput}
                 value={this.state.name}
-                onChangeText={(text) => this.updateTextInput(text, 'name')}
-                style={{ padding:10 }}
+                onChangeText={(text) => this.updateTextInput(text, 'name')}                
               />       
               <TextInput
                 placeholder="E-mail"
+                style={styles.textInput}
                 value={this.state.email}
-                onChangeText={(text) => this.updateTextInput(text, 'email')}
-                style={{ padding:10 }}
+                onChangeText={(text) => this.updateTextInput(text, 'email')}                
               />
               <TextInput
                 placeholder="Telefone"
+                style={styles.textInput}
                 value={this.state.phone}
-                onChangeText={(text) => this.updateTextInput(text, 'phone')}
-                style={{ padding:10 }}
-              />                                                 
+                onChangeText={(text) => this.updateTextInput(text, 'phone')}                
+              />                     
+              <CitiesSelectBox>                
+              </CitiesSelectBox>                                          
               <Button
                 icon={{name: 'save', color: '#FFF'}}                
                 title="Cadastrar"
@@ -110,7 +112,7 @@ export default class RegisterCostumer extends Component {
 
               <Button
                 icon={{name: 'warning', color: '#FFF'}}
-                title="Apagar a galera"
+                title="Apagar todos Clientes"
                 buttonStyle={styles.button}
                 //customClick={this.register_customer.bind(this)}
                 //onPress={() => this.saveCustomer()}
@@ -118,7 +120,7 @@ export default class RegisterCostumer extends Component {
               />                         
               <Button                
                 leftIcon={{name: 'save'}}
-                title="Listar a galera"                
+                title="Listar"                
                 buttonStyle={styles.button}
                 //customClick={this.db.listCustomer()}
                 //onPress={() => this.saveCustomer()}
@@ -155,5 +157,16 @@ const styles = StyleSheet.create({
   },
   icon: {
     color: '#FFF'
+  },
+  textInput: {    
+    borderLeftColor: '#FFF',
+    borderRightColor: '#FFF',    
+    borderTopColor: '#FFF',
+    borderBottomColor: '#5DADE2',
+    borderWidth: 1,
+    padding: 10,
+    marginLeft: 20,
+    marginRight: 20,
+    marginBottom: 10,
   },
 });

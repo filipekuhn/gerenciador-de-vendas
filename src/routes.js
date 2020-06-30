@@ -8,7 +8,7 @@ import Main from './pages/main';
 import Customer from './pages/customer';
 import Customers from './pages/customers';
 import Sale from './pages/sale';
-import RegisterCustomer from './pages/RegisterCustomer';
+import RegisterCustomer from './pages/registerCustomer';
 
 const Stack = createStackNavigator();
 
@@ -23,7 +23,7 @@ function App() {
         <Stack.Screen name="Customer" 
           component={Customer} 
           options={{headerStyle: {backgroundColor: '#5390fe'}, 
-                  headerTintColor: '#FFF', headerTitleAlign: 'left'}} />
+                  headerTintColor: '#FFF', headerTitleAlign: 'left'}} /> 
         <Stack.Screen name="Sales" 
           component={Sale} 
           options={{headerStyle: {backgroundColor: '#5390fe'}, 

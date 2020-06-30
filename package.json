@@ -18,14 +18,17 @@
     "react-native": "0.62.2",
     "react-native-elements": "^2.0.2",
     "react-native-gesture-handler": "^1.6.1",
+    "react-native-multi-selectbox": "^1.2.9",
     "react-native-reanimated": "^1.9.0",
     "react-native-safe-area-context": "^3.0.6",
     "react-native-safe-area-view": "^1.1.1",
     "react-native-screens": "^2.9.0",
     "react-native-sqlite-storage": "^5.0.0",
+    "react-native-svg": "^12.1.0",
     "react-native-vector-icons": "^6.6.0",
     "react-navigation": "^4.3.9",
-    "react-navigation-drawer": "react-navigation/drawer"
+    "react-navigation-drawer": "react-navigation/drawer",
+    "styled-components": "^5.1.1"
   },
   "devDependencies": {
     "@babel/core": "^7.6.2",

@@ -2,13 +2,18 @@ import React, { Component } from 'react';
 import { StyleSheet, FlatList, ActivityIndicator, View, Text } from 'react-native';
 import { ListItem, Button } from 'react-native-elements';
 import Database from '../database/Database';
+import databaseCustomer from '../database/Customer';
+import { ScrollView } from 'react-native-gesture-handler';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-const db = new Database();
+//const db = new Database();
+const db = new databaseCustomer();
+
 
 export default class Customers extends Component {
   static navigationOptions = ({ navigation }) => {
     return {
-      title: 'Customer List',
+      title: 'Lista de Clientes',
       headerRight: (
         <Button
           buttonStyle={{ padding: 0, backgroundColor: 'transparent' }}
@@ -27,7 +32,6 @@ export default class Customers extends Component {
     super();
     this.state = {
       isLoading: true,
-      products: [],
       notFound: 'Customers not found.\nPlease click (+) button to add it.'      
     };
     this.getCustomers();  
@@ -60,18 +64,22 @@ export default class Customers extends Component {
   renderItem = ({ item }) => (
     <ListItem
       title={item.name}
+      subtitle={item.email}
       leftAvatar={{
         //source: item.prodImage && { uri: item.prodImage },
-        title: item.name[0]
+        title: item.name[0],
+        email: item.email[1],
+        phone: item.phone[2],
       }}
       onPress={() => {
         this.props.navigation.navigate('Customer', {
-          idcostumer: `${item.idcostumer}`,
+          id: `${item._id}`                   
         });
       }}
       chevron
       bottomDivider
     />
+    
   )
 
   render() {
@@ -79,9 +87,6 @@ export default class Customers extends Component {
       return(
         <View style={styles.activity}>
           <ActivityIndicator size="large" color="#0000ff"/>
-          <Button
-          title="Clientes"
-          onPress={ () => this.props.navigation.navigate('RegisterCustomer')} />
         </View>
       )
     }
@@ -90,7 +95,8 @@ export default class Customers extends Component {
         <View>
           <Text style={styles.message}>{this.state.notFound}</Text>          
           <Button
-            title="Add Clientes"
+            buttonStyle={styles.button}
+            title="Adicionar Clientes"
             onPress={ () => this.props.navigation.navigate('RegisterCustomer')} />
         </View>
         
@@ -98,16 +104,17 @@ export default class Customers extends Component {
       )
     }
     return (
-      <View>
+      <SafeAreaView style={{ flex: 1 }}>
         <FlatList
         keyExtractor={this.keyExtractor}
         data={this.state.customers}
         renderItem={this.renderItem}
       />
         <Button
-          title="Clientes"
+          buttonStyle={styles.button}
+          title="Cadastrar Cliente"
           onPress={ () => this.props.navigation.navigate('RegisterCustomer')} />
-      </View>
+      </SafeAreaView>
       
       
     );
@@ -136,6 +143,16 @@ const styles = StyleSheet.create({
   message: {
     padding: 16,
     fontSize: 18,
-    color: 'red'
-  }
+    color: '#5390fe'
+  },
+  button: {
+    alignItems: 'center',
+    backgroundColor: '#5390fe',
+    color: '#5390fe',
+    padding: 10,
+    marginTop: 10,
+    marginLeft: 35,
+    marginRight: 35,
+    marginBottom: 10,
+  },
 });
