@@ -147,11 +147,14 @@ import MyButton from './components/MyButton';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { SQLite, openDatabase } from 'react-native-sqlite-storage';
+import Cities from '../utils/cities.json';
+import DB from '../database/Database';
 
 const Stack = createStackNavigator();
+const database = new DB();
 export default class Main extends Component {
   constructor(props) {
-    super(props);              
+    super(props);                             
   }
 
   render() {

@@ -5,9 +5,18 @@ import MyButton from './components/MyButton';
 import CitiesSelectBox from './components/CitiesSelectBox';
 import moment from 'moment';
 import { TextInput, TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler';
+import { ThemeProvider } from 'styled-components';
+import SelectBox from 'react-native-multi-selectbox';
 import CustomerDatabase from '../database/Customer';
+import CityDatabase from '../database/City';
 
+const Colors = {
+  primary: '#078489',
+  secondary: '#124b5f',
+  tertiary: '#f7f1e3',
+}
 const db = new CustomerDatabase();
+const dbCity = new CityDatabase();
 
 export default class RegisterCostumer extends Component {
   static navigationOptions = {
@@ -25,7 +34,37 @@ export default class RegisterCostumer extends Component {
       idsellingway: '',
       registrationdate: '',
       isLoading: '',
+      cities: [{item: 'Cidades', id: 0}],
+      selectedLocations: [{item: 'Cidades', id: 0}]
     };      
+    
+  }
+
+  componentDidMount() {
+    console.log("entrou no DID MONTE DE BOSTA");
+    this.getCities();
+  }
+
+  getCities() {
+    let cities = [];
+    dbCity.listCities().then((data) => {
+      cities = data;
+      selectedLocations = data;
+      this.setState({
+        cities,
+        selectedLocations,
+        isLoading: false,
+      });      
+    }).catch((err) => {
+      console.log(err);
+      this.setState = {
+        isLoading: false
+      }
+    })
+  }
+
+  log() {
+    console.log(this.state.selectedLocations[0]);
   }
   
   updateTextInput = (text, field) => {
@@ -44,7 +83,7 @@ export default class RegisterCostumer extends Component {
       email: this.state.email,
       phone: this.state.phone,
       idfileformat: this.state.idfileformat,
-      idcity: this.state.idcity,
+      idcity: this.state.selectedLocations[0].id,
       idsellingway: this.state.idsellingway,
       registrationdate: todayDate
     }
@@ -74,8 +113,8 @@ export default class RegisterCostumer extends Component {
     });
   }
 
-  render() {
-    return(
+  render() {    
+    return(      
       <View style={{ backgroundColor: 'white', flex: 1 }}>
         <ScrollView keyboardShouldPersistTaps="handled">
           <KeyboardAvoidingView
@@ -98,9 +137,20 @@ export default class RegisterCostumer extends Component {
                 style={styles.textInput}
                 value={this.state.phone}
                 onChangeText={(text) => this.updateTextInput(text, 'phone')}                
-              />                     
-              <CitiesSelectBox>                
-              </CitiesSelectBox>                                          
+              />            
+              <ThemeProvider theme={Colors}>
+                <View style={{ margin: 30 }}>          
+                  <Text style={{ fontSize: 15, paddingBottom: 10 }}>Selecione a Cidade</Text>
+                  <SelectBox
+                    label=""            
+                    options={this.state.cities}            
+                    value={this.state.selectedLocations[0]}                    
+                    onChange={val => this.setState({ selectedLocations: [val]})}            
+                    hideInputFilter={false}
+                    viewMargin="00 0 20px 0"
+                  />                  
+                </View>
+              </ThemeProvider>             
               <Button
                 icon={{name: 'save', color: '#FFF'}}                
                 title="Cadastrar"
@@ -133,6 +183,14 @@ export default class RegisterCostumer extends Component {
                 //customClick={this.register_customer.bind(this)}
                 //onPress={() => this.saveCustomer()}
                 onPress={() => db.dropTableCustomer()}
+              />
+              <Button
+                leftIcon={{name: 'save'}}
+                title="Log da cidade"
+                buttonStyle={styles.button}
+                //customClick={this.register_customer.bind(this)}
+                //onPress={() => this.saveCustomer()}
+                onPress={() => this.log()}
               />
 
             </KeyboardAvoidingView>

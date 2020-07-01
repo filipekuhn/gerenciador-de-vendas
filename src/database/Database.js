@@ -1,4 +1,6 @@
 import SQLite from "react-native-sqlite-storage";
+import Cities from '../utils/cities.json';
+
 SQLite.DEBUG(true);
 SQLite.enablePromise(true);
 
@@ -6,6 +8,7 @@ const database_name = "gerenciadordevendas.db";
 const database_version = "1.0";
 const database_displayname = "Banco de Dados Gerenciador de Vendas";
 const database_size = 200000;
+const cities = Cities.cities
 
 export default class Database {
 
@@ -26,7 +29,7 @@ export default class Database {
             .then(DB => {
               db = DB;
               console.log("Database OPEN");
-              db.executeSql('SELECT 1 FROM customer LIMIT 1').then(() => {
+              db.executeSql('SELECT 1 FROM city LIMIT 1').then(() => {
                   console.log("Database is ready ... executing query ...");
               }).catch((error) =>{
                   console.log("Received error: ", error);
@@ -42,10 +45,24 @@ export default class Database {
                       tx.executeSql('CREATE TABLE IF NOT EXISTS sale (_id INTEGER PRIMARY KEY AUTOINCREMENT, idproductsale INTEGER, idcustomer INTEGER, idsellingway INTEGER, observations TEXT, saleprice DOUBLE, finalprice DOUBLE, pendingpayment BOOLEAN NOT NULL, idpayment INTEGER, FOREIGN KEY(idproductsale) REFERENCES productsale(_id), FOREIGN KEY (idcustomer) REFERENCES customer (_id), FOREIGN KEY (idsellingway) REFERENCES sellingway (_id), FOREIGN KEY (idpayment) REFERENCES payment (_id));');
                       tx.executeSql('CREATE TABLE IF NOT EXISTS productsale (_id INTEGER PRIMARY KEY AUTOINCREMENT, idproduct INTEGER, idsale INTEGER, idproductsellingway INTEGER, productprice DOUBLE, netprice DOUBLE, FOREIGN KEY (idproduct) REFERENCES product (_id), FOREIGN KEY (idsale) REFERENCES sale (_id), FOREIGN KEY (idproductsellingway) REFERENCES productsellingway (_id));');
                   }).then(() => {
-                      console.log("Tables created successfully");
+                      console.log("Tables created successfully");                      
                   }).catch(error => {
                       console.log(error);
                   });
+              });
+              db.executeSql('SELECT 1 FROM city LIMIT 1').then(() => {                
+                console.log("Table City already filled");              
+              }).catch((error) => {
+                console.log("Receive error from table CITY: ", error);
+                db.transaction((tx) => {
+                  cities.forEach(element => {
+                    tx.executeSql('INSERT INTO city (_id, name, uf) VALUES (?, ?, ?)', [
+                      element.id,
+                      element.name,
+                      element.uf
+                    ]);
+                  });
+                });
               });
               resolve(db);
             })
@@ -74,7 +91,24 @@ export default class Database {
     }
   };
 
-  
+  dropTableCities() {
+    return new Promise((resolve) => {
+      this.initDB().then((db) => {
+        db.transaction((tx) => {
+          tx.executeSql('DROP TABLE city', []).then(([tx, results]) => {
+            resolve(results);
+            console.log(results.rowsAffected);
+          });
+        }).then((result) => {
+          this.closeDatabase(db);
+        }).catch((err) => {
+          console.log(err);
+        });
+      }).catch((err) => {
+        console.log(err);
+      });
+    });
+  }
 
 /*  productById(id) {
     console.log(id);

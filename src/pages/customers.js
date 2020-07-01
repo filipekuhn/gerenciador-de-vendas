@@ -34,7 +34,7 @@ export default class Customers extends Component {
       isLoading: true,
       notFound: 'Customers not found.\nPlease click (+) button to add it.'      
     };
-    this.getCustomers();  
+    this.getCustomers();      
   }
 
   componentDidMount() {
