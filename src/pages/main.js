@@ -171,6 +171,9 @@ export default class Main extends Component {
       <MyButton
           title="Vendas"
           customClick={ () => this.props.navigation.navigate('Sales')} /> 
+      <MyButton
+          title="Formas de Venda"
+          customClick={ () => this.props.navigation.navigate('SellingWays')} /> 
     </View>
     );
   }

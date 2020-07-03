@@ -9,6 +9,9 @@ import Customer from './pages/customer';
 import Customers from './pages/customers';
 import Sale from './pages/sale';
 import RegisterCustomer from './pages/registerCustomer';
+import SellingWay from './pages/sellingWay';
+import SellingWays from './pages/sellingWays';
+import RegisterSellingWay from './pages/registerSellingWay';
 
 const Stack = createStackNavigator();
 
@@ -36,6 +39,19 @@ function App() {
           component={Customers} 
           options={{headerStyle: {backgroundColor: '#5390fe'}, 
                   headerTintColor: '#FFF', headerTitleAlign: 'left'}} />
+        <Stack.Screen name="SellingWay" 
+          component={SellingWay} 
+          options={{headerStyle: {backgroundColor: '#5390fe'}, 
+                  headerTintColor: '#FFF', headerTitleAlign: 'left'}} />
+        <Stack.Screen name="SellingWays" 
+          component={SellingWays} 
+          options={{headerStyle: {backgroundColor: '#5390fe'}, 
+                  headerTintColor: '#FFF', headerTitleAlign: 'left'}} />
+        <Stack.Screen name="RegisterSellingWay" 
+          component={RegisterSellingWay} 
+          options={{headerStyle: {backgroundColor: '#5390fe'}, 
+                  headerTintColor: '#FFF', headerTitleAlign: 'left'}} />
+        
       </Stack.Navigator>                  
     </NavigationContainer>
   );
