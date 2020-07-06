@@ -5,10 +5,12 @@ import { NavigationContainer } from '@react-navigation/native';
 import MyButton from './components/MyButton';
 import CustomerDatabase from '../database/Customer';
 import City from '../database/City';
+import SellingWay from '../database/SellingWay';
 import { route } from '@react-navigation/native';
 
 const db = new CustomerDatabase();
 const dbCity = new City();
+const dbSellingWay = new SellingWay();
 
 
 export default class Customer extends Component {
@@ -23,6 +25,7 @@ export default class Customer extends Component {
       customer: {},
       id: '',
       city: {},
+      sellingWay: {}
     };  
     //console.log(route.params.id);
     //const idParam = route.params.id;
@@ -34,6 +37,7 @@ export default class Customer extends Component {
       
     let customer = {};   
     let city = {};
+    let sellingWay = {};
     const { id } = this.props.route.params;    
     db.findCustomerById(id).then((data) => {      
       customer = data;
@@ -54,7 +58,19 @@ export default class Customer extends Component {
           isLoading: false
         }
       });
-      console.log(`Esse são os dados setados de customer por id: ${customer._id} nome: ${customer.name}, cidade: ${city.name} estado: ${city.uf}`);
+      dbSellingWay.findSellingWayById(this.state.customer.idsellingway).then((data) => {
+        sellingWay = data;
+        this.setState({
+          sellingWay,
+          isLoading: false
+        });
+      }).catch((err) => {
+        console.log(err);
+        this.setState({
+          isLoading: false
+        });
+      });
+      console.log(`Esse são os dados setados de customer por id: ${customer._id} nome: ${customer.name}, cidade: ${city.name} estado: ${city.uf} origem: ${sellingWay.name}`);
     }).catch((err) => {
       console.log(err);
       this.setState = {
@@ -67,8 +83,8 @@ export default class Customer extends Component {
   render() {    
     if(this.state.isLoading){
       return (
-        <View>
-          <Text>Carregando</Text>
+        <View style={styles.activity}>
+          <ActivityIndicator size="large" color="#0000ff"/>
         </View>
       )
     }
@@ -76,40 +92,57 @@ export default class Customer extends Component {
       <ScrollView>
         <Card>
           <View>  
-            <Text>Id Cliente: {this.state.customer._id}</Text>
+            <Text>Id: {this.state.customer._id}</Text>
           </View>
           <View>  
-            <Text>Nome Cliente: {this.state.customer.name}</Text>
+            <Text>Nome: {this.state.customer.name}</Text>
           </View>
           <View>  
-            <Text>E-mail Cliente: {this.state.customer.email}</Text>
+            <Text>E-mail: {this.state.customer.email}</Text>
           </View>
           <View>  
-            <Text>Cidade Cliente: {this.state.city.name} - {this.state.city.uf}</Text>
+            <Text>Cidade: {this.state.city.name} - {this.state.city.uf}</Text>
+          </View>
+          <View>  
+            <Text>Origem: {this.state.sellingWay.name}</Text>
           </View>
           <Button
-            leftIcon={{name: 'delete'}}
-            title='Deletar'
-            onPress={() => db.deleteCustomerById(this.state.id)} />
+            buttonStyle={styles.button}
+            icon={{name: 'edit', color: '#FFF'}}
+            title='Editar'
+            onPress={() => (this.state.id)} />
 
+          <Button
+            buttonStyle={{ backgroundColor: '#FF0000', padding: 10, marginTop: 16, marginLeft: 35, marginRight: 35 }}
+            icon={{name: 'delete', color: '#FFF'}}
+            title='Deletar'
+            onPress={() => db.deleteCustomerById(this.state.id)} />      
         </Card>
       </ScrollView>
     )
-
-    /*return (
-      <View
-      style={{
-        flex: 1,
-        backgroundColor: 'white',
-        flexDirection: 'column',
-      }}>        
-      <MyButton
-          title="Registrar Cliente"
-          customClick={ () => this.props.navigation.navigate('RegisterCustomer')} />      
-      <MyButton
-          title="Visualizar Clientes"
-          customClick={ () => this.props.navigation.navigate('Customers')} /> 
-    </View>
-    );*/
   }
 }
+
+const styles = StyleSheet.create({
+  button: {
+    alignItems: 'center',
+    backgroundColor: '#5390fe',
+    color: '#5390fe',
+    padding: 10,
+    marginTop: 16,
+    marginLeft: 35,
+    marginRight: 35,
+  },
+  text: {
+    color: '#FFF',
+  },
+  activity: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+});

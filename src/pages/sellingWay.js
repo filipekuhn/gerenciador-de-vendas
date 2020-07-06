@@ -18,10 +18,7 @@ export default class SellingWays extends Component {
       isLoading: true,
       sellingWay: {},
       id: '',      
-    };  
-    //console.log(route.params.id);
-    //const idParam = route.params.id;
-    //this.findCustomerData(idParam);    
+    };      
   }
   
 
@@ -47,8 +44,8 @@ export default class SellingWays extends Component {
   render() {    
     if(this.state.isLoading){
       return (
-        <View>
-          <Text>Carregando</Text>
+        <View style={styles.activity}>
+          <ActivityIndicator size="large" color="#0000ff"/>
         </View>
       )
     }
@@ -89,5 +86,14 @@ const styles = StyleSheet.create({
   },
   text: {
     color: '#FFF',
+  },
+  activity: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center'
   },
 });

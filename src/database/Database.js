@@ -84,7 +84,8 @@ export default class Database {
           console.log("Database CLOSED");
         })
         .catch(error => {
-          this.errorCB(error);
+          //this.errorCB(error);
+          console.log(error);
         });
     } else {
       console.log("Database was not OPENED");

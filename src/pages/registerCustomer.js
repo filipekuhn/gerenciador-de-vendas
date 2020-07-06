@@ -9,6 +9,8 @@ import { ThemeProvider } from 'styled-components';
 import SelectBox from 'react-native-multi-selectbox';
 import CustomerDatabase from '../database/Customer';
 import CityDatabase from '../database/City';
+import SellingWayDatabase from '../database/SellingWay';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const Colors = {
   primary: '#078489',
@@ -17,6 +19,7 @@ const Colors = {
 }
 const db = new CustomerDatabase();
 const dbCity = new CityDatabase();
+const dbSellingWay = new SellingWayDatabase();
 
 export default class RegisterCostumer extends Component {
   static navigationOptions = {
@@ -35,14 +38,16 @@ export default class RegisterCostumer extends Component {
       registrationdate: '',
       isLoading: '',
       cities: [{item: 'Cidades', id: 0}],
-      selectedLocations: [{item: 'Cidades', id: 0}]
+      selectedLocations: [{item: 'Cidades', id: 0}],
+      sellingWays: [{item: 'Origem do Cliente', id: 0}],
+      selectedSellingWay: [{item: 'Origem do Cliente', id: 0}]
     };      
     
   }
 
-  componentDidMount() {
-    console.log("entrou no DID MONTE DE BOSTA");
+  componentDidMount() {    
     this.getCities();
+    this.getSellingWays();
   }
 
   getCities() {
@@ -63,8 +68,22 @@ export default class RegisterCostumer extends Component {
     })
   }
 
-  log() {
-    console.log(this.state.selectedLocations[0]);
+  getSellingWays() {
+    let sellingWays = [];
+    dbSellingWay.listSellingWaysItems().then((data) => {
+      sellingWays = data;
+      selectedSellingWay = data;      
+      this.setState({
+        sellingWays,        
+        selectedSellingWay,
+        isLoading: false,
+      });      
+    }).catch((err) => {
+      console.log(err);
+      this.setState = {
+        isLoading: false
+      }
+    })
   }
   
   updateTextInput = (text, field) => {
@@ -84,7 +103,7 @@ export default class RegisterCostumer extends Component {
       phone: this.state.phone,
       idfileformat: this.state.idfileformat,
       idcity: this.state.selectedLocations[0].id,
-      idsellingway: this.state.idsellingway,
+      idsellingway: this.state.selectedSellingWay[0].id,
       registrationdate: todayDate
     }
     db.addCustomer(data).then((result) => {
@@ -128,6 +147,7 @@ export default class RegisterCostumer extends Component {
               />       
               <TextInput
                 placeholder="E-mail"
+                keyboardType={"email-address"}
                 style={styles.textInput}
                 value={this.state.email}
                 onChangeText={(text) => this.updateTextInput(text, 'email')}                
@@ -136,9 +156,11 @@ export default class RegisterCostumer extends Component {
                 placeholder="Telefone"
                 style={styles.textInput}
                 value={this.state.phone}
-                onChangeText={(text) => this.updateTextInput(text, 'phone')}                
-              />            
-              <ThemeProvider theme={Colors}>
+                mask="(00) 00000 - 0000"
+                onChangeText={(text) => this.updateTextInput(text, 'phone')}             
+              />
+              <SafeAreaView style={{ flex: 1 }}>
+              <ThemeProvider theme={Colors} style={{ flex: 1 }}>
                 <View style={{ margin: 30 }}>          
                   <Text style={{ fontSize: 15, paddingBottom: 10 }}>Selecione a Cidade</Text>
                   <SelectBox
@@ -150,7 +172,20 @@ export default class RegisterCostumer extends Component {
                     viewMargin="00 0 20px 0"
                   />                  
                 </View>
-              </ThemeProvider>             
+              
+                <View style={{ margin: 30 }}>
+                  <Text style={{ fontSize: 15, paddingBottom: 10 }}>Selecione a Origem do Cliente</Text>
+                  <SelectBox
+                    label=""            
+                    options={this.state.sellingWays}            
+                    value={this.state.selectedSellingWay[0]}                    
+                    onChange={val => this.setState({ selectedSellingWay: [val]})}            
+                    hideInputFilter={false}
+                    viewMargin="00 0 20px 0"
+                  />
+                </View>
+              </ThemeProvider>       
+              </SafeAreaView>                  
               <Button
                 icon={{name: 'save', color: '#FFF'}}                
                 title="Cadastrar"

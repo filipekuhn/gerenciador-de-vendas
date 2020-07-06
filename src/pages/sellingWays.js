@@ -45,7 +45,7 @@ export default class SellingWays extends Component {
 
   getSellingWays() {
     let sellingways = [];
-    db.listSellingWay().then((data) => {
+    db.listSellingWays().then((data) => {
       sellingways = data;
       this.setState({
         sellingways,

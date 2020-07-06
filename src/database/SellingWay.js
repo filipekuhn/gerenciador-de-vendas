@@ -59,6 +59,7 @@ export default class SellingWay {
           });
         }).then(result => {
           database.closeDatabase(db)
+          console.log(result);
         }).catch(err => {
           console.log(err);
         });
@@ -68,7 +69,38 @@ export default class SellingWay {
     });
   }
 
-  listSellingWay() {
+  listSellingWaysItems() {
+    return new Promise((resolve) => {
+      const sellingways = [];
+      database.initDB().then((db) => {
+        db.transaction((tx) => {
+          tx.executeSql('SELECT * FROM sellingway ', []).then(([tx,results]) => {
+            console.log("Query completed");
+            var len = results.rows.length;
+            for (let i = 0; i < len; i++) {
+              let row = results.rows.item(i);
+              console.log(`ID SellingWay: ${row._id}, SellingWay Name: ${row.name}`);
+              const { _id, name } = row;
+              sellingways.push({
+                id: _id,
+                item: name,                
+              });
+            }
+            console.log(sellingways);
+            resolve(sellingways);
+          });
+        }).then((result) => {
+          database.closeDatabase(db);
+        }).catch((err) => {
+          console.log(err);
+        });
+      }).catch((err) => {
+        console.log(err);
+      });
+    });  
+  }
+
+  listSellingWays() {
     return new Promise((resolve) => {
       const sellingways = [];
       database.initDB().then((db) => {

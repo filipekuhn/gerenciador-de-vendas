@@ -29,9 +29,10 @@ export default class City {
           database.closeDatabase(db);
         }).catch((err) => {
           console.log(err);
+          database.closeDatabase(db);
         });
       }).catch((err) => {
-        console.log(err);
+        console.log(err);        
       });
     });  
   }
