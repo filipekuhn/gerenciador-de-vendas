@@ -1,7 +1,8 @@
+//import React, { Component, useEffect } from 'react';
 import React, { Component } from 'react';
 import { StyleSheet, FlatList, ActivityIndicator, View, Text } from 'react-native';
 import { ListItem, Button } from 'react-native-elements';
-import Database from '../database/Database';
+import { navigation  } from '@react-navigation/native';
 import databaseCustomer from '../database/Customer';
 import { ScrollView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -11,37 +12,27 @@ const db = new databaseCustomer();
 
 
 export default class Customers extends Component {
-  static navigationOptions = ({ navigation }) => {
-    return {
-      title: 'Lista de Clientes',
-      headerRight: (
-        <Button
-          buttonStyle={{ padding: 0, backgroundColor: 'transparent' }}
-          icon={{ name: 'add-circle', style: { marginRight: 0, fontSize: 28 } }}
-          onPress={() => { 
-            navigation.navigate('RegisterCustomer', {
-              onNavigateBack: this.handleOnNavigateBack
-            }); 
-          }}
-        />
-      ),
-    };
-  };
 
-  constructor() {
-    super();
+
+  constructor(props) {
+    super(props);
     this.state = {
       isLoading: true,
+      update: false,
+      customers: [],
       notFound: 'Customers not found.\nPlease click (+) button to add it.'      
-    };
-    this.getCustomers();      
+    };    
   }
 
-  componentDidMount() {
-    this._subscribe = this.props.navigation.addListener('didFocus', () => {
-      this.getCustomers();
-    });
-  }
+  componentDidMount() {        
+    this.getCustomers();  
+  }  
+
+  onRefresh() {
+    this.setState({ isLoading: true }, function() { this.getCustomers() });
+ }
+  
+
 
   getCustomers() {
     let customers = [];
@@ -108,6 +99,9 @@ export default class Customers extends Component {
         <FlatList
         keyExtractor={this.keyExtractor}
         data={this.state.customers}
+        //extraData={this.state}
+        refreshing={this.state.isLoading}
+        onRefresh={() => this.onRefresh()}        
         renderItem={this.renderItem}
       />
         <Button

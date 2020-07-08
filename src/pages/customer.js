@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, ScrollView, Image, ActivityIndicator}  from 'react-native';
 import { Card, Button } from 'react-native-elements';
-import { NavigationContainer } from '@react-navigation/native';
-import MyButton from './components/MyButton';
 import CustomerDatabase from '../database/Customer';
 import City from '../database/City';
 import SellingWay from '../database/SellingWay';
@@ -14,9 +12,6 @@ const dbSellingWay = new SellingWay();
 
 
 export default class Customer extends Component {
-  static navaigationOptions = {
-    title: 'Dados do Cliente'
-  }
 
   constructor() {
     super();
@@ -26,15 +21,10 @@ export default class Customer extends Component {
       id: '',
       city: {},
       sellingWay: {}
-    };  
-    //console.log(route.params.id);
-    //const idParam = route.params.id;
-    //this.findCustomerData(idParam);    
+    };      
   }
-  
-
- componentDidMount() {
-      
+    
+ componentDidMount() {      
     let customer = {};   
     let city = {};
     let sellingWay = {};
@@ -99,6 +89,9 @@ export default class Customer extends Component {
           </View>
           <View>  
             <Text>E-mail: {this.state.customer.email}</Text>
+          </View>
+          <View>  
+            <Text>Telefone: {this.state.customer.phone}</Text>
           </View>
           <View>  
             <Text>Cidade: {this.state.city.name} - {this.state.city.uf}</Text>

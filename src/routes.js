@@ -37,8 +37,9 @@ function App() {
                   headerTintColor: '#FFF', headerTitleAlign: 'left'}} />
         <Stack.Screen name="Customers" 
           component={Customers} 
-          options={{headerStyle: {backgroundColor: '#5390fe'}, 
-                  headerTintColor: '#FFF', headerTitleAlign: 'left'}} />
+          options={{ title: "Clientes", headerStyle: {backgroundColor: '#5390fe'}, 
+                  headerTintColor: '#FFF', headerTitleAlign: 'left'}} 
+          initialParams={{ update: false }}/>
         <Stack.Screen name="SellingWay" 
           component={SellingWay} 
           options={{headerStyle: {backgroundColor: '#5390fe'}, 

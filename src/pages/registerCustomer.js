@@ -117,7 +117,7 @@ export default class RegisterCostumer extends Component {
         [
           {
             text: "OK", 
-            onPress: () => this.props.navigation.navigate('Main'), 
+            onPress: () => this.props.navigation.navigate('Customers', { update: true }), 
             icon: "done"
           }
         ],
@@ -155,8 +155,7 @@ export default class RegisterCostumer extends Component {
               <TextInput
                 placeholder="Telefone"
                 style={styles.textInput}
-                value={this.state.phone}
-                mask="(00) 00000 - 0000"
+                value={this.state.phone}                
                 onChangeText={(text) => this.updateTextInput(text, 'phone')}             
               />
               <SafeAreaView style={{ flex: 1 }}>
@@ -189,9 +188,7 @@ export default class RegisterCostumer extends Component {
               <Button
                 icon={{name: 'save', color: '#FFF'}}                
                 title="Cadastrar"
-                buttonStyle={styles.button}
-                //customClick={this.register_customer.bind(this)}
-                //onPress={() => this.saveCustomer()}
+                buttonStyle={styles.button}                
                 onPress={() => this.saveCustomer()}
               />
 
