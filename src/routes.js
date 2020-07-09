@@ -12,6 +12,9 @@ import RegisterCustomer from './pages/registerCustomer';
 import SellingWay from './pages/sellingWay';
 import SellingWays from './pages/sellingWays';
 import RegisterSellingWay from './pages/registerSellingWay';
+import FileFormat from './pages/fileFormat';
+import FileFormats from './pages/fileFormats';
+import RegisterFileFormat from './pages/registerFileFormat';
 
 const Stack = createStackNavigator();
 
@@ -21,38 +24,60 @@ function App() {
       <Stack.Navigator initialRouteName="Main">
         <Stack.Screen name="Main" 
           component={Main} 
-          options={{headerStyle: {backgroundColor: '#5390fe'}, 
-                  headerTintColor: '#FFF', headerTitleAlign: 'left'}} />
+          options={{ title: "Menu Principal", headerStyle: {backgroundColor: '#5390fe'}, 
+                  headerTintColor: '#FFF', headerTitleAlign: 'left' }} />
+        
         <Stack.Screen name="Customer" 
           component={Customer} 
-          options={{headerStyle: {backgroundColor: '#5390fe'}, 
-                  headerTintColor: '#FFF', headerTitleAlign: 'left'}} /> 
+          options={{  title: "Clientes", headerStyle: {backgroundColor: '#5390fe'}, 
+                  headerTintColor: '#FFF', headerTitleAlign: 'left' }} /> 
+        
         <Stack.Screen name="Sales" 
           component={Sale} 
-          options={{headerStyle: {backgroundColor: '#5390fe'}, 
-                  headerTintColor: '#FFF', headerTitleAlign: 'left'}} />
+          options={{ title: "Vendas", headerStyle: {backgroundColor: '#5390fe'}, 
+                  headerTintColor: '#FFF', headerTitleAlign: 'left' }} />
+        
         <Stack.Screen name="RegisterCustomer" 
           component={RegisterCustomer} 
-          options={{headerStyle: {backgroundColor: '#5390fe'}, 
-                  headerTintColor: '#FFF', headerTitleAlign: 'left'}} />
+          options={{ title: "Cliente", headerStyle: {backgroundColor: '#5390fe'}, 
+                  headerTintColor: '#FFF', headerTitleAlign: 'left' }} />
+        
         <Stack.Screen name="Customers" 
           component={Customers} 
           options={{ title: "Clientes", headerStyle: {backgroundColor: '#5390fe'}, 
-                  headerTintColor: '#FFF', headerTitleAlign: 'left'}} 
+                  headerTintColor: '#FFF', headerTitleAlign: 'left' }} 
           initialParams={{ update: false }}/>
+        
         <Stack.Screen name="SellingWay" 
           component={SellingWay} 
-          options={{headerStyle: {backgroundColor: '#5390fe'}, 
-                  headerTintColor: '#FFF', headerTitleAlign: 'left'}} />
+          options={{ title: "Forma de Venda", headerStyle: {backgroundColor: '#5390fe'}, 
+                  headerTintColor: '#FFF', headerTitleAlign: 'left' }} />
+        
         <Stack.Screen name="SellingWays" 
           component={SellingWays} 
-          options={{headerStyle: {backgroundColor: '#5390fe'}, 
-                  headerTintColor: '#FFF', headerTitleAlign: 'left'}} />
+          options={{ title: "Formas de Venda", headerStyle: {backgroundColor: '#5390fe'}, 
+                  headerTintColor: '#FFF', headerTitleAlign: 'left' }} />
+
         <Stack.Screen name="RegisterSellingWay" 
           component={RegisterSellingWay} 
-          options={{headerStyle: {backgroundColor: '#5390fe'}, 
-                  headerTintColor: '#FFF', headerTitleAlign: 'left'}} />
+          options={{ title: "Forma de Venda", headerStyle: {backgroundColor: '#5390fe'}, 
+                  headerTintColor: '#FFF', headerTitleAlign: 'left' }} />
+
+        <Stack.Screen name="FileFormat" 
+          component={FileFormat} 
+          options={{ title: "Formato de Arquivo", headerStyle: {backgroundColor: '#5390fe'}, 
+                  headerTintColor: '#FFF', headerTitleAlign: 'left' }} />
+
+        <Stack.Screen name="FileFormats" 
+          component={FileFormats} 
+          options={{ title: "Formatos de Arquivos", headerStyle: {backgroundColor: '#5390fe'}, 
+                  headerTintColor: '#FFF', headerTitleAlign: 'left' }} />                  
         
+        <Stack.Screen name="RegisterFileFormat" 
+          component={RegisterFileFormat} 
+          options={{ title: "Formato de Arquivo", headerStyle: {backgroundColor: '#5390fe'}, 
+                  headerTintColor: '#FFF', headerTitleAlign: 'left' }} />
+
       </Stack.Navigator>                  
     </NavigationContainer>
   );

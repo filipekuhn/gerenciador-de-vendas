@@ -10,6 +10,7 @@ import SelectBox from 'react-native-multi-selectbox';
 import CustomerDatabase from '../database/Customer';
 import CityDatabase from '../database/City';
 import SellingWayDatabase from '../database/SellingWay';
+import FileFormatDatabase from '../database/FileFormat';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const Colors = {
@@ -20,13 +21,11 @@ const Colors = {
 const db = new CustomerDatabase();
 const dbCity = new CityDatabase();
 const dbSellingWay = new SellingWayDatabase();
-
+const dbFileFormat = new FileFormatDatabase();
 export default class RegisterCostumer extends Component {
-  static navigationOptions = {
-    title: 'Add Cliente'
-  };
-  constructor() {
-    super();    
+
+  constructor(props) {
+    super(props);    
     this.state = {
       idcustomer: '',
       name: '',
@@ -40,7 +39,9 @@ export default class RegisterCostumer extends Component {
       cities: [{item: 'Cidades', id: 0}],
       selectedLocations: [{item: 'Cidades', id: 0}],
       sellingWays: [{item: 'Origem do Cliente', id: 0}],
-      selectedSellingWay: [{item: 'Origem do Cliente', id: 0}]
+      selectedSellingWay: [{item: 'Origem do Cliente', id: 0}],
+      fileFormats: [{item: 'Formato do Arquivo', id: 0}],
+      selectedFileFormats: [{item: 'Formato do Arquivo', id: 0}]
     };      
     
   }
@@ -48,6 +49,7 @@ export default class RegisterCostumer extends Component {
   componentDidMount() {    
     this.getCities();
     this.getSellingWays();
+    this.getFileFormats();
   }
 
   getCities() {
@@ -86,6 +88,24 @@ export default class RegisterCostumer extends Component {
     })
   }
   
+  getFileFormats() {
+    let fileFormats = [];
+    dbFileFormat.listFileFormatsItems().then((data) => {
+      fileFormats = data;
+      selectedFileFormats = data;      
+      this.setState({
+        fileFormats,        
+        selectedFileFormats,
+        isLoading: false,
+      });      
+    }).catch((err) => {
+      console.log(err);
+      this.setState = {
+        isLoading: false
+      }
+    })
+  }
+
   updateTextInput = (text, field) => {
     const state = this.state
     state[field] = text;
@@ -101,7 +121,7 @@ export default class RegisterCostumer extends Component {
       name: this.state.name,
       email: this.state.email,
       phone: this.state.phone,
-      idfileformat: this.state.idfileformat,
+      idfileformat: this.state.selectedFileFormats[0].id,
       idcity: this.state.selectedLocations[0].id,
       idsellingway: this.state.selectedSellingWay[0].id,
       registrationdate: todayDate
@@ -117,7 +137,7 @@ export default class RegisterCostumer extends Component {
         [
           {
             text: "OK", 
-            onPress: () => this.props.navigation.navigate('Customers', { update: true }), 
+            onPress: () => this.props.navigation.push('Customers'), 
             icon: "done"
           }
         ],
@@ -134,11 +154,11 @@ export default class RegisterCostumer extends Component {
 
   render() {    
     return(      
-      <View style={{ backgroundColor: 'white', flex: 1 }}>
+      <SafeAreaView style={{ flex: 1 }}>
         <ScrollView keyboardShouldPersistTaps="handled">
           <KeyboardAvoidingView
-            behavior="padding"
-            style={{ flex: 1, justifyContent: 'space-between' }}>
+            behavior="position"
+            style={{ justifyContent: 'space-between' }}>
               <TextInput
                 placeholder="Nome"
                 style={styles.textInput}
@@ -157,77 +177,62 @@ export default class RegisterCostumer extends Component {
                 style={styles.textInput}
                 value={this.state.phone}                
                 onChangeText={(text) => this.updateTextInput(text, 'phone')}             
-              />
-              <SafeAreaView style={{ flex: 1 }}>
-              <ThemeProvider theme={Colors} style={{ flex: 1 }}>
-                <View style={{ margin: 30 }}>          
-                  <Text style={{ fontSize: 15, paddingBottom: 10 }}>Selecione a Cidade</Text>
-                  <SelectBox
-                    label=""            
-                    options={this.state.cities}            
-                    value={this.state.selectedLocations[0]}                    
-                    onChange={val => this.setState({ selectedLocations: [val]})}            
-                    hideInputFilter={false}
-                    viewMargin="00 0 20px 0"
-                  />                  
-                </View>
-              
-                <View style={{ margin: 30 }}>
-                  <Text style={{ fontSize: 15, paddingBottom: 10 }}>Selecione a Origem do Cliente</Text>
-                  <SelectBox
-                    label=""            
-                    options={this.state.sellingWays}            
-                    value={this.state.selectedSellingWay[0]}                    
-                    onChange={val => this.setState({ selectedSellingWay: [val]})}            
-                    hideInputFilter={false}
-                    viewMargin="00 0 20px 0"
-                  />
-                </View>
-              </ThemeProvider>       
-              </SafeAreaView>                  
-              <Button
-                icon={{name: 'save', color: '#FFF'}}                
-                title="Cadastrar"
-                buttonStyle={styles.button}                
-                onPress={() => this.saveCustomer()}
-              />
+              />                   
+          </KeyboardAvoidingView>          
+        </ScrollView>        
+        <ThemeProvider theme={Colors}>
+          <View style={{ marginTop: 1, marginBottom: 5, marginLeft: 20, marginRight: 20 }}>          
+            <Text style={{ fontSize: 12, marginBottom: 5 }}>Selecione a Cidade</Text>
+            <SelectBox
+              label=""            
+              options={this.state.cities}            
+              value={this.state.selectedLocations[0]}                    
+              onChange={val => this.setState({ selectedLocations: [val]})}            
+              hideInputFilter={false}
+              viewMargin="00 0 10px 0"                                  
+            />                  
+          </View>
+          <View style={{ marginTop: 5, marginBottom: 5, marginLeft: 20, marginRight: 20 }}>
+            <Text style={{ fontSize: 12, paddingBottom: 5 }}>Selecione a Origem do Cliente</Text>
+            <SelectBox
+              label=""            
+              options={this.state.sellingWays}            
+              value={this.state.selectedSellingWay[0]}                    
+              onChange={val => this.setState({ selectedSellingWay: [val]})}            
+              hideInputFilter={false}
+              viewMargin="00 0 10px 0"                
+            />
+          </View>
+          <View style={{ marginTop: 5, marginBottom: 5, marginLeft: 20, marginRight: 20 }}>
+            <Text style={{ fontSize: 12, paddingBottom: 5 }}>Formato de Arquivo</Text>
+            <SelectBox
+              label=""            
+              options={this.state.fileFormats}            
+              value={this.state.selectedFileFormats[0]}                    
+              onChange={val => this.setState({ selectedFileFormats: [val]})}            
+              hideInputFilter={false}
+              viewMargin="00 0 10px 0"                
+            />
+          </View>
+        </ThemeProvider>
+        <ScrollView>
+          <Button
+            icon={{name: 'save', color: '#FFF'}}                
+            title="Cadastrar"
+            buttonStyle={styles.button}                
+            onPress={() => this.saveCustomer()}
+          />
 
-              <Button
-                icon={{name: 'warning', color: '#FFF'}}
-                title="Apagar todos Clientes"
-                buttonStyle={styles.button}
-                //customClick={this.register_customer.bind(this)}
-                //onPress={() => this.saveCustomer()}
-                onPress={() => db.deleteAllCustomer()}
-              />                         
-              <Button                
-                leftIcon={{name: 'save'}}
-                title="Listar"                
-                buttonStyle={styles.button}
-                //customClick={this.db.listCustomer()}
-                //onPress={() => this.saveCustomer()}
-                onPress={() => db.listCustomer()}
-              />              
-              <Button
-                leftIcon={{name: 'save'}}
-                title="Apagar a tabela Customer"
-                buttonStyle={styles.button}
-                //customClick={this.register_customer.bind(this)}
-                //onPress={() => this.saveCustomer()}
-                onPress={() => db.dropTableCustomer()}
-              />
-              <Button
-                leftIcon={{name: 'save'}}
-                title="Log da cidade"
-                buttonStyle={styles.button}
-                //customClick={this.register_customer.bind(this)}
-                //onPress={() => this.saveCustomer()}
-                onPress={() => this.log()}
-              />
-
-            </KeyboardAvoidingView>
+          <Button
+            icon={{name: 'warning', color: '#FFF'}}
+            title="Apagar todos Clientes"
+            buttonStyle={styles.button}
+            //customClick={this.register_customer.bind(this)}
+            //onPress={() => this.saveCustomer()}
+            onPress={() => db.deleteAllCustomer()}
+          />    
         </ScrollView>
-      </View>
+      </SafeAreaView>
     );
   }
 }

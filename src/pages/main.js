@@ -174,6 +174,9 @@ export default class Main extends Component {
       <MyButton
           title="Formas de Venda"
           customClick={ () => this.props.navigation.navigate('SellingWays')} /> 
+      <MyButton
+          title="Formatos de Arquivos"
+          customClick={ () => this.props.navigation.navigate('FileFormats')} /> 
     </View>
     );
   }

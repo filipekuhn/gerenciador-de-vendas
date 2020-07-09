@@ -4,11 +4,13 @@ import { Card, Button } from 'react-native-elements';
 import CustomerDatabase from '../database/Customer';
 import City from '../database/City';
 import SellingWay from '../database/SellingWay';
+import FileFormat from '../database/FileFormat';
 import { route } from '@react-navigation/native';
 
 const db = new CustomerDatabase();
 const dbCity = new City();
 const dbSellingWay = new SellingWay();
+const dbFileFormat = new FileFormat();
 
 
 export default class Customer extends Component {
@@ -20,14 +22,16 @@ export default class Customer extends Component {
       customer: {},
       id: '',
       city: {},
-      sellingWay: {}
+      sellingWay: {},
+      fileFomart: {},
     };      
   }
     
- componentDidMount() {      
+ componentDidMount() {  
     let customer = {};   
     let city = {};
     let sellingWay = {};
+    let fileFomart = {};
     const { id } = this.props.route.params;    
     db.findCustomerById(id).then((data) => {      
       customer = data;
@@ -60,7 +64,19 @@ export default class Customer extends Component {
           isLoading: false
         });
       });
-      console.log(`Esse são os dados setados de customer por id: ${customer._id} nome: ${customer.name}, cidade: ${city.name} estado: ${city.uf} origem: ${sellingWay.name}`);
+      dbFileFormat.findFileFormatById(this.state.customer.idfileformat).then((data) => {
+        fileFomart = data;
+        this.setState({
+          fileFomart,
+          isLoading: false
+        });
+      }).catch((err) => {
+        console.log(err);
+        this.setState({
+          isLoading: false
+        });
+      });
+      console.log(`Esse são os dados setados de customer por id: ${customer._id} nome: ${customer.name}, cidade: ${city.name} estado: ${city.uf} origem: ${sellingWay.name} arquivo: ${fileFomart.name}` );
     }).catch((err) => {
       console.log(err);
       this.setState = {
@@ -98,6 +114,9 @@ export default class Customer extends Component {
           </View>
           <View>  
             <Text>Origem: {this.state.sellingWay.name}</Text>
+          </View>
+          <View>  
+            <Text>Formato de Arquivo: {this.state.fileFomart.name}</Text>
           </View>
           <Button
             buttonStyle={styles.button}

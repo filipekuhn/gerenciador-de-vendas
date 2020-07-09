@@ -1,36 +1,20 @@
 import React, { Component } from 'react';
 import { StyleSheet, FlatList, ActivityIndicator, View, Text } from 'react-native';
 import { ListItem, Button } from 'react-native-elements';
-import Database from '../database/Database';
-import databaseSellingWay from '../database/SellingWay';
+import databaseFileFormats from '../database/FileFormat';
 import { ScrollView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 //const db = new Database();
-const db = new databaseSellingWay();
+const db = new databaseFileFormats();
 
 
-export default class SellingWays extends Component {
-  static navigationOptions = ({ navigation }) => {
-    return {
-      title: 'Formas de Venda',
-      headerRight: (
-        <Button
-          buttonStyle={{ padding: 0, backgroundColor: 'transparent' }}
-          icon={{ name: 'add-circle', style: { marginRight: 0, fontSize: 28 } }}
-          onPress={() => { 
-            navigation.navigate('RegisterSellingWay', {
-              onNavigateBack: this.handleOnNavigateBack
-            }); 
-          }}
-        />
-      ),
-    };
-  };
-
-  constructor() {
-    super();
+export default class FileFormats extends Component {  
+  
+  constructor(props) {
+    super(props);
     this.state = {
+      fileFormats: [],
       isLoading: true,
       notFound: 'Please click (+) button to add it.'      
     };    
@@ -40,15 +24,15 @@ export default class SellingWays extends Component {
     /*this._subscribe = this.props.navigation.addListener('didFocus', () => {
       this.getSellingWays();
     });*/
-    this.getSellingWays();      
+    this.getFileFormats();      
   }
 
-  getSellingWays() {
-    let sellingways = [];
-    db.listSellingWays().then((data) => {
-      sellingways = data;
+  getFileFormats() {
+    let fileFormats = [];
+    db.listFileFormat().then((data) => {
+      fileFormats = data;
       this.setState({
-        sellingways,
+        fileFormats,
         isLoading: false,
       });
     }).catch((err) => {
@@ -69,7 +53,7 @@ export default class SellingWays extends Component {
         title: item.name[0],        
       }}
       onPress={() => {
-        this.props.navigation.navigate('SellingWay', {
+        this.props.navigation.navigate('FileFormat', {
           id: `${item._id}`                   
         });
       }}
@@ -87,30 +71,28 @@ export default class SellingWays extends Component {
         </View>
       )
     }
-    if(this.state.sellingways.length === 0){
+    if(this.state.fileFormats.length === 0){
       return(
         <View>
           <Text style={styles.message}>{this.state.notFound}</Text>          
           <Button
             buttonStyle={styles.button}
-            title="Adicionar Formas de Venda"
-            onPress={ () => this.props.navigation.navigate('RegisterSellingWay')} />
-        </View>
-        
-        
+            title="Adicionar Formatos de Arquivos"
+            onPress={ () => this.props.navigation.navigate('RegisterFileFormat')} />
+        </View>                  
       )
     }
     return (
       <SafeAreaView style={{ flex: 1 }}>
         <FlatList
         keyExtractor={this.keyExtractor}
-        data={this.state.sellingways}
+        data={this.state.fileFormats}
         renderItem={this.renderItem}
       />
         <Button
           buttonStyle={styles.button}
-          title="Cadastrar Forma de Venda"
-          onPress={ () => this.props.navigation.navigate('RegisterSellingWay')} />
+          title="Cadastrar Formatos de Arquivos"
+          onPress={ () => this.props.navigation.navigate('RegisterFileFormat')} />
       </SafeAreaView>
       
       

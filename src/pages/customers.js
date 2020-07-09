@@ -13,7 +13,6 @@ const db = new databaseCustomer();
 
 export default class Customers extends Component {
 
-
   constructor(props) {
     super(props);
     this.state = {
@@ -32,8 +31,6 @@ export default class Customers extends Component {
     this.setState({ isLoading: true }, function() { this.getCustomers() });
  }
   
-
-
   getCustomers() {
     let customers = [];
     db.listCustomer().then((data) => {
