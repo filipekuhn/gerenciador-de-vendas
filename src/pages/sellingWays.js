@@ -65,7 +65,7 @@ export default class SellingWays extends Component {
     <ListItem
       title={item.name}      
       leftAvatar={{
-        //source: item.prodImage && { uri: item.prodImage },
+        source: require('../images/sellingway.png'),
         title: item.name[0],        
       }}
       onPress={() => {

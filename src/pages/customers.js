@@ -1,16 +1,13 @@
 //import React, { Component, useEffect } from 'react';
 import React, { Component } from 'react';
 import { StyleSheet, FlatList, ActivityIndicator, View, Text } from 'react-native';
-import { ListItem, Button } from 'react-native-elements';
+import { ListItem, Button, Avatar } from 'react-native-elements';
 import { navigation  } from '@react-navigation/native';
 import databaseCustomer from '../database/Customer';
-import { ScrollView } from 'react-native-gesture-handler';
+//import { ScrollView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-//const db = new Database();
 const db = new databaseCustomer();
-
-
 export default class Customers extends Component {
 
   constructor(props) {
@@ -19,7 +16,7 @@ export default class Customers extends Component {
       isLoading: true,
       update: false,
       customers: [],
-      notFound: 'Customers not found.\nPlease click (+) button to add it.'      
+      notFound: 'Nenhum cliente encotrado'      
     };    
   }
 
@@ -50,14 +47,16 @@ export default class Customers extends Component {
   keyExtractor = (item, index) => index.toString()
 
   renderItem = ({ item }) => (
-    <ListItem
+    <ListItem      
       title={item.name}
       subtitle={item.email}
-      leftAvatar={{
-        //source: item.prodImage && { uri: item.prodImage },
-        title: item.name[0],
-        email: item.email[1],
-        phone: item.phone[2],
+      leftAvatar={{        
+        rounded: true,
+        showEditButton: true,
+        size: "medium",
+        //source: { uri: 'https://reactjs.org/logo-og.png'},        
+        source: require('../images/users.png'), 
+        title: item.name[0],        
       }}
       onPress={() => {
         this.props.navigation.navigate('Customer', {
@@ -93,7 +92,7 @@ export default class Customers extends Component {
     }
     return (
       <SafeAreaView style={{ flex: 1 }}>
-        <FlatList
+        <FlatList        
         keyExtractor={this.keyExtractor}
         data={this.state.customers}
         //extraData={this.state}
@@ -102,6 +101,7 @@ export default class Customers extends Component {
         renderItem={this.renderItem}
       />
         <Button
+          icon={{name: 'account-circle', color: '#FFF'}}
           buttonStyle={styles.button}
           title="Cadastrar Cliente"
           onPress={ () => this.props.navigation.navigate('RegisterCustomer')} />
@@ -118,8 +118,8 @@ const styles = StyleSheet.create({
    paddingBottom: 22
   },
   item: {
-    padding: 10,
-    fontSize: 18,
+    padding: 5,
+    fontSize: 20,
     height: 44,
   },
   activity: {
@@ -145,5 +145,6 @@ const styles = StyleSheet.create({
     marginLeft: 35,
     marginRight: 35,
     marginBottom: 10,
+    borderRadius: 70
   },
 });

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, ActivityIndicator}  from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Image, ActivityIndicator, Alert}  from 'react-native';
 import { Card, Button } from 'react-native-elements';
 import CustomerDatabase from '../database/Customer';
 import City from '../database/City';
@@ -96,7 +96,7 @@ export default class Customer extends Component {
     }
     return (
       <ScrollView>
-        <Card>
+        <Card style={{ fontSize: 28 }}>
           <View>  
             <Text>Id: {this.state.customer._id}</Text>
           </View>
@@ -118,17 +118,44 @@ export default class Customer extends Component {
           <View>  
             <Text>Formato de Arquivo: {this.state.fileFomart.name}</Text>
           </View>
+          <View>  
+            <Text>Data de Registro: {this.state.customer.registrationdate}</Text>
+          </View>
+          <View>  
+            <Text>Observações:</Text>
+          </View>                   
+          <View style={styles.multiLines}>
+              <Text style={{ margin: 5, fontSize: 14}}>{this.state.customer.comments}</Text>                  
+          </View>
+
           <Button
             buttonStyle={styles.button}
             icon={{name: 'edit', color: '#FFF'}}
             title='Editar'
-            onPress={() => (this.state.id)} />
+            onPress={() => this.props.navigation.navigate('EditCustomer', {
+              id: `${this.state.id}`
+            })} />
 
           <Button
             buttonStyle={{ backgroundColor: '#FF0000', padding: 10, marginTop: 16, marginLeft: 35, marginRight: 35 }}
             icon={{name: 'delete', color: '#FFF'}}
-            title='Deletar'
-            onPress={() => db.deleteCustomerById(this.state.id)} />      
+            title='Deletar'            
+            onPress={() => Alert.alert(
+              "Exclusão de Usuário",
+              `Você tem certeza que deseja excluir o usuário ${this.state.customer.name}?`,
+              [
+                {
+                  text: "Sim", 
+                  onPress: () => db.deleteCustomerById(this.state.id).then(() => this.props.navigation.navigate('Customers')), 
+                  icon: "done"
+                },
+                {
+                  text: "Cancelar",                   
+                }
+              ],
+              { cancelable: true }
+            )}
+            />      
         </Card>
       </ScrollView>
     )
@@ -157,4 +184,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center'
   },
+  multiLines: {
+    justifyContent: 'center', 
+    flex: 1, 
+    borderColor: '#d3d3d3', 
+    borderWidth: 1, 
+    marginTop: 5 
+  }
 });

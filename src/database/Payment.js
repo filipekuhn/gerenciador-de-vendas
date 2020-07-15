@@ -2,15 +2,18 @@ import Database from './Database';
 
 const database = new Database();
 
-export default class FileFormat {
+export default class Payment {
 
-  addFileFormat(f) {
+  addPayment(p) {
     return new Promise((resolve) => {
       database.initDB().then((db) => {
         db.transaction((tx) => {
-          tx.executeSql('INSERT INTO fileformat (name) VALUES (?)', 
+          tx.executeSql('INSERT INTO payment (name, bank, agency, account) VALUES (?, ?, ?, ?)', 
           [
-            f.name            
+            p.name,
+            p.bank,
+            p.agency,
+            p.account            
           ]).then(([tx, results]) => {
             resolve(results);
           });
@@ -25,41 +28,19 @@ export default class FileFormat {
     });  
   }
 
-  editFileFormat(f) {
-    return new Promise((resolve) => {
-      database.initDB().then((db) => {
-        db.transaction((tx) => {
-          tx.executeSql('UPDATE fileformat SET name = ? WHERE _id = ?', 
-          [
-            f.name,             
-            f._id
-          ]).then(([tx, results]) => {
-            resolve(results);
-          });
-        }).then((result) => {
-          database.closeDatabase(db);
-        }).catch((err) => {
-          console.log(err);
-          resolve(err);
-        });
-      }).catch((err) => {
-        console.log(err);
-      });
-    });  
-  }
-
-  deleteFileFormatById(id) {
+  deletePaymentById(id) {
     return new Promise((resolve) =>{
       database.initDB().then((db) => {
         db.transaction((tx) => {
-          tx.executeSql('DELETE FROM fileformat WHERE _id = ?', [id]).then(([tx, results]) => {
-            console.log("File Format deleted!");
+          tx.executeSql('DELETE FROM payment WHERE _id = ?', [id]).then(([tx, results]) => {
+            console.log("Payment deleted!");
             resolve(results);            
           });
-        }).then((result) => {          
+        }).then((result) => {
           database.closeDatabase(db);                
         }).catch((err) => {
-          console.log(err);          
+          console.log(err);
+          resolve(err);          
         });        
       }).catch((err) => {
         console.log(err);
@@ -67,12 +48,12 @@ export default class FileFormat {
     });
   }
 
-  findFileFormatById(id) {
+  findPaymentById(id) {
     return new Promise((resolve) => {
-      const sellingway = [];
+      const payment = [];
       database.initDB().then((db) => {
         db.transaction((tx) => {
-          tx.executeSql('SELECT * FROM fileformat WHERE _id = ?', [id]).then(([tx, results]) => {
+          tx.executeSql('SELECT * FROM payment WHERE _id = ?', [id]).then(([tx, results]) => {
             console.log(results);
             if(results.rows.length > 0) {
               let row = results.rows.item(0);
@@ -91,25 +72,25 @@ export default class FileFormat {
     });
   }
 
-  listFileFormatsItems() {
+  listPaymentsItems() {
     return new Promise((resolve) => {
-      const fileformats = [];
+      const payments = [];
       database.initDB().then((db) => {
         db.transaction((tx) => {
-          tx.executeSql('SELECT * FROM fileformat ', []).then(([tx,results]) => {
+          tx.executeSql('SELECT * FROM payment ', []).then(([tx,results]) => {
             console.log("Query completed");
             var len = results.rows.length;
             for (let i = 0; i < len; i++) {
               let row = results.rows.item(i);
-              console.log(`ID File Format: ${row._id}, File Format Name: ${row.name}`);
+              console.log(`ID Payment: ${row._id}, Payment Name: ${row.name}`);
               const { _id, name } = row;
-              fileformats.push({
+              payments.push({
                 id: _id,
                 item: name,                
               });
             }
-            console.log(fileformats);
-            resolve(fileformats);
+            console.log(payments);
+            resolve(payments);
           });
         }).then((result) => {
           database.closeDatabase(db);
@@ -122,25 +103,25 @@ export default class FileFormat {
     });  
   }
 
-  listFileFormat() {
+  listPayments() {
     return new Promise((resolve) => {
-      const fileformats = [];
+      const payments = [];
       database.initDB().then((db) => {
         db.transaction((tx) => {
-          tx.executeSql('SELECT * FROM fileformat ', []).then(([tx,results]) => {
+          tx.executeSql('SELECT * FROM payment ', []).then(([tx,results]) => {
             console.log("Query completed");
             var len = results.rows.length;
             for (let i = 0; i < len; i++) {
               let row = results.rows.item(i);
-              console.log(`ID File Format: ${row._id}, File Format Name: ${row.name}`);
+              console.log(`ID Payment: ${row._id}, Payment Name: ${row.name}`);
               const { _id, name } = row;
-              fileformats.push({
+              payments.push({
                 _id,
                 name,                
               });
             }
-            console.log(fileformats);
-            resolve(fileformats);
+            console.log(payments);
+            resolve(payments);
           });
         }).then((result) => {
           database.closeDatabase(db);

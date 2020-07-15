@@ -7,6 +7,7 @@ import { createAppContainer } from 'react-navigation';
 import Main from './pages/main';
 import Customer from './pages/customer';
 import Customers from './pages/customers';
+import EditCustomer from './pages/editCustomer';
 import Sale from './pages/sale';
 import RegisterCustomer from './pages/registerCustomer';
 import SellingWay from './pages/sellingWay';
@@ -15,6 +16,7 @@ import RegisterSellingWay from './pages/registerSellingWay';
 import FileFormat from './pages/fileFormat';
 import FileFormats from './pages/fileFormats';
 import RegisterFileFormat from './pages/registerFileFormat';
+import EditFileFormat from './pages/editFileFormat';
 
 const Stack = createStackNavigator();
 
@@ -42,6 +44,11 @@ function App() {
           options={{ title: "Cliente", headerStyle: {backgroundColor: '#5390fe'}, 
                   headerTintColor: '#FFF', headerTitleAlign: 'left' }} />
         
+        <Stack.Screen name="EditCustomer" 
+          component={EditCustomer} 
+          options={{ title: "Editar dados do Cliente", headerStyle: {backgroundColor: '#5390fe'}, 
+                  headerTintColor: '#FFF', headerTitleAlign: 'left' }} />
+
         <Stack.Screen name="Customers" 
           component={Customers} 
           options={{ title: "Clientes", headerStyle: {backgroundColor: '#5390fe'}, 
@@ -76,6 +83,11 @@ function App() {
         <Stack.Screen name="RegisterFileFormat" 
           component={RegisterFileFormat} 
           options={{ title: "Formato de Arquivo", headerStyle: {backgroundColor: '#5390fe'}, 
+                  headerTintColor: '#FFF', headerTitleAlign: 'left' }} />
+
+        <Stack.Screen name="EditFileFormat" 
+          component={EditFileFormat} 
+          options={{ title: "Editar Formato de Arquivo", headerStyle: {backgroundColor: '#5390fe'}, 
                   headerTintColor: '#FFF', headerTitleAlign: 'left' }} />
 
       </Stack.Navigator>                  

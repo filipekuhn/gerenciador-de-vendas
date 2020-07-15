@@ -56,7 +56,9 @@ export default class SellingWays extends Component {
             buttonStyle={styles.button}
             icon={{name: 'edit', color: '#FFF'}}
             title='Editar'
-            onPress={() => db.editFileFormat(this.state.id) } />
+            onPress={() => this.props.navigation.navigate('EditFileFormat', {
+              id: `${this.state.id}`
+            }) } />
 
           <Button
             buttonStyle={{ backgroundColor: '#FF0000', padding: 10, marginTop: 16, marginLeft: 35, marginRight: 35 }}

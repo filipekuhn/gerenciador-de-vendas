@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
 import { View, ScrollView, KeyboardAvoidingView, Alert, StyleSheet, Text } from 'react-native';
 import { Button, Icon } from 'react-native-elements';
-import MyButton from './components/MyButton';
-import CitiesSelectBox from './components/CitiesSelectBox';
-import moment from 'moment';
 import { TextInput, TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler';
 import { ThemeProvider } from 'styled-components';
 import SelectBox from 'react-native-multi-selectbox';
@@ -22,20 +19,24 @@ const db = new CustomerDatabase();
 const dbCity = new CityDatabase();
 const dbSellingWay = new SellingWayDatabase();
 const dbFileFormat = new FileFormatDatabase();
-export default class RegisterCostumer extends Component {
+
+export default class EditCostumer extends Component {
 
   constructor(props) {
     super(props);    
     this.state = {
+      customer: {},
+      city: {},
+      sellingWay: {},
+      fileFormat: {},
       idcustomer: '',
       name: '',
       email: '',
       phone: '',
       idfileformat: '',
       idcity: '',
-      idsellingway: '',
-      comments: '',
-      registrationdate: '',
+      idsellingway: '',  
+      comments: '',    
       isLoading: '',
       cities: [{item: 'Cidades', id: 0}],
       selectedLocations: [{item: 'Cidades', id: 0}],
@@ -48,39 +49,92 @@ export default class RegisterCostumer extends Component {
   }
 
   componentDidMount() {    
+    this.getCustomer();
     this.getCities();
     this.getSellingWays();
     this.getFileFormats();
   }
-  comp
-  componentWillUnmount() {
-    this.setState({
-      idcustomer: '',
-      name: '',
-      email: '',
-      phone: '',
-      idfileformat: '',
-      idcity: '',
-      idsellingway: '',
-      registrationdate: '',
-      isLoading: '',
-      cities: [{item: 'Cidades', id: 0}],
-      selectedLocations: [{item: 'Cidades', id: 0}],
-      sellingWays: [{item: 'Origem do Cliente', id: 0}],
-      selectedSellingWay: [{item: 'Origem do Cliente', id: 0}],
-      fileFormats: [{item: 'Formato do Arquivo', id: 0}],
-      selectedFileFormats: [{item: 'Formato do Arquivo', id: 0}]
-    });
+
+  getCustomer() {
+    let customer = {};   
+    let city = {};
+    let sellingWay = {};
+    let fileFomart = {};
+    const { id } = this.props.route.params;    
+    db.findCustomerById(id).then((data) => {      
+      customer = data;
+      this.setState({
+        customer,        
+        isLoading: false,
+        id: customer._id
+      });
+      dbCity.findCityById(this.state.customer.idcity).then((data) => {
+        city = data;
+        this.setState({ 
+          city,
+          selectedLocations: [{ item: city.name + " - " + city.uf, id: city._id }],
+          isLoading: false          
+        });
+        console.log("Ó AQUI Ó: ", city.name);
+        
+      }).catch((err) => {
+        console.log(err);
+        this.setState = ({
+          isLoading: false
+        });
+      });
+      dbSellingWay.findSellingWayById(this.state.customer.idsellingway).then((data) => {
+        sellingWay = data;
+        this.setState({
+          sellingWay,
+          selectedSellingWay: [{ item: sellingWay.name, id: sellingWay._id }],
+          isLoading: false
+        });
+      }).catch((err) => {
+        console.log(err);
+        this.setState({
+          isLoading: false
+        });
+      });
+      dbFileFormat.findFileFormatById(this.state.customer.idfileformat).then((data) => {
+        fileFomart = data;
+        this.setState({
+          fileFomart,
+          selectedFileFormats: [{ item: fileFomart.name, id: fileFomart._id }],
+          isLoading: false
+        });
+      }).catch((err) => {
+        console.log(err);
+        this.setState({
+          isLoading: false
+        });
+      });
+      this.setState({
+        idcustomer: customer._id,
+        name: customer.name,
+        email: customer.email,
+        phone: customer.phone,
+        idcity: customer.idcity,
+        idfileformat: customer.idfileformat,
+        idsellingway: customer.idsellingway, 
+        comments: customer.comments                      
+      });
+      console.log(`Esse são os dados setados de customer por id: ${customer._id} nome: ${customer.name}, cidade: ${city.name} estado: ${city.uf} origem: ${sellingWay.name} arquivo: ${fileFomart.name}` );
+    }).catch((err) => {
+      console.log(err);
+      this.setState = {
+        isLoading: false
+      }
+    })
   }
 
   getCities() {
     let cities = [];
     dbCity.listCities().then((data) => {
       cities = data;
-      selectedLocations = data;
+      //selectedLocations = data;
       this.setState({
-        cities,
-        selectedLocations,
+        cities,        
         isLoading: false,
       });      
     }).catch((err) => {
@@ -95,10 +149,9 @@ export default class RegisterCostumer extends Component {
     let sellingWays = [];
     dbSellingWay.listSellingWaysItems().then((data) => {
       sellingWays = data;
-      selectedSellingWay = data;      
+      //selectedSellingWay = data;      
       this.setState({
-        sellingWays,        
-        selectedSellingWay,
+        sellingWays,                
         isLoading: false,
       });      
     }).catch((err) => {
@@ -113,10 +166,9 @@ export default class RegisterCostumer extends Component {
     let fileFormats = [];
     dbFileFormat.listFileFormatsItems().then((data) => {
       fileFormats = data;
-      selectedFileFormats = data;      
+      //selectedFileFormats = data;      
       this.setState({
-        fileFormats,        
-        selectedFileFormats,
+        fileFormats,                
         isLoading: false,
       });      
     }).catch((err) => {
@@ -133,33 +185,34 @@ export default class RegisterCostumer extends Component {
     this.setState(state);
   }
 
-  saveCustomer() {
-    let todayDate = moment(new Date()).format("DD-MM-YYYY");
+  saveCustomer() {    
     this.setState({
       isLoading: true,      
     });    
-    let data = {      
+    let data = {            
       name: this.state.name,
       email: this.state.email,
       phone: this.state.phone,
       idfileformat: this.state.selectedFileFormats[0].id,
       idcity: this.state.selectedLocations[0].id,
-      idsellingway: this.state.selectedSellingWay[0].id,
-      comments: this.state.comments,
-      registrationdate: todayDate
+      idsellingway: this.state.selectedSellingWay[0].id,   
+      comments: this.state.comments,   
+      _id: this.state.customer._id
     }
-    db.addCustomer(data).then((result) => {
+    db.editCustomer(data).then((result) => {
       console.log(result);
       this.setState({
         isLoading: false,
       });
       Alert.alert(
-        "Cadastro de Usuário",
-        "O Cadastro foi salvo com sucesso!",
+        "Edição de Cadastro de Usuário",
+        "O Cadastro foi alterado com sucesso!",
         [
           {
             text: "OK", 
-            onPress: () => this.props.navigation.push('Customers'), 
+            onPress: () => this.props.navigation.push('Customer', {
+              id: `${this.state.customer._id}`
+            }), 
             icon: "done"
           }
         ],
@@ -179,10 +232,10 @@ export default class RegisterCostumer extends Component {
       <SafeAreaView style={{ flex: 1 }}>
         <ScrollView keyboardShouldPersistTaps="handled">
           <KeyboardAvoidingView
-            behavior="position"
+            behavior="padding"
             style={{ justifyContent: 'space-between' }}>
               <TextInput
-                placeholder="Nome"                
+                placeholder="Nome"
                 style={styles.textInput}
                 value={this.state.name}
                 onChangeText={(text) => this.updateTextInput(text, 'name')}                
@@ -196,26 +249,25 @@ export default class RegisterCostumer extends Component {
               />
               <TextInput
                 placeholder="Telefone"
-                keyboardType={"phone-pad"}
                 style={styles.textInput}
                 value={this.state.phone}                
                 onChangeText={(text) => this.updateTextInput(text, 'phone')}             
-              />           
+              />              
               <TextInput
                 placeholder="Observações"
-                multiline={true}
                 style={styles.textInput}
+                multiline={true}
                 value={this.state.comments}
                 onChangeText={(text) => this.updateTextInput(text, 'comments')}
-              />             
-          </KeyboardAvoidingView>          
+              />     
+          </KeyboardAvoidingView>
         </ScrollView>        
-        <ThemeProvider theme={Colors} style={{ marginTop: 10 }}>
+        <ThemeProvider theme={Colors}>
           <View style={{ marginTop: 1, marginBottom: 5, marginLeft: 20, marginRight: 20 }}>          
             <Text style={{ fontSize: 12, marginBottom: 5 }}>Selecione a Cidade</Text>
             <SelectBox
               label=""            
-              options={this.state.cities}            
+              options={this.state.cities}                          
               value={this.state.selectedLocations[0]}                    
               onChange={val => this.setState({ selectedLocations: [val]})}            
               hideInputFilter={false}
@@ -245,13 +297,20 @@ export default class RegisterCostumer extends Component {
             />
           </View>
         </ThemeProvider>
-        <ScrollView> 
+        <ScrollView>
           <Button
             icon={{name: 'save', color: '#FFF'}}         
             title="Cadastrar"
             buttonStyle={styles.button}                
             onPress={() => this.saveCustomer()}
           />
+
+          <Button
+            icon={{name: 'warning', color: '#FFF'}}
+            title="Apagar todos Clientes"
+            buttonStyle={styles.button}
+            onPress={() => db.deleteAllCustomer()}
+          />    
         </ScrollView>
       </SafeAreaView>
     );
