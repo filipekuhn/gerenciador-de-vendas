@@ -1,38 +1,38 @@
+//import React, { Component, useEffect } from 'react';
 import React, { Component } from 'react';
 import { StyleSheet, FlatList, ActivityIndicator, View, Text } from 'react-native';
-import { ListItem, Button } from 'react-native-elements';
-import databaseFileFormats from '../database/FileFormat';
-import { ScrollView } from 'react-native-gesture-handler';
+import { ListItem, Button, Avatar } from 'react-native-elements';
+import { useFocusEffect, useNavigation, useNavigationState, useRoute } from '@react-navigation/native';
+import database from '../database/Product';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-//const db = new Database();
-const db = new databaseFileFormats();
+const db = new database();
+export default class Products extends Component {
 
-
-export default class FileFormats extends Component {  
-  
   constructor(props) {
     super(props);
     this.state = {
-      fileFormats: [],
       isLoading: true,
-      notFound: 'Please click (+) button to add it.'      
+      update: false,
+      prodcuts: [],
+      notFound: 'Nenhum produto encotrado'      
     };    
   }
 
-  componentDidMount() {
-    /*this._subscribe = this.props.navigation.addListener('didFocus', () => {
-      this.getSellingWays();
-    });*/
-    this.getFileFormats();      
-  }
+  componentDidMount() {        
+    this.getProducts();  
+  }  
 
-  getFileFormats() {
-    let fileFormats = [];
-    db.listFileFormat().then((data) => {
-      fileFormats = data;
+  onRefresh() {
+    this.setState({ isLoading: true }, function() { this.getProducts() });
+ }
+  
+  getProducts() {
+    let products = [];
+    db.listProducts().then((data) => {
+      products = data;
       this.setState({
-        fileFormats,
+        products,
         isLoading: false,
       });
     }).catch((err) => {
@@ -46,15 +46,19 @@ export default class FileFormats extends Component {
   keyExtractor = (item, index) => index.toString()
 
   renderItem = ({ item }) => (
-    <ListItem
-      title={item.name}      
-      leftAvatar={{
-        //source: item.prodImage && { uri: item.prodImage },
-        source: require('../images/fileformat.png'),
-        title: item.name[0],                
+    <ListItem      
+      title={item.name}
+      subtitle={item.code}
+      leftAvatar={{        
+        rounded: true,
+        showEditButton: true,
+        size: "medium",
+        //source: { uri: 'https://reactjs.org/logo-og.png'},        
+        source: require('../images/product.png'), 
+        title: item.name[0],              
       }}
       onPress={() => {
-        this.props.navigation.navigate('FileFormat', {
+        this.props.navigation.navigate('Product', {
           id: `${item._id}`                   
         });
       }}
@@ -72,30 +76,35 @@ export default class FileFormats extends Component {
         </View>
       )
     }
-    if(this.state.fileFormats.length === 0){
+    if(this.state.products.length === 0){
       return(
         <View>
           <Text style={styles.message}>{this.state.notFound}</Text>          
           <Button
             buttonStyle={styles.button}
+            title="Adicionar Produtos"
             icon={{ name: 'add-circle-outline', color: '#FFF' }}
-            title="Adicionar Formatos de Arquivos"
-            onPress={ () => this.props.navigation.navigate('RegisterFileFormat')} />
-        </View>                  
+            onPress={ () => this.props.navigation.navigate('RegisterProduct', {
+              onGoBack: () => this.getProducts()
+            })} />
+        </View>                
       )
     }
     return (
       <SafeAreaView style={{ flex: 1 }}>
-        <FlatList
+        <FlatList        
         keyExtractor={this.keyExtractor}
-        data={this.state.fileFormats}
+        data={this.state.products}
+        //extraData={this.state}
+        refreshing={this.state.isLoading}
+        onRefresh={() => this.onRefresh()}        
         renderItem={this.renderItem}
       />
         <Button
+          icon={{name: 'add-circle-outline', color: '#FFF'}}
           buttonStyle={styles.button}
-          title="Cadastrar Formatos de Arquivos"
-          icon={{ name: 'add-circle-outline', color: '#FFF' }}
-          onPress={ () => this.props.navigation.navigate('RegisterFileFormat')} />
+          title="Cadastrar Produto"
+          onPress={ () => this.props.navigation.navigate('RegisterProduct')} />
       </SafeAreaView>
       
       
@@ -109,8 +118,8 @@ const styles = StyleSheet.create({
    paddingBottom: 22
   },
   item: {
-    padding: 10,
-    fontSize: 18,
+    padding: 5,
+    fontSize: 20,
     height: 44,
   },
   activity: {

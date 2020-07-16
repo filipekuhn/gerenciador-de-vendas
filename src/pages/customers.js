@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, FlatList, ActivityIndicator, View, Text } from 'react-native';
 import { ListItem, Button, Avatar } from 'react-native-elements';
-import { navigation  } from '@react-navigation/native';
+import { useFocusEffect, useNavigation, useNavigationState, useRoute } from '@react-navigation/native';
 import databaseCustomer from '../database/Customer';
 //import { ScrollView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -84,11 +84,15 @@ export default class Customers extends Component {
           <Button
             buttonStyle={styles.button}
             title="Adicionar Clientes"
-            onPress={ () => this.props.navigation.navigate('RegisterCustomer')} />
-        </View>
-        
-        
+            onPress={ () => this.props.navigation.navigate('RegisterCustomer', {
+              onGoBack: () => this.getCustomers()
+            })} />
+        </View>                
       )
+    }
+    if(this.props.route.params.update){            
+      this.props.route.params.update = false;
+      this.getCustomers();
     }
     return (
       <SafeAreaView style={{ flex: 1 }}>
@@ -104,7 +108,9 @@ export default class Customers extends Component {
           icon={{name: 'account-circle', color: '#FFF'}}
           buttonStyle={styles.button}
           title="Cadastrar Cliente"
-          onPress={ () => this.props.navigation.navigate('RegisterCustomer')} />
+          onPress={ () => this.props.navigation.navigate('RegisterCustomer', {
+            onGoBack: () => this.getCustomers()
+          })} />
       </SafeAreaView>
       
       

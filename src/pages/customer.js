@@ -124,8 +124,8 @@ export default class Customer extends Component {
           <View>  
             <Text>Observações:</Text>
           </View>                   
-          <View style={styles.multiLines}>
-              <Text style={{ margin: 5, fontSize: 14}}>{this.state.customer.comments}</Text>                  
+          <View>
+              <Text style={{ fontSize: 14}}>{this.state.customer.comments}</Text>                  
           </View>
 
           <Button
@@ -146,7 +146,7 @@ export default class Customer extends Component {
               [
                 {
                   text: "Sim", 
-                  onPress: () => db.deleteCustomerById(this.state.id).then(() => this.props.navigation.navigate('Customers')), 
+                  onPress: () => db.deleteCustomerById(this.state.id).then(() => this.props.navigation.goBack()), 
                   icon: "done"
                 },
                 {

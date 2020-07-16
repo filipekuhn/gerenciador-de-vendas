@@ -159,7 +159,7 @@ export default class RegisterCostumer extends Component {
         [
           {
             text: "OK", 
-            onPress: () => this.props.navigation.push('Customers'), 
+            onPress: () => this.props.navigation.push('Customers', { update: true }), 
             icon: "done"
           }
         ],

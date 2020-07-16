@@ -1,8 +1,9 @@
 import React from 'react';
 import { View, Text } from 'react-native'
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, DrawerActions } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { createAppContainer } from 'react-navigation';
+import { createDrawerNavigator } from '@react-navigation/drawer'
+import Icon from 'react-native-vector-icons';
 
 import Main from './pages/main';
 import Customer from './pages/customer';
@@ -17,18 +18,34 @@ import FileFormat from './pages/fileFormat';
 import FileFormats from './pages/fileFormats';
 import RegisterFileFormat from './pages/registerFileFormat';
 import EditFileFormat from './pages/editFileFormat';
+import Products from './pages/products';
+import Product from './pages/product';
+import RegisterProduct from './pages/registerProduct';
+import EditProduct from './pages/editProduct';
 
 const Stack = createStackNavigator();
+const Drawer = createDrawerNavigator();
+
+
+
 
 function App() {
+  createDrawer = () =>
+    <Drawer.Navigator>
+      <Drawer.Screen name="Cus" component={Customers} />
+      <Drawer.Screen name="Prod" component={Products} />
+      <Drawer.Screen name="File" component={FileFormats} />
+    </Drawer.Navigator>
+  
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Main">
         <Stack.Screen name="Main" 
           component={Main} 
-          options={{ title: "Menu Principal", headerStyle: {backgroundColor: '#5390fe'}, 
-                  headerTintColor: '#FFF', headerTitleAlign: 'left' }} />
+          options={{  title: "Menu Principal", headerStyle: {backgroundColor: '#5390fe'}, 
+                  headerTintColor: '#FFF', headerTitleAlign: 'left' }} /> 
         
+
         <Stack.Screen name="Customer" 
           component={Customer} 
           options={{  title: "Clientes", headerStyle: {backgroundColor: '#5390fe'}, 
@@ -90,6 +107,16 @@ function App() {
           options={{ title: "Editar Formato de Arquivo", headerStyle: {backgroundColor: '#5390fe'}, 
                   headerTintColor: '#FFF', headerTitleAlign: 'left' }} />
 
+        <Stack.Screen name="Products"  
+          component={Products} 
+          options={{ title: "Produtos", headerStyle: {backgroundColor: '#5390fe'}, 
+                  headerTintColor: '#FFF', headerTitleAlign: 'left' }} 
+          initialParams={{ update: false }}/>                  
+
+        <Stack.Screen name="RegisterProduct" 
+          component={RegisterProduct} 
+          options={{ title: "Cadastro de Produto", headerStyle: {backgroundColor: '#5390fe'}, 
+                  headerTintColor: '#FFF', headerTitleAlign: 'left' }} />
       </Stack.Navigator>                  
     </NavigationContainer>
   );

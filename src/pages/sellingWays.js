@@ -109,6 +109,7 @@ export default class SellingWays extends Component {
       />
         <Button
           buttonStyle={styles.button}
+          icon={{name: 'add-circle-outline', color: '#FFF'}}
           title="Cadastrar Forma de Venda"
           onPress={ () => this.props.navigation.navigate('RegisterSellingWay')} />
       </SafeAreaView>
@@ -151,5 +152,6 @@ const styles = StyleSheet.create({
     marginLeft: 35,
     marginRight: 35,
     marginBottom: 10,
+    borderRadius: 70
   },
 });
