@@ -2,13 +2,17 @@
 import React, { Component } from 'react';
 import { StyleSheet, FlatList, ActivityIndicator, View, Text } from 'react-native';
 import { ListItem, Button, Avatar } from 'react-native-elements';
-import { useFocusEffect, useNavigation, useNavigationState, useRoute } from '@react-navigation/native';
+import { useFocusEffect, useNavigation, useNavigationState, useRoute, navigationOptions } from '@react-navigation/native';
 import databaseCustomer from '../database/Customer';
 //import { ScrollView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const db = new databaseCustomer();
 export default class Customers extends Component {
+
+  static navigationOptions = {
+    title: 'Clientes'
+  }
 
   constructor(props) {
     super(props);

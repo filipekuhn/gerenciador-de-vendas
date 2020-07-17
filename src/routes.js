@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, Text } from 'react-native'
-import { NavigationContainer, DrawerActions } from '@react-navigation/native';
+import { NavigationContainer, DrawerActions, DrawerRouter } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { createDrawerNavigator } from '@react-navigation/drawer'
-import Icon from 'react-native-vector-icons';
+import { createDrawerNavigator, DrawerContent } from '@react-navigation/drawer'
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import Main from './pages/main';
 import Customer from './pages/customer';
@@ -26,25 +26,45 @@ import EditProduct from './pages/editProduct';
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
+createDrawer = () =>
+  <Drawer.Navigator initialRouteName="Menu">
+    <Drawer.Screen name="Menu" component={Main} initialParams={{ name: 'Menu k7' }} />
+    <Drawer.Screen name="Clientes" component={Customers} initialParams={{ update: false, name: 'Clintx' }} options={{ drawerLabel: 'Clientes' }} />
+    <Drawer.Screen name="Produtos" component={Products} options={{ title: "Produtos"}} />
+    <Drawer.Screen name="Formatos de Arquivos" component={FileFormats} options={{ title: "Formatos de Arquivos"}} />
+    <Drawer.Screen name="Formas de Venda" component={SellingWays} options={{ title: "Formas de Venda"}} />
+    <Drawer.Screen name="Vendas" component={Sale} />
+  </Drawer.Navigator>
 
 
-
-function App() {
-  createDrawer = () =>
-    <Drawer.Navigator>
-      <Drawer.Screen name="Cus" component={Customers} />
-      <Drawer.Screen name="Prod" component={Products} />
-      <Drawer.Screen name="File" component={FileFormats} />
-    </Drawer.Navigator>
+function App() {  
   
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Main">
+      <Stack.Navigator initialRouteName="Ts">
+        <Stack.Screen 
+          name="Ts"
+          children={this.createDrawer}
+          options={({ navigation }) => ({
+            title: '',
+            headerStyle: {backgroundColor: '#5390fe'}, 
+            headerTintColor: '#FFF', 
+            headerTitleAlign: 'left',
+            headerLeft: () =>
+              <Icon
+                onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
+                style={[{ color: 'white', marginLeft: 8 }]}
+                size={24}
+                name={'menu'}
+              />
+          })
+          }
+        />
+
         <Stack.Screen name="Main" 
           component={Main} 
           options={{  title: "Menu Principal", headerStyle: {backgroundColor: '#5390fe'}, 
-                  headerTintColor: '#FFF', headerTitleAlign: 'left' }} /> 
-        
+                  headerTintColor: '#FFF', headerTitleAlign: 'left' }} />         
 
         <Stack.Screen name="Customer" 
           component={Customer} 

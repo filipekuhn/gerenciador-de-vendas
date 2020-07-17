@@ -31,6 +31,7 @@ export default class Database {
               console.log("Database OPEN");
               db.executeSql('SELECT 1 FROM city LIMIT 1').then(() => {
                   console.log("Database is ready ... executing query ...");
+                  db.executeSql('PRAGMA foreign_keys = ON');
               }).catch((error) =>{
                   console.log("Received error: ", error);
                   console.log("Database not yet ready ... populating data");
