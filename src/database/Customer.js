@@ -20,12 +20,13 @@ export default class Customer {
             c.comments,
             c.registrationdate
           ]).then(([tx, results]) => {
-            resolve(results);
+            resolve(true);
           });
         }).then((result) => {
           database.closeDatabase(db);
         }).catch((err) => {
           console.log(err);
+          resolve(false)
         });
       }).catch((err) => {
         console.log(err);

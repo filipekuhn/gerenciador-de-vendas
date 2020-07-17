@@ -5,7 +5,7 @@ import CustomerDatabase from '../database/Customer';
 import City from '../database/City';
 import SellingWay from '../database/SellingWay';
 import FileFormat from '../database/FileFormat';
-import { route } from '@react-navigation/native';
+import styles from '../stylesheet/stylesheet';
 
 const db = new CustomerDatabase();
 const dbCity = new City();
@@ -24,10 +24,16 @@ export default class Customer extends Component {
       city: {},
       sellingWay: {},
       fileFomart: {},
+      formatedRegistrationDate: '',
+      update: false
     };      
   }
     
  componentDidMount() {  
+   this.getCustomer();  
+  }
+
+  getCustomer() {
     let customer = {};   
     let city = {};
     let sellingWay = {};
@@ -38,7 +44,8 @@ export default class Customer extends Component {
       this.setState({
         customer,
         isLoading: false,
-        id: customer._id
+        id: customer._id,
+        formatedRegistrationDate: String(customer.registrationdate).replace("-", "/").replace("-", "/")      
       });
       dbCity.findCityById(this.state.customer.idcity).then((data) => {
         city = data;
@@ -83,7 +90,6 @@ export default class Customer extends Component {
         isLoading: false
       }
     })
-  
   }
 
   render() {    
@@ -93,6 +99,10 @@ export default class Customer extends Component {
           <ActivityIndicator size="large" color="#0000ff"/>
         </View>
       )
+    }
+    if(this.props.route.params.update){            
+      this.props.route.params.update = false;
+      this.getCustomer();
     }
     return (
       <ScrollView>
@@ -119,7 +129,7 @@ export default class Customer extends Component {
             <Text>Formato de Arquivo: {this.state.fileFomart.name}</Text>
           </View>
           <View>  
-            <Text>Data de Registro: {this.state.customer.registrationdate}</Text>
+            <Text>Data de Registro: {this.state.formatedRegistrationDate}</Text>
           </View>
           <View>  
             <Text>Observações:</Text>
@@ -133,11 +143,11 @@ export default class Customer extends Component {
             icon={{name: 'edit', color: '#FFF'}}
             title='Editar'
             onPress={() => this.props.navigation.navigate('EditCustomer', {
-              id: `${this.state.id}`
+              id: `${this.state.id}`              
             })} />
 
           <Button
-            buttonStyle={{ backgroundColor: '#FF0000', padding: 10, marginTop: 16, marginLeft: 35, marginRight: 35 }}
+            buttonStyle={styles.deleteButton}
             icon={{name: 'delete', color: '#FFF'}}
             title='Deletar'            
             onPress={() => Alert.alert(
@@ -146,7 +156,9 @@ export default class Customer extends Component {
               [
                 {
                   text: "Sim", 
-                  onPress: () => db.deleteCustomerById(this.state.id).then(() => this.props.navigation.goBack()), 
+                  onPress: () => db.deleteCustomerById(this.state.id).then(() => this.props.navigation.navigate('Customers', {
+                    update: true
+                  })), 
                   icon: "done"
                 },
                 {
@@ -161,34 +173,3 @@ export default class Customer extends Component {
     )
   }
 }
-
-const styles = StyleSheet.create({
-  button: {
-    alignItems: 'center',
-    backgroundColor: '#5390fe',
-    color: '#5390fe',
-    padding: 10,
-    marginTop: 16,
-    marginLeft: 35,
-    marginRight: 35,
-  },
-  text: {
-    color: '#FFF',
-  },
-  activity: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  multiLines: {
-    justifyContent: 'center', 
-    flex: 1, 
-    borderColor: '#d3d3d3', 
-    borderWidth: 1, 
-    marginTop: 5 
-  }
-});

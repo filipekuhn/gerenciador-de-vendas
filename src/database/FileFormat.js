@@ -59,7 +59,8 @@ export default class FileFormat {
         }).then((result) => {          
           database.closeDatabase(db);                
         }).catch((err) => {
-          console.log(err);          
+          console.log(err);  
+          resolve(err);        
         });        
       }).catch((err) => {
         console.log(err);

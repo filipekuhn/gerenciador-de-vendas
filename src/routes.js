@@ -28,12 +28,10 @@ const Drawer = createDrawerNavigator();
 
 createDrawer = () =>
   <Drawer.Navigator initialRouteName="Menu">
-    <Drawer.Screen name="Menu" component={Main} initialParams={{ name: 'Menu k7' }} />
-    <Drawer.Screen name="Clientes" component={Customers} initialParams={{ update: false, name: 'Clintx' }} options={{ drawerLabel: 'Clientes' }} />
-    <Drawer.Screen name="Produtos" component={Products} options={{ title: "Produtos"}} />
-    <Drawer.Screen name="Formatos de Arquivos" component={FileFormats} options={{ title: "Formatos de Arquivos"}} />
-    <Drawer.Screen name="Formas de Venda" component={SellingWays} options={{ title: "Formas de Venda"}} />
-    <Drawer.Screen name="Vendas" component={Sale} />
+    <Drawer.Screen name="Menu" component={Main} />
+    <Drawer.Screen name="Vendas" component={Customers} initialParams={{ update: false }} />
+    <Drawer.Screen name="Financeiro" component={Products} />
+    <Drawer.Screen name="Backup" component={FileFormats}  />    
   </Drawer.Navigator>
 
 
@@ -46,7 +44,7 @@ function App() {
           name="Ts"
           children={this.createDrawer}
           options={({ navigation }) => ({
-            title: '',
+            title: 'Menu',
             headerStyle: {backgroundColor: '#5390fe'}, 
             headerTintColor: '#FFF', 
             headerTitleAlign: 'left',

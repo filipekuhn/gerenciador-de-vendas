@@ -3,7 +3,7 @@ import { StyleSheet, FlatList, ActivityIndicator, View, Text } from 'react-nativ
 import { Card, Button, Icon } from 'react-native-elements';
 import DatabaseFileFormat from '../database/FileFormat';
 import { ScrollView } from 'react-native-gesture-handler';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import styles from '../stylesheet/stylesheet';
 
 const db = new DatabaseFileFormat();
 
@@ -61,7 +61,7 @@ export default class SellingWays extends Component {
             }) } />
 
           <Button
-            buttonStyle={{ backgroundColor: '#FF0000', padding: 10, marginTop: 16, marginLeft: 35, marginRight: 35 }}
+            buttonStyle={styles.deleteButton}
             icon={{name: 'delete', color: '#FFF'}}
             title='Deletar'
             onPress={() => db.deleteFileFormatById(this.state.id)} />      
@@ -72,27 +72,3 @@ export default class SellingWays extends Component {
     )
   } 
 }
-
-const styles = StyleSheet.create({
-  button: {
-    alignItems: 'center',
-    backgroundColor: '#5390fe',
-    color: '#5390fe',
-    padding: 10,
-    marginTop: 16,
-    marginLeft: 35,
-    marginRight: 35,
-  },
-  text: {
-    color: '#FFF',
-  },
-  activity: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-});

@@ -4,12 +4,9 @@ import { Card, Button, Icon } from 'react-native-elements';
 import Database from '../database/Database';
 import databaseSellingWay from '../database/SellingWay';
 import { ScrollView } from 'react-native-gesture-handler';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import styles from '../stylesheet/stylesheet';
 
-//const db = new Database();
 const db = new databaseSellingWay();
-
-
 export default class SellingWays extends Component {
 
   constructor() {
@@ -22,8 +19,7 @@ export default class SellingWays extends Component {
   }
   
 
- componentDidMount() {
-      
+ componentDidMount() {      
     let sellingWay = {};     
     const { id } = this.props.route.params;    
     db.findSellingWayById(id).then((data) => {      
@@ -62,7 +58,7 @@ export default class SellingWays extends Component {
             onPress={() => db.editSellingWayById(this.state.id)} />
 
           <Button
-            buttonStyle={{ backgroundColor: '#FF0000', padding: 10, marginTop: 16, marginLeft: 35, marginRight: 35 }}
+            buttonStyle={styles.deleteButton}
             icon={{name: 'delete', color: '#FFF'}}
             title='Deletar'
             onPress={() => db.deleteSellingWayById(this.state.id)} />      
@@ -73,27 +69,3 @@ export default class SellingWays extends Component {
     )
   } 
 }
-
-const styles = StyleSheet.create({
-  button: {
-    alignItems: 'center',
-    backgroundColor: '#5390fe',
-    color: '#5390fe',
-    padding: 10,
-    marginTop: 16,
-    marginLeft: 35,
-    marginRight: 35,
-  },
-  text: {
-    color: '#FFF',
-  },
-  activity: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-});

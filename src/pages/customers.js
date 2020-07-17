@@ -1,11 +1,10 @@
 //import React, { Component, useEffect } from 'react';
 import React, { Component } from 'react';
-import { StyleSheet, FlatList, ActivityIndicator, View, Text } from 'react-native';
+import { FlatList, ActivityIndicator, View, Text } from 'react-native';
 import { ListItem, Button, Avatar } from 'react-native-elements';
-import { useFocusEffect, useNavigation, useNavigationState, useRoute, navigationOptions } from '@react-navigation/native';
 import databaseCustomer from '../database/Customer';
-//import { ScrollView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import styles from '../stylesheet/stylesheet';
 
 const db = new databaseCustomer();
 export default class Customers extends Component {
@@ -64,7 +63,8 @@ export default class Customers extends Component {
       }}
       onPress={() => {
         this.props.navigation.navigate('Customer', {
-          id: `${item._id}`                   
+          id: `${item._id}`,
+          onGoBack: () => this.getCustomers()                   
         });
       }}
       chevron
@@ -121,40 +121,3 @@ export default class Customers extends Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-   flex: 1,
-   paddingBottom: 22
-  },
-  item: {
-    padding: 5,
-    fontSize: 20,
-    height: 44,
-  },
-  activity: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  message: {
-    padding: 16,
-    fontSize: 18,
-    color: '#5390fe'
-  },
-  button: {
-    alignItems: 'center',
-    backgroundColor: '#5390fe',
-    color: '#5390fe',
-    padding: 10,
-    marginTop: 10,
-    marginLeft: 35,
-    marginRight: 35,
-    marginBottom: 10,
-    borderRadius: 70
-  },
-});

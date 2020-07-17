@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import { View, ScrollView, KeyboardAvoidingView, Alert, StyleSheet, Text } from 'react-native';
-import { Button, Icon } from 'react-native-elements';
-import MyButton from './components/MyButton';
-import CitiesSelectBox from './components/CitiesSelectBox';
+import { Button } from 'react-native-elements';
+import styles from '../stylesheet/stylesheet';
 import moment from 'moment';
 import { TextInput, TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler';
 import { ThemeProvider } from 'styled-components';
@@ -12,6 +11,7 @@ import CityDatabase from '../database/City';
 import SellingWayDatabase from '../database/SellingWay';
 import FileFormatDatabase from '../database/FileFormat';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { TextInputMask } from 'react-native-masked-text';
 
 const Colors = {
   primary: '#078489',
@@ -42,7 +42,7 @@ export default class RegisterCostumer extends Component {
       sellingWays: [{item: 'Origem do Cliente', id: 0}],
       selectedSellingWay: [{item: 'Origem do Cliente', id: 0}],
       fileFormats: [{item: 'Formato do Arquivo', id: 0}],
-      selectedFileFormats: [{item: 'Formato do Arquivo', id: 0}]
+      selectedFileFormats: [{item: 'Formato do Arquivo', id: null}]
     };      
     
   }
@@ -64,23 +64,21 @@ export default class RegisterCostumer extends Component {
       idsellingway: '',
       registrationdate: '',
       isLoading: '',
-      cities: [{item: 'Cidades', id: 0}],
-      selectedLocations: [{item: 'Cidades', id: 0}],
-      sellingWays: [{item: 'Origem do Cliente', id: 0}],
-      selectedSellingWay: [{item: 'Origem do Cliente', id: 0}],
-      fileFormats: [{item: 'Formato do Arquivo', id: 0}],
-      selectedFileFormats: [{item: 'Formato do Arquivo', id: 0}]
+      cities: [{item: 'Cidades', id: null}],
+      selectedLocations: [],
+      sellingWays: [{item: 'Origem do Cliente', id: null}],
+      selectedSellingWay: [],
+      fileFormats: [{item: 'Formato do Arquivo', id: null}],
+      selectedFileFormats: []
     });
   }
 
   getCities() {
     let cities = [];
     dbCity.listCities().then((data) => {
-      cities = data;
-      selectedLocations = data;
+      cities = data;      
       this.setState({
-        cities,
-        selectedLocations,
+        cities,        
         isLoading: false,
       });      
     }).catch((err) => {
@@ -94,11 +92,9 @@ export default class RegisterCostumer extends Component {
   getSellingWays() {
     let sellingWays = [];
     dbSellingWay.listSellingWaysItems().then((data) => {
-      sellingWays = data;
-      selectedSellingWay = data;      
+      sellingWays = data;      
       this.setState({
-        sellingWays,        
-        selectedSellingWay,
+        sellingWays,                
         isLoading: false,
       });      
     }).catch((err) => {
@@ -112,11 +108,9 @@ export default class RegisterCostumer extends Component {
   getFileFormats() {
     let fileFormats = [];
     dbFileFormat.listFileFormatsItems().then((data) => {
-      fileFormats = data;
-      selectedFileFormats = data;      
+      fileFormats = data;      
       this.setState({
-        fileFormats,        
-        selectedFileFormats,
+        fileFormats,                
         isLoading: false,
       });      
     }).catch((err) => {
@@ -135,16 +129,28 @@ export default class RegisterCostumer extends Component {
 
   saveCustomer() {
     let todayDate = moment(new Date()).format("DD-MM-YYYY");
+    let cityId = null;
+    let sellingWayId = null;
+    let fileFormatId = null;    
     this.setState({
       isLoading: true,      
     });    
+    if(this.state.selectedLocations[0].id > 0) {
+      cityId = this.state.selectedLocations[0].id
+    }
+    if(this.state.selectedSellingWay[0].id > 0) {
+      sellingWayId = this.state.selectedSellingWay[0].id
+    }
+    if(this.state.selectedFileFormats[0].id > 0) {
+      fileFormatId = this.state.selectedFileFormats[0].id      
+    }
     let data = {      
       name: this.state.name,
       email: this.state.email,
-      phone: this.state.phone,
-      idfileformat: this.state.selectedFileFormats[0].id,
-      idcity: this.state.selectedLocations[0].id,
-      idsellingway: this.state.selectedSellingWay[0].id,
+      phone: this.state.phone,      
+      idcity: cityId,
+      idsellingway: sellingWayId,
+      idfileformat: fileFormatId,
       comments: this.state.comments,
       registrationdate: todayDate
     }
@@ -153,24 +159,52 @@ export default class RegisterCostumer extends Component {
       this.setState({
         isLoading: false,
       });
-      Alert.alert(
-        "Cadastro de Usuário",
-        "O Cadastro foi salvo com sucesso!",
-        [
-          {
-            text: "OK", 
-            onPress: () => this.props.navigation.push('Customers', { update: true }), 
-            icon: "done"
-          }
-        ],
-        { cancelable: false }
-      );
+      if(result) {
+        Alert.alert(
+          "Cadastro de Usuário",
+          "O Cadastro foi salvo com sucesso!",
+          [
+            {
+              text: "OK", 
+              onPress: () => this.props.navigation.navigate('Customers', { update: true }), 
+              icon: "done"
+            }
+          ],
+          { cancelable: false }
+        );
+      }else {
+        Alert.alert(
+          "Cadastro de Usuário",
+          "Não foi possível realizar o cadastro!",
+          [
+            {
+              text: "OK", 
+              onPress: () => this.props.navigation.navigate('Customers', { update: true }), 
+              icon: "done"
+            }
+          ],
+          { cancelable: false }
+        );
+      }
+      
       //this.props.navigation.navigate('Main');
     }).catch((err) => {
       console.log(err);
       this.setState({
         isLoading: false,
       });
+      Alert.alert(
+        "Cadastro de Usuário",
+        "Não foi possível realizar o cadastro! - " + err,
+        [
+          {
+            text: "OK", 
+            onPress: () => this.props.navigation.navigate('Customers', { update: true }), 
+            icon: "done"
+          }
+        ],
+        { cancelable: false }
+      );
     });
   }
 
@@ -194,13 +228,18 @@ export default class RegisterCostumer extends Component {
                 value={this.state.email}
                 onChangeText={(text) => this.updateTextInput(text, 'email')}                
               />
-              <TextInput
+              <TextInputMask
                 placeholder="Telefone"
-                keyboardType={"phone-pad"}
+                type={'cel-phone'}
+                options={{
+                  maskType: 'BRL',
+                  withDDD: true,
+                  dddMask: '(99) '
+                }}
                 style={styles.textInput}
                 value={this.state.phone}                
-                onChangeText={(text) => this.updateTextInput(text, 'phone')}             
-              />           
+                onChangeText={(text) => this.updateTextInput(text, 'phone')}                             
+              />       
               <TextInput
                 placeholder="Observações"
                 multiline={true}
@@ -257,32 +296,3 @@ export default class RegisterCostumer extends Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  button: {
-    alignItems: 'center',
-    backgroundColor: '#5390fe',
-    color: '#5390fe',
-    padding: 10,
-    marginTop: 16,
-    marginLeft: 35,
-    marginRight: 35,
-  },
-  text: {
-    color: '#FFF',
-  },
-  icon: {
-    color: '#FFF'
-  },
-  textInput: {    
-    borderLeftColor: '#FFF',
-    borderRightColor: '#FFF',    
-    borderTopColor: '#FFF',
-    borderBottomColor: '#5DADE2',
-    borderWidth: 1,
-    padding: 10,
-    marginLeft: 20,
-    marginRight: 20,
-    marginBottom: 10,
-  },
-});

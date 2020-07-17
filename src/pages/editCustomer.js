@@ -9,6 +9,8 @@ import CityDatabase from '../database/City';
 import SellingWayDatabase from '../database/SellingWay';
 import FileFormatDatabase from '../database/FileFormat';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { TextInputMask } from 'react-native-masked-text';
+import styles from '../stylesheet/stylesheet';
 
 const Colors = {
   primary: '#078489',
@@ -210,9 +212,9 @@ export default class EditCostumer extends Component {
         [
           {
             text: "OK", 
-            onPress: () => this.props.navigation.push('Customer', {
-              id: `${this.state.customer._id}`
-            }), 
+            onPress: () => this.props.navigation.navigate('Customers', {
+              update: true
+            }),
             icon: "done"
           }
         ],
@@ -247,11 +249,17 @@ export default class EditCostumer extends Component {
                 value={this.state.email}
                 onChangeText={(text) => this.updateTextInput(text, 'email')}                
               />
-              <TextInput
+              <TextInputMask
                 placeholder="Telefone"
+                type={'cel-phone'}
+                options={{
+                  maskType: 'BRL',
+                  withDDD: true,
+                  dddMask: '(99) '
+                }}
                 style={styles.textInput}
                 value={this.state.phone}                
-                onChangeText={(text) => this.updateTextInput(text, 'phone')}             
+                onChangeText={(text) => this.updateTextInput(text, 'phone')}                             
               />              
               <TextInput
                 placeholder="Observações"
@@ -304,44 +312,8 @@ export default class EditCostumer extends Component {
             buttonStyle={styles.button}                
             onPress={() => this.saveCustomer()}
           />
-
-          <Button
-            icon={{name: 'warning', color: '#FFF'}}
-            title="Apagar todos Clientes"
-            buttonStyle={styles.button}
-            onPress={() => db.deleteAllCustomer()}
-          />    
         </ScrollView>
       </SafeAreaView>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  button: {
-    alignItems: 'center',
-    backgroundColor: '#5390fe',
-    color: '#5390fe',
-    padding: 10,
-    marginTop: 16,
-    marginLeft: 35,
-    marginRight: 35,
-  },
-  text: {
-    color: '#FFF',
-  },
-  icon: {
-    color: '#FFF'
-  },
-  textInput: {    
-    borderLeftColor: '#FFF',
-    borderRightColor: '#FFF',    
-    borderTopColor: '#FFF',
-    borderBottomColor: '#5DADE2',
-    borderWidth: 1,
-    padding: 10,
-    marginLeft: 20,
-    marginRight: 20,
-    marginBottom: 10,
-  },
-});

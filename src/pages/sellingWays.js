@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { StyleSheet, FlatList, ActivityIndicator, View, Text } from 'react-native';
+import { FlatList, ActivityIndicator, View, Text } from 'react-native';
 import { ListItem, Button } from 'react-native-elements';
-import Database from '../database/Database';
 import databaseSellingWay from '../database/SellingWay';
 import { ScrollView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import styles from '../stylesheet/stylesheet';
 
 //const db = new Database();
 const db = new databaseSellingWay();
@@ -118,40 +118,3 @@ export default class SellingWays extends Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-   flex: 1,
-   paddingBottom: 22
-  },
-  item: {
-    padding: 10,
-    fontSize: 18,
-    height: 44,
-  },
-  activity: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  message: {
-    padding: 16,
-    fontSize: 18,
-    color: '#5390fe'
-  },
-  button: {
-    alignItems: 'center',
-    backgroundColor: '#5390fe',
-    color: '#5390fe',
-    padding: 10,
-    marginTop: 10,
-    marginLeft: 35,
-    marginRight: 35,
-    marginBottom: 10,
-    borderRadius: 70
-  },
-});

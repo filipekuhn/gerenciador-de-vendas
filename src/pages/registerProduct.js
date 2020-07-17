@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View, ScrollView, KeyboardAvoidingView, Alert, StyleSheet, Text } from 'react-native';
 import { Button, Icon } from 'react-native-elements';
 import { TextInput, TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler';
-
+import styles from '../stylesheet/stylesheet';
 import Database from '../database/Product';
 
 const db = new Database();
@@ -101,32 +101,3 @@ export default class RegisterProduct extends Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  button: {
-    alignItems: 'center',
-    backgroundColor: '#5390fe',
-    color: '#5390fe',
-    padding: 10,
-    marginTop: 16,
-    marginLeft: 35,
-    marginRight: 35,
-  },
-  text: {
-    color: '#FFF',
-  },
-  icon: {
-    color: '#FFF'
-  },
-  textInput: {    
-    borderLeftColor: '#FFF',
-    borderRightColor: '#FFF',    
-    borderTopColor: '#FFF',
-    borderBottomColor: '#5DADE2',
-    borderWidth: 1,
-    padding: 10,
-    marginLeft: 20,
-    marginRight: 20,
-    marginBottom: 10,
-  },
-});

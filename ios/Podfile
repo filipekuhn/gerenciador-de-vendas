@@ -79,6 +79,8 @@ target 'GerenciadorDeVendas' do
 
   pod 'RNGestureHandler', :path => '../node_modules/react-native-gesture-handler'
 
+  pod 'react-native-text-input-mask', :path => '../node_modules/react-native-text-input-mask'
+
   target 'GerenciadorDeVendasTests' do
     inherit! :complete
     # Pods for testing
