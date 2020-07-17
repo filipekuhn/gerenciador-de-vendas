@@ -45,7 +45,9 @@ export default class RegisterFileFormat extends Component {
         [
           {
             text: "OK", 
-            onPress: () => this.props.navigation.navigate('FileFormats'), 
+            onPress: () => this.props.navigation.navigate('FileFormats', {
+              update: true
+            }), 
             icon: "done"
           }
         ],

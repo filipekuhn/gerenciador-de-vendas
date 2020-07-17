@@ -90,6 +90,10 @@ export default class Products extends Component {
         </View>                
       )
     }
+    if(this.props.route.params.update){            
+      this.props.route.params.update = false;
+      this.getProducts();
+    }
     return (
       <SafeAreaView style={{ flex: 1 }}>
         <FlatList        

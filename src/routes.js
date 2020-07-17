@@ -98,7 +98,8 @@ function App() {
         <Stack.Screen name="SellingWays" 
           component={SellingWays} 
           options={{ title: "Formas de Venda", headerStyle: {backgroundColor: '#5390fe'}, 
-                  headerTintColor: '#FFF', headerTitleAlign: 'left' }} />
+                  headerTintColor: '#FFF', headerTitleAlign: 'left' }}
+          initialParams={{ update: false }} />
 
         <Stack.Screen name="RegisterSellingWay" 
           component={RegisterSellingWay} 
@@ -113,7 +114,8 @@ function App() {
         <Stack.Screen name="FileFormats" 
           component={FileFormats} 
           options={{ title: "Formatos de Arquivos", headerStyle: {backgroundColor: '#5390fe'}, 
-                  headerTintColor: '#FFF', headerTitleAlign: 'left' }} />                  
+                  headerTintColor: '#FFF', headerTitleAlign: 'left' }} 
+          initialParams={{ update: false }} />                  
         
         <Stack.Screen name="RegisterFileFormat" 
           component={RegisterFileFormat} 
@@ -131,10 +133,20 @@ function App() {
                   headerTintColor: '#FFF', headerTitleAlign: 'left' }} 
           initialParams={{ update: false }}/>                  
 
+        <Stack.Screen name="Product"  
+          component={Product} 
+          options={{ title: "Produto", headerStyle: {backgroundColor: '#5390fe'}, 
+                  headerTintColor: '#FFF', headerTitleAlign: 'left' }} />   
+
         <Stack.Screen name="RegisterProduct" 
           component={RegisterProduct} 
           options={{ title: "Cadastro de Produto", headerStyle: {backgroundColor: '#5390fe'}, 
                   headerTintColor: '#FFF', headerTitleAlign: 'left' }} />
+
+        <Stack.Screen name="EditProduct" 
+          component={EditProduct} 
+          options={{ title: "Editar Produto", headerStyle: {backgroundColor: '#5390fe'}, 
+                  headerTintColor: '#FFF', headerTitleAlign: 'left' }} />                  
       </Stack.Navigator>                  
     </NavigationContainer>
   );

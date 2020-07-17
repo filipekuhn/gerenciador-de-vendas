@@ -11,25 +11,9 @@ const db = new databaseSellingWay();
 
 
 export default class SellingWays extends Component {
-  static navigationOptions = ({ navigation }) => {
-    return {
-      title: 'Formas de Venda',
-      headerRight: (
-        <Button
-          buttonStyle={{ padding: 0, backgroundColor: 'transparent' }}
-          icon={{ name: 'add-circle', style: { marginRight: 0, fontSize: 28 } }}
-          onPress={() => { 
-            navigation.navigate('RegisterSellingWay', {
-              onNavigateBack: this.handleOnNavigateBack
-            }); 
-          }}
-        />
-      ),
-    };
-  };
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       isLoading: true,
       notFound: 'Please click (+) button to add it.'      
@@ -37,9 +21,6 @@ export default class SellingWays extends Component {
   }
 
   componentDidMount() {
-    /*this._subscribe = this.props.navigation.addListener('didFocus', () => {
-      this.getSellingWays();
-    });*/
     this.getSellingWays();      
   }
 
@@ -57,6 +38,10 @@ export default class SellingWays extends Component {
         isLoading: false
       }
     })
+  }
+
+  onRefresh() {
+    this.setState({ isLoading: true }, function() { this.getSellingWays() });
   }
 
   keyExtractor = (item, index) => index.toString()
@@ -95,16 +80,20 @@ export default class SellingWays extends Component {
             buttonStyle={styles.button}
             title="Adicionar Formas de Venda"
             onPress={ () => this.props.navigation.navigate('RegisterSellingWay')} />
-        </View>
-        
-        
+        </View>            
       )
+    }
+    if(this.props.route.params.update){
+      this.props.route.params.update = false;
+      this.getSellingWays();
     }
     return (
       <SafeAreaView style={{ flex: 1 }}>
         <FlatList
         keyExtractor={this.keyExtractor}
         data={this.state.sellingways}
+        refreshing={this.state.isLoading}
+        onRefresh={() => this.onRefresh()}
         renderItem={this.renderItem}
       />
         <Button

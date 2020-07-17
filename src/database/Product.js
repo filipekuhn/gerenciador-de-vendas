@@ -27,6 +27,31 @@ export default class Product {
     });  
   }
 
+  editProduct(p) {
+    return new Promise((resolve) => {
+      database.initDB().then((db) => {
+        db.transaction((tx) => {
+          tx.executeSql('UPDATE product SET name = ?, code = ?, measures = ? WHERE _id = ?', 
+          [
+            p.name,
+            p.code,
+            p.measures,             
+            p._id
+          ]).then(([tx, results]) => {
+            resolve(true);
+          });
+        }).then((result) => {
+          database.closeDatabase(db);
+        }).catch((err) => {
+          console.log(err);
+          resolve(false);
+        });
+      }).catch((err) => {
+        console.log(err);
+      });
+    });  
+  }
+
   deleteProductById(id) {
     return new Promise((resolve) =>{
       database.initDB().then((db) => {

@@ -21,6 +21,7 @@ export default class RegisterProduct extends Component {
   }
 
   componentDidMount() {    
+    
   }
   
   updateTextInput = (text, field) => {
@@ -50,7 +51,9 @@ export default class RegisterProduct extends Component {
           {
             text: "OK", 
             icon: "done",
-            onPress: () => this.props.navigation.goBack(),            
+            onPress: () => this.props.navigation.navigate('Products', {
+              update: true
+            }),            
           }
         ],
         { cancelable: false }

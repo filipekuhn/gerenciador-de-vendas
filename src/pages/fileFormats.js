@@ -40,6 +40,10 @@ export default class FileFormats extends Component {
     })
   }
 
+  onRefresh() {
+    this.setState({ isLoading: true }, function() { this.getFileFormats() });
+ }
+
   keyExtractor = (item, index) => index.toString()
 
   renderItem = ({ item }) => (
@@ -81,11 +85,17 @@ export default class FileFormats extends Component {
         </View>                  
       )
     }
+    if(this.props.route.params.update){
+      this.props.route.params.update = false;
+      this.getFileFormats();
+    }
     return (
       <SafeAreaView style={{ flex: 1 }}>
         <FlatList
         keyExtractor={this.keyExtractor}
         data={this.state.fileFormats}
+        refreshing={this.state.isLoading}
+        onRefresh={() => this.onRefresh()}
         renderItem={this.renderItem}
       />
         <Button
