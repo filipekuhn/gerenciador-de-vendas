@@ -26,13 +26,11 @@ export default class Main extends Component {
         flex: 1,
         backgroundColor: 'white',
         flexDirection: 'column',
+        alignContent: 'space-around'
       }}>        
       <MyButton
           title="Clientes"
-          customClick={ () => this.props.navigation.navigate('Customers')} />
-      <MyButton
-          title="Vendas"
-          customClick={ () => this.props.navigation.navigate('Sales')} /> 
+          customClick={ () => this.props.navigation.navigate('Customers')} />      
       <MyButton
           title="Formas de Venda"
           customClick={ () => this.props.navigation.navigate('SellingWays')} /> 
@@ -41,7 +39,10 @@ export default class Main extends Component {
           customClick={ () => this.props.navigation.navigate('FileFormats')} />
       <MyButton
           title="Produtos"
-          customClick={ () => this.props.navigation.navigate('Products')} /> 
+          customClick={ () => this.props.navigation.navigate('Products')} />
+      <MyButton
+          title="Cidades"
+          customClick={ () => this.props.navigation.navigate('Cities')} />
     </View>
 
     

@@ -22,14 +22,18 @@ import Products from './pages/products';
 import Product from './pages/product';
 import RegisterProduct from './pages/registerProduct';
 import EditProduct from './pages/editProduct';
+import Cities from './pages/cities';
+import City from './pages/city';
+import RegisterCity from './pages/registerCity';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
 createDrawer = () =>
   <Drawer.Navigator initialRouteName="Menu">
-    <Drawer.Screen name="Menu" component={Main} />
-    <Drawer.Screen name="Vendas" component={Customers} initialParams={{ update: false }} />
+    <Drawer.Screen name="Menu" component={Main} options={{ title: 'Cadastros' }} />
+    <Drawer.Screen name="Orçamentos" component={Sale} initialParams={{ update: false }} />
+    <Drawer.Screen name="Vendas" component={Sale} initialParams={{ update: false }} />    
     <Drawer.Screen name="Financeiro" component={Products} />
     <Drawer.Screen name="Backup" component={FileFormats}  />    
   </Drawer.Navigator>
@@ -44,7 +48,7 @@ function App() {
           name="Ts"
           children={this.createDrawer}
           options={({ navigation }) => ({
-            title: 'Menu',
+            title: 'Cadastros',
             headerStyle: {backgroundColor: '#5390fe'}, 
             headerTintColor: '#FFF', 
             headerTitleAlign: 'left',
@@ -146,7 +150,23 @@ function App() {
         <Stack.Screen name="EditProduct" 
           component={EditProduct} 
           options={{ title: "Editar Produto", headerStyle: {backgroundColor: '#5390fe'}, 
-                  headerTintColor: '#FFF', headerTitleAlign: 'left' }} />                  
+                  headerTintColor: '#FFF', headerTitleAlign: 'left' }} />
+
+        <Stack.Screen name="Cities" 
+          component={Cities} 
+          options={{ title: "Cidades", headerStyle: {backgroundColor: '#5390fe'}, 
+                  headerTintColor: '#FFF', headerTitleAlign: 'left' }}
+          initialParams={{ update: false }} />                                    
+
+        <Stack.Screen name="City"   
+          component={City} 
+          options={{ title: "Cidade", headerStyle: {backgroundColor: '#5390fe'}, 
+                  headerTintColor: '#FFF', headerTitleAlign: 'left' }} />      
+
+        <Stack.Screen name="RegisterCity"   
+          component={RegisterCity} 
+          options={{ title: "Cidade", headerStyle: {backgroundColor: '#5390fe'}, 
+                  headerTintColor: '#FFF', headerTitleAlign: 'left' }} />                                    
       </Stack.Navigator>                  
     </NavigationContainer>
   );

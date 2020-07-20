@@ -39,6 +39,21 @@ const styles = StyleSheet.create({
     marginRight: 20,
     marginBottom: 10,
   },
+  picker: {
+    height: 50, 
+    width: 100,
+    borderLeftColor: '#FFF',
+    borderRightColor: '#FFF',    
+    borderTopColor: '#FFF',
+    borderBottomColor: '#5DADE2',
+    borderWidth: 1,
+    padding: 20,
+    marginLeft: 20,
+    marginRight: 20,
+    marginBottom: 10,    
+    position: 'relative',
+    justifyContent: 'flex-start'
+  },
   container: {
     flex: 1,
     paddingBottom: 22

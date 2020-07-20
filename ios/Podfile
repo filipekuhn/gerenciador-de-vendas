@@ -81,6 +81,8 @@ target 'GerenciadorDeVendas' do
 
   pod 'react-native-text-input-mask', :path => '../node_modules/react-native-text-input-mask'
 
+  pod 'RNCPicker', :path => '../node_modules/@react-native-community/picker'
+
   target 'GerenciadorDeVendasTests' do
     inherit! :complete
     # Pods for testing

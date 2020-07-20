@@ -27,12 +27,57 @@ export default class City {
     });  
   }
 
+  editCity(c) {
+    return new Promise((resolve) => {
+      database.initDB().then((db) => {
+        db.transaction((tx) => {
+          tx.executeSql('UPDATE city SET name = ?, uf = ? WHERE _id = ?', 
+          [
+            c.name,
+            c.uf,
+            c._id
+          ]).then((result) => {
+            console.log(result);
+            database.closeDatabase(db);
+            resolve(true);
+          }).catch((err) => {
+            console.log(err);
+            resolve(false);
+          });
+        }).catch((err) => {
+          console.log(err);
+          resolve(false);
+        })
+      }); 
+    });
+  }
+
+  deleteCity(id) {
+    return new Promise((resolve) =>{
+      database.initDB().then((db) => {
+        db.transaction((tx) => {
+          tx.executeSql('DELETE FROM city WHERE _id = ?', [id]).then(([tx, results]) => {
+            console.log(results);                   
+          });
+        }).then((result) => {
+          database.closeDatabase(db);                
+          resolve(true);     
+        }).catch((err) => {
+          console.log(err);
+          resolve(false);          
+        });        
+      }).catch((err) => {
+        console.log(err);
+      });
+    });
+  }
+
   listCities() {
     return new Promise((resolve) => {
       const cities = [];
       database.initDB().then((db) => {
         db.transaction((tx) => {
-          tx.executeSql('SELECT * FROM city ', []).then(([tx,results]) => {
+          tx.executeSql('SELECT * FROM city ORDER BY uf, name', []).then(([tx,results]) => {
             console.log("Query completed on table city");
             var len = results.rows.length;
             for (let i = 0; i < len; i++) {
@@ -50,8 +95,7 @@ export default class City {
         }).then((result) => {
           database.closeDatabase(db);
         }).catch((err) => {
-          console.log(err);
-          database.closeDatabase(db);
+          console.log(err);          
         });
       }).catch((err) => {
         console.log(err);        
