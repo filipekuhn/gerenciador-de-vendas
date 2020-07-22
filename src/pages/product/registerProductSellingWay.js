@@ -1,17 +1,18 @@
 import React, { Component } from 'react';
-import { View, ScrollView, KeyboardAvoidingView, Alert, StyleSheet, Text } from 'react-native';
+import { View, ScrollView, KeyboardAvoidingView, Alert, Text } from 'react-native';
 import { Button, Icon } from 'react-native-elements';
 import { TextInput } from 'react-native-gesture-handler';
+import { TextInputMask } from 'react-native-masked-text';
 import styles from '../../stylesheet/stylesheet';
 import { Picker } from '@react-native-community/picker';
 import ProductSellingWay from '../../database/ProductSellingWay';
 import Product from '../../database/Product';
 import SellingWay from '../../database/SellingWay';
+import moment from 'moment';
 
 const db = new ProductSellingWay();
 const dbProduct = new Product();
 const dbSellingWay = new SellingWay();
-
 
 export default class RegisterProductSellingWay extends Component {
 
@@ -70,13 +71,27 @@ export default class RegisterProductSellingWay extends Component {
     this.setState({
       isLoading: true,      
     });    
+    if(this.siteInclusionDateField.isValid()){
+
+    } else {
+      Alert.alert(
+        "Cadastro de Valores de Produto",
+        "A data inserida como data de cadastro no site é inválida!",
+        [
+          {
+            text: "OK"
+          }
+        ],
+        { cancelable: true }
+      )
+    }
     let data = {      
       idProduct: this.state.idProduct,
       idSellingWay: this.state.selectedSellingWay,
       siteInclusionDate: this.state.siteInclusionDate,
-      salePrice: this.state.salePrice,
-      siteCommission: this.state.siteCommission,
-      netPrice: this.state.netPrice      
+      salePrice: this.salePriceField.getRawValue(),
+      siteCommission: this.comissionField.getRawValue(),
+      netPrice: this.salePriceField.getRawValue() - this.comissionField.getRawValue()
     }
     db.addProductSellingWay(data).then((result) => {
       console.log(result);
@@ -128,25 +143,64 @@ export default class RegisterProductSellingWay extends Component {
                   })   
                 }             
               </Picker>
-              <TextInput
-                placeholder="Data"
+              <Text>Data de inclusão no Site</Text>
+              <TextInputMask
+                placeholder={moment(new Date()).format("DD/MM/YYYY")}
                 style={styles.textInput}
+                type={'datetime'}
+                options={{
+                  format: 'DD/MM/YYYY'
+                }}
                 value={this.state.siteInclusionDate}
-                onChangeText={(text) => this.updateTextInput(text, 'siteInclusionDate')}                
+                onChangeText={(text) => this.updateTextInput(text, 'siteInclusionDate')}  
+                ref={(ref) => this.siteInclusionDateField = ref}              
               />       
-              <TextInput
-                placeholder="Preço de Venda"
+              <Text>Valor de Venda</Text>
+              <TextInputMask       
+                placeholder="R$ 0,00"         
                 style={styles.textInput}
+                type={'money'}
+                options={{
+                  precision: 2,
+                  separator: ',',
+                  delimiter: '.',
+                  unit: 'R$',
+                  suffixUnit: ''
+                }}                
                 value={this.state.salePrice}
-                onChangeText={(text) => this.updateTextInput(text, 'salePrice')}                
+                onChangeText={(text) => this.updateTextInput(text, 'salePrice')}                  
+                ref={(ref) => this.salePriceField = ref}              
               />
-              <TextInput
-                placeholder="Comissão do Site"
-                keyboardType="numbers-and-punctuation"
+              <Text>Valor de Comissão do Site</Text>
+              <TextInputMask                   
+                placeholder="R$ 0,00"                             
                 style={styles.textInput}
+                type={'money'}
+                options={{
+                  precision: 2,
+                  separator: ',',
+                  delimiter: '.',
+                  unit: 'R$',
+                  suffixUnit: ''
+                }}                
                 value={this.state.siteCommission}
                 onChangeText={(text) => this.updateTextInput(text, 'siteCommission')}                
-              />                        
+                ref={(ref) => this.comissionField = ref}
+              /> 
+              <Text>Valor líquido</Text>
+              <TextInputMask                
+                style={styles.textInput}
+                type={'money'}  
+                options={{
+                  precision: 2,
+                  separator: ',',
+                  delimiter: '.',
+                  unit: 'R$',
+                  suffixUnit: ''
+                }}   
+                value={this.state.netPrice}
+                enabled={false}              
+              />                       
      
               <Button
                 icon={{name: 'save', color: '#FFF'}}                

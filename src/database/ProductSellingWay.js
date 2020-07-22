@@ -59,7 +59,7 @@ export default class ProductSellingWay {
     return new Promise((resolve) =>{
       database.initDB().then((db) => {
         db.transaction((tx) => {
-          tx.executeSql('DELETE FROM product WHERE _id = ?', [id]).then(([tx, results]) => {
+          tx.executeSql('DELETE FROM productsellingway WHERE _id = ?', [id]).then(([tx, results]) => {
             console.log("Product deleted!");
             resolve(results);            
           });
@@ -135,17 +135,25 @@ export default class ProductSellingWay {
       const products = [];
       database.initDB().then((db) => {
         db.transaction((tx) => {
-        tx.executeSql('SELECT * FROM productsellingway WHERE idproduct = ? ', [id]).then(([tx,results]) => {
+        tx.executeSql('SELECT * FROM productsellingway AS psw JOIN product AS p ON psw.idproduct = p._id JOIN sellingway AS sw ON psw.idsellingway = sw._id WHERE idproduct = ? ', [id]).then(([tx,results]) => {
             console.log("Query completed", results.rows.length);
             var len = results.rows.length;
             for (let i = 0; i < len; i++) {
               let row = results.rows.item(i);
-              console.log(`ID ProductSellingWay: ${row._id}, ProductSellingWay SalePrice: ${row.saleprice}`);
-              const { _id, idproduct, idsellingway, siteinclusiondate, saleprice, sitecommission, netprice } = row;
+              //console.log(`ID ProductSellingWay: ${row._id}, ProductSellingWay SalePrice: ${row.saleprice}`);
+              console.log("ESSE", results.rows.item(0));
+              const { _id, idproduct, idsellingway, siteinclusiondate, saleprice, sitecommission, netprice, code, measures, name } = row;
               products.push({
                 _id,
-                idproduct, 
-                idsellingway, 
+                product: {
+                  idproduct: idproduct,
+                  code: code,
+                  measures: measures
+                },
+                sellingWay: {
+                  idsellingway: idsellingway,
+                  name: name
+                },
                 siteinclusiondate, 
                 saleprice, 
                 sitecommission, 
