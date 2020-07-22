@@ -50,6 +50,7 @@ export default class SellingWays extends Component {
     <ListItem
       title={item.name}      
       leftAvatar={{
+        rounded: false,
         source: require('../images/sellingway.png'),
         title: item.name[0],        
       }}

@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
   },
   picker: {
     height: 50, 
-    width: 100,
+    width: 150,
     borderLeftColor: '#FFF',
     borderRightColor: '#FFF',    
     borderTopColor: '#FFF',
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
     marginRight: 20,
     marginBottom: 10,    
     position: 'relative',
-    justifyContent: 'flex-start'
+    justifyContent: 'center'
   },
   container: {
     flex: 1,

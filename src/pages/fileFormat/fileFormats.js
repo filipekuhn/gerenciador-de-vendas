@@ -50,7 +50,7 @@ export default class FileFormats extends Component {
     <ListItem
       title={item.name}      
       leftAvatar={{
-        //source: item.prodImage && { uri: item.prodImage },
+        rounded: false,        
         source: require('../images/fileformat.png'),
         title: item.name[0],                
       }}

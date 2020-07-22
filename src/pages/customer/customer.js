@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, ActivityIndicator, Alert}  from 'react-native';
+import { View, Text, ScrollView, ActivityIndicator, Alert}  from 'react-native';
 import { Card, Button } from 'react-native-elements';
-import CustomerDatabase from '../database/Customer';
-import City from '../database/City';
-import SellingWay from '../database/SellingWay';
-import FileFormat from '../database/FileFormat';
-import styles from '../stylesheet/stylesheet';
+import CustomerDatabase from '../../database/Customer';
+import City from '../../database/City';
+import SellingWay from '../../database/SellingWay';
+import FileFormat from '../../database/FileFormat';
+import styles from '../../stylesheet/stylesheet';
 
 const db = new CustomerDatabase();
 const dbCity = new City();

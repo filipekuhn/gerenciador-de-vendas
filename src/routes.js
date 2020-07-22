@@ -29,11 +29,11 @@ import RegisterCity from './pages/registerCity';
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
-createDrawer = () =>
+createDrawer = ({ route }) =>
   <Drawer.Navigator initialRouteName="Menu">
     <Drawer.Screen name="Menu" component={Main} options={{ title: 'Cadastros' }} />
-    <Drawer.Screen name="Orçamentos" component={Sale} initialParams={{ update: false }} />
-    <Drawer.Screen name="Vendas" component={Sale} initialParams={{ update: false }} />    
+    <Drawer.Screen name="Orçamentos" component={Sale} initialParams={{ update: false }}/>
+    <Drawer.Screen name="Vendas" component={Sale} initialParams={{ update: false, title: 'Vendas' }} />    
     <Drawer.Screen name="Financeiro" component={Products} />
     <Drawer.Screen name="Backup" component={FileFormats}  />    
   </Drawer.Navigator>
@@ -43,19 +43,19 @@ function App() {
   
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Ts">
+      <Stack.Navigator initialRouteName="Menu">
         <Stack.Screen 
-          name="Ts"
-          children={this.createDrawer}
-          options={({ navigation }) => ({
-            title: 'Cadastros',
+          name="Menu"
+          children={this.createDrawer}                    
+          options={({ navigation, route }) => ({            
+            title: route.params?.titleName,
             headerStyle: {backgroundColor: '#5390fe'}, 
             headerTintColor: '#FFF', 
             headerTitleAlign: 'left',
             headerLeft: () =>
               <Icon
                 onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
-                style={[{ color: 'white', marginLeft: 8 }]}
+                style={[{ color: 'white', marginLeft: 12 }]}
                 size={24}
                 name={'menu'}
               />
@@ -65,6 +65,7 @@ function App() {
 
         <Stack.Screen name="Main" 
           component={Main} 
+          initialParams={{ titleName: 'Teste123' }}
           options={{  title: "Menu Principal", headerStyle: {backgroundColor: '#5390fe'}, 
                   headerTintColor: '#FFF', headerTitleAlign: 'left' }} />         
 
@@ -75,6 +76,7 @@ function App() {
         
         <Stack.Screen name="Sales" 
           component={Sale} 
+          initialParams={{ titleName: 'SALES' }}
           options={{ title: "Vendas", headerStyle: {backgroundColor: '#5390fe'}, 
                   headerTintColor: '#FFF', headerTitleAlign: 'left' }} />
         

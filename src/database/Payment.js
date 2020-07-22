@@ -28,7 +28,7 @@ export default class Payment {
     });  
   }
 
-  deletePaymentById(id) {
+  deletePayment(id) {
     return new Promise((resolve) =>{
       database.initDB().then((db) => {
         db.transaction((tx) => {
@@ -83,7 +83,7 @@ export default class Payment {
             for (let i = 0; i < len; i++) {
               let row = results.rows.item(i);
               console.log(`ID Payment: ${row._id}, Payment Name: ${row.name}`);
-              const { _id, name } = row;
+              const { _id, name, bank, agency, account } = row;
               payments.push({
                 id: _id,
                 item: name,                
@@ -114,10 +114,13 @@ export default class Payment {
             for (let i = 0; i < len; i++) {
               let row = results.rows.item(i);
               console.log(`ID Payment: ${row._id}, Payment Name: ${row.name}`);
-              const { _id, name } = row;
+              const { _id, name, bank, agency, account } = row;
               payments.push({
                 _id,
-                name,                
+                name,
+                bank,
+                agency,
+                account                
               });
             }
             console.log(payments);

@@ -1,11 +1,8 @@
 import React, { Component } from 'react';
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
 import MyButton from './components/MyButton';
-import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import { SQLite, openDatabase } from 'react-native-sqlite-storage';
-import Cities from '../utils/cities.json';
 import DB from '../database/Database';
 
 const Stack = createStackNavigator();
