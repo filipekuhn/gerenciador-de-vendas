@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { FlatList, ActivityIndicator, View, Text } from 'react-native';
 import { ListItem, Button } from 'react-native-elements';
-import databaseSellingWay from '../database/SellingWay';
+import databaseSellingWay from '../../database/SellingWay';
 import { ScrollView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import styles from '../stylesheet/stylesheet';
+import styles from '../../stylesheet/stylesheet';
 
 //const db = new Database();
 const db = new databaseSellingWay();
@@ -51,7 +51,7 @@ export default class SellingWays extends Component {
       title={item.name}      
       leftAvatar={{
         rounded: false,
-        source: require('../images/sellingway.png'),
+        source: require('../../images/sellingway.png'),
         title: item.name[0],        
       }}
       onPress={() => {

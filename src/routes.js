@@ -6,32 +6,33 @@ import { createDrawerNavigator, DrawerContent } from '@react-navigation/drawer'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import Main from './pages/main';
-import Customer from './pages/customer';
-import Customers from './pages/customers';
-import EditCustomer from './pages/editCustomer';
+import Customer from './pages/customer/customer';
+import Customers from './pages/customer/customers';
+import EditCustomer from './pages/customer/editCustomer';
 import Sale from './pages/sale';
-import RegisterCustomer from './pages/registerCustomer';
-import SellingWay from './pages/sellingWay';
-import SellingWays from './pages/sellingWays';
-import RegisterSellingWay from './pages/registerSellingWay';
-import FileFormat from './pages/fileFormat';
-import FileFormats from './pages/fileFormats';
-import RegisterFileFormat from './pages/registerFileFormat';
-import EditFileFormat from './pages/editFileFormat';
-import Products from './pages/products';
-import Product from './pages/product';
-import RegisterProduct from './pages/registerProduct';
-import EditProduct from './pages/editProduct';
-import Cities from './pages/cities';
-import City from './pages/city';
-import RegisterCity from './pages/registerCity';
+import RegisterCustomer from './pages/customer/registerCustomer';
+import SellingWay from './pages/sellingWay/sellingWay';
+import SellingWays from './pages/sellingWay/sellingWays';
+import RegisterSellingWay from './pages/sellingWay/registerSellingWay';
+import FileFormat from './pages/fileFormat/fileFormat';
+import FileFormats from './pages/fileFormat/fileFormats';
+import RegisterFileFormat from './pages/fileFormat/registerFileFormat';
+import EditFileFormat from './pages/fileFormat/editFileFormat';
+import Products from './pages/product/products';
+import Product from './pages/product/product';
+import RegisterProduct from './pages/product/registerProduct';
+import EditProduct from './pages/product/editProduct';
+import Cities from './pages/city/cities';
+import City from './pages/city/city';
+import RegisterCity from './pages/city/registerCity';
+import RegisterProductSellingWay from './pages/product/registerProductSellingWay';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
 createDrawer = ({ route }) =>
   <Drawer.Navigator initialRouteName="Menu">
-    <Drawer.Screen name="Menu" component={Main} options={{ title: 'Cadastros' }} />
+    <Drawer.Screen name="Menu" component={Main} options={{ titleName: 'Cadastros' }} />
     <Drawer.Screen name="Orçamentos" component={Sale} initialParams={{ update: false }}/>
     <Drawer.Screen name="Vendas" component={Sale} initialParams={{ update: false, title: 'Vendas' }} />    
     <Drawer.Screen name="Financeiro" component={Products} />
@@ -46,7 +47,8 @@ function App() {
       <Stack.Navigator initialRouteName="Menu">
         <Stack.Screen 
           name="Menu"
-          children={this.createDrawer}                    
+          //children={this.createDrawer}                    
+          component={this.createDrawer}
           options={({ navigation, route }) => ({            
             title: route.params?.titleName,
             headerStyle: {backgroundColor: '#5390fe'}, 
@@ -91,7 +93,7 @@ function App() {
                   headerTintColor: '#FFF', headerTitleAlign: 'left' }} />
 
         <Stack.Screen name="Customers" 
-          component={Customers} 
+          component={Customers}
           options={{ title: "Clientes", headerStyle: {backgroundColor: '#5390fe'}, 
                   headerTintColor: '#FFF', headerTitleAlign: 'left' }} 
           initialParams={{ update: false }}/>
@@ -168,7 +170,12 @@ function App() {
         <Stack.Screen name="RegisterCity"   
           component={RegisterCity} 
           options={{ title: "Cidade", headerStyle: {backgroundColor: '#5390fe'}, 
-                  headerTintColor: '#FFF', headerTitleAlign: 'left' }} />                                    
+                  headerTintColor: '#FFF', headerTitleAlign: 'left' }} />        
+
+        <Stack.Screen name="RegisterProductSellingWay"   
+          component={RegisterProductSellingWay} 
+          options={{ title: "Formas de Venda do Produto", headerStyle: {backgroundColor: '#5390fe'}, 
+                  headerTintColor: '#FFF', headerTitleAlign: 'left' }} />      
       </Stack.Navigator>                  
     </NavigationContainer>
   );

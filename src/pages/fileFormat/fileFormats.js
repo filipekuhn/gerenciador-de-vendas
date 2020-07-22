@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { FlatList, ActivityIndicator, View, Text } from 'react-native';
 import { ListItem, Button } from 'react-native-elements';
-import databaseFileFormats from '../database/FileFormat';
+import databaseFileFormats from '../../database/FileFormat';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import styles from '../stylesheet/stylesheet';
+import styles from '../../stylesheet/stylesheet';
 
 const db = new databaseFileFormats();
 export default class FileFormats extends Component {  
@@ -51,7 +51,7 @@ export default class FileFormats extends Component {
       title={item.name}      
       leftAvatar={{
         rounded: false,        
-        source: require('../images/fileformat.png'),
+        source: require('../../images/fileformat.png'),
         title: item.name[0],                
       }}
       onPress={() => {

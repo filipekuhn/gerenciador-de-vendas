@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import { StyleSheet, FlatList, ActivityIndicator, View, Text } from 'react-native';
 import { Card, Button, Icon } from 'react-native-elements';
-import Database from '../database/Database';
-import databaseSellingWay from '../database/SellingWay';
+import databaseSellingWay from '../../database/SellingWay';
 import { ScrollView } from 'react-native-gesture-handler';
-import styles from '../stylesheet/stylesheet';
+import styles from '../../stylesheet/stylesheet';
 
 const db = new databaseSellingWay();
 export default class SellingWays extends Component {

@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { View, ScrollView, KeyboardAvoidingView, Alert, StyleSheet, Text } from 'react-native';
 import { Button, Icon } from 'react-native-elements';
 import { TextInput, TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler';
-import styles from '../stylesheet/stylesheet';
-import Database from '../database/Product';
+import styles from '../../stylesheet/stylesheet';
+import Database from '../../database/Product';
 
 const db = new Database();
 

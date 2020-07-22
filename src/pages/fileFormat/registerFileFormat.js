@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { View, ScrollView, KeyboardAvoidingView, Alert, StyleSheet, Text } from 'react-native';
 import { Button, Icon } from 'react-native-elements';
 import { TextInput, TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler';
-import styles from '../stylesheet/stylesheet';
-import FileFormatDatabase from '../database/FileFormat';
+import styles from '../../stylesheet/stylesheet';
+import FileFormatDatabase from '../../database/FileFormat';
 
 const db = new FileFormatDatabase();
 
@@ -15,7 +15,6 @@ export default class RegisterFileFormat extends Component {
       idfileformat: '',
       name: ''      
     };      
-    
   }
 
   componentDidMount() {    

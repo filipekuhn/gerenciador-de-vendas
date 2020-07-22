@@ -1,16 +1,16 @@
 import React, { Component } from 'react';
 import { StyleSheet, FlatList, ActivityIndicator, View, Text } from 'react-native';
 import { Card, Button, Icon } from 'react-native-elements';
-import DatabaseFileFormat from '../database/FileFormat';
+import DatabaseFileFormat from '../../database/FileFormat';
 import { ScrollView } from 'react-native-gesture-handler';
-import styles from '../stylesheet/stylesheet';
+import styles from '../../stylesheet/stylesheet';
 
 const db = new DatabaseFileFormat();
 
-export default class SellingWays extends Component {
+export default class FileFormat extends Component {
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       isLoading: true,
       fileFormat: {},

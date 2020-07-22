@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { ActivityIndicator, View, Text, Alert } from 'react-native';
 import { Card, Button, Icon } from 'react-native-elements';
-import Database from '../database/City';
+import Database from '../../database/City';
 import { ScrollView } from 'react-native-gesture-handler';
-import styles from '../stylesheet/stylesheet';
-
+import styles from '../../stylesheet/stylesheet';
+ 
 const db = new Database();
 
 export default class City extends Component {

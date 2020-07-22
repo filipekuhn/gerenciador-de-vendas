@@ -1,16 +1,16 @@
 import React, { Component } from 'react';
 import { View, ScrollView, KeyboardAvoidingView, Alert, StyleSheet, Text } from 'react-native';
 import { Button, Icon } from 'react-native-elements';
-import { TextInput, TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler';
+import { TextInput } from 'react-native-gesture-handler';
 import { ThemeProvider } from 'styled-components';
 import SelectBox from 'react-native-multi-selectbox';
-import CustomerDatabase from '../database/Customer';
-import CityDatabase from '../database/City';
-import SellingWayDatabase from '../database/SellingWay';
-import FileFormatDatabase from '../database/FileFormat';
+import CustomerDatabase from '../../database/Customer';
+import CityDatabase from '../../database/City';
+import SellingWayDatabase from '../../database/SellingWay';
+import FileFormatDatabase from '../../database/FileFormat';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { TextInputMask } from 'react-native-masked-text';
-import styles from '../stylesheet/stylesheet';
+import styles from '../../stylesheet/stylesheet';
 
 const Colors = {
   primary: '#078489',

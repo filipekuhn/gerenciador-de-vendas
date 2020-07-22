@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
 import { View, ScrollView, KeyboardAvoidingView, Alert, StyleSheet, Text } from 'react-native';
 import { Button } from 'react-native-elements';
-import styles from '../stylesheet/stylesheet';
+import styles from '../../stylesheet/stylesheet';
 import moment from 'moment';
 import { TextInput, TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler';
 import { ThemeProvider } from 'styled-components';
 import SelectBox from 'react-native-multi-selectbox';
-import CustomerDatabase from '../database/Customer';
-import CityDatabase from '../database/City';
-import SellingWayDatabase from '../database/SellingWay';
-import FileFormatDatabase from '../database/FileFormat';
+import CustomerDatabase from '../../database/Customer';
+import CityDatabase from '../../database/City';
+import SellingWayDatabase from '../../database/SellingWay';
+import FileFormatDatabase from '../../database/FileFormat';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { TextInputMask } from 'react-native-masked-text';
 

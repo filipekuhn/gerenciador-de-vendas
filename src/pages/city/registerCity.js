@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import { View, ScrollView, KeyboardAvoidingView, Alert, StyleSheet, Text } from 'react-native';
 import { Button } from 'react-native-elements';
 import { TextInput } from 'react-native-gesture-handler';
-import styles from '../stylesheet/stylesheet';
+import styles from '../../stylesheet/stylesheet';
 import { Picker } from '@react-native-community/picker';
-import Database from '../database/City';
+import Database from '../../database/City';
 
 const db = new Database();
 

@@ -2,9 +2,9 @@
 import React, { Component } from 'react';
 import { FlatList, ActivityIndicator, View, Text } from 'react-native';
 import { ListItem, Button, Avatar } from 'react-native-elements';
-import databaseCustomer from '../database/Customer';
+import databaseCustomer from '../../database/Customer';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import styles from '../stylesheet/stylesheet';
+import styles from '../../stylesheet/stylesheet';
 
 const db = new databaseCustomer();
 export default class Customers extends Component {
@@ -58,7 +58,7 @@ export default class Customers extends Component {
         showEditButton: true,
         size: "medium",
         //source: { uri: 'https://reactjs.org/logo-og.png'},        
-        source: require('../images/users.png'), 
+        source: require('../../images/users.png'), 
         title: item.name[0],        
       }}
       onPress={() => {
