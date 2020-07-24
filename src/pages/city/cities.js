@@ -1,10 +1,11 @@
 //import React, { Component, useEffect } from 'react';
 import React, { Component } from 'react';
 import { FlatList, ActivityIndicator, View, Text } from 'react-native';
-import { ListItem, Button, Avatar } from 'react-native-elements';
+import { ListItem, Button, SearchBar } from 'react-native-elements';
 import Database from '../../database/City';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from '../../stylesheet/stylesheet';
+import { TextInput } from 'react-native-gesture-handler';
 
 const db = new Database();
 export default class Cities extends Component {
@@ -15,8 +16,10 @@ export default class Cities extends Component {
       isLoading: true,
       update: false,
       cities: [],
+      search: '',
       notFound: 'Nenhuma cidade encontrada'      
-    };    
+    };   
+    this.arrayholder = []; 
   }
 
   componentDidMount() {        
@@ -32,15 +35,35 @@ export default class Cities extends Component {
     db.listCities().then((data) => {
       cities = data;
       this.setState({
-        cities,
+        cities,        
         isLoading: false,
-      });
+      },
+        function() {
+          this.arrayholder= cities;
+        }
+      );
     }).catch((err) => {
       console.log(err);
       this.setState = {
         isLoading: false
       }
     })
+  }
+
+  searchFilter(text) {
+    const newData = this.arrayholder.filter(function(item) {
+      const itemData = item.item ? item.item.toUpperCase() : ''.toUpperCase();
+      const textData = text.toUpperCase();
+      return itemData.indexOf(textData) > -1;
+    });
+    this.setState({
+      cities: newData,
+      search: text
+    });
+  }
+
+  updateSearch = (search) => {
+    this.setState({ search });    
   }
 
   keyExtractor = (item, index) => index.toString()
@@ -67,6 +90,8 @@ export default class Cities extends Component {
   )
 
   render() {
+    const { search } = this.state;
+
     if(this.state.isLoading){
       return(
         <View style={styles.activity}>
@@ -74,7 +99,7 @@ export default class Cities extends Component {
         </View>
       )
     }
-    if(this.state.cities.length === 0){
+    /*if(this.state.cities.length === 0){
       return(
         <View>
           <Text style={styles.message}>{this.state.notFound}</Text>          
@@ -86,13 +111,25 @@ export default class Cities extends Component {
             })} />
         </View>                
       )
-    }
+    }*/
     if(this.props.route.params.update){            
       this.props.route.params.update = false;
       this.getCities();
     }
     return (
       <SafeAreaView style={{ flex: 1 }}>
+        <SearchBar
+          containerStyle={{ backgroundColor: '#5390fe', 
+            borderBottomColor: '#5390fe', 
+            borderTopColor: '#5390fe',                                    
+          }}
+          inputContainerStyle={{ backgroundColor: '#FFF', marginLeft: 20, marginRight: 20, borderRadius: 30 }}          
+          placeholder="Buscar..."
+          onChangeText={(text) => this.searchFilter(text)}
+          value={this.state.search}
+          
+          
+        />
         <FlatList        
         keyExtractor={this.keyExtractor}
         data={this.state.cities}        

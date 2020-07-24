@@ -60,7 +60,7 @@ export default class ProductSellingWay {
       database.initDB().then((db) => {
         db.transaction((tx) => {
           tx.executeSql('DELETE FROM productsellingway WHERE _id = ?', [id]).then(([tx, results]) => {
-            console.log("Product deleted!");
+            console.log("Product Selling Way deleted!");
             resolve(results);            
           });
         }).then((result) => {

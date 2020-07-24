@@ -9,12 +9,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 const db = new Database();
 const dbProductSellingWay = new ProductSellingWay();
-const list = [
-  {
-    name: 'Vai te fude',
-    subtitle: 'Seu bosta'
-  }
-]
 
 export default class Product extends Component {
 
@@ -75,17 +69,57 @@ export default class Product extends Component {
     return (
       <ScrollView>              
         <Card>          
-          <View>  
-            <Text>Produto: {this.state.product.name}</Text>
+          <View style={{ flexDirection: "row" }}>  
+            <Text style={{ fontWeight: "bold" }}>Produto: </Text>
+            <Text>{this.state.product.name}</Text>
           </View>
-          <View>  
-            <Text>Código: {this.state.product.code}</Text>
+          <View style={{ flexDirection: "row" }}>  
+            <Text style={{ fontWeight: "bold" }}>Código: </Text>
+            <Text>{this.state.product.code}</Text>
           </View>    
-          <View>  
-            <Text>Medidas: {this.state.product.measures}</Text>
+          <View style={{ flexDirection: "row" }}>  
+            <Text style={{ fontWeight: "bold" }}>Medidas: </Text>
+            <Text>{this.state.product.measures}</Text>
           </View>  
+        </Card>
+        <View style={{ flexDirection: "row", marginHorizontal: 30 }}>
+          <View style={{ width: 150 }}>
+            <Button
+              buttonStyle={styles.editRowButton}
+              icon={{name: 'edit', color: '#FFF'}}
+              title='Editar'
+              onPress={() => this.props.navigation.navigate('EditProduct', {
+                id: `${this.state.id}`
+              }) } />
+          </View>
+          <View style={{ width: 150 }}>
+            <Button
+              buttonStyle={styles.deleteRowButton}
+              icon={{name: 'delete', color: '#FFF'}}
+              title='Deletar'
+              onPress={() => Alert.alert(
+                "Exclusão de Produto",
+                `Você tem certeza que deseja excluir o produto ${this.state.product.name}?`,
+                [
+                  {
+                    text: "Sim", 
+                    onPress: () => db.deleteProductById(this.state.id).then(() => this.props.navigation.navigate('Products', {
+                      update: true
+                    })), 
+                    icon: "done"
+                  },
+                  {
+                    text: "Cancelar",                   
+                  }
+                ],
+                { cancelable: true }
+              )}
+            />
+          </View>
+        </View>
+        <Card>
           <View style={{ marginTop: 10 }}>
-            <Text style={{ fontWeight: "bold", fontSize: 18, marginBottom: 10 }}>
+            <Text style={{ fontWeight: "bold", fontSize: 18, marginBottom: 5 }}>
               Valores do Produto
             </Text>
           </View>
@@ -95,47 +129,19 @@ export default class Product extends Component {
                 <ListItem                  
                   key={i}
                   title={l.sellingWay.name}
-                  subtitle={"Valor de Venda: " + l.saleprice + "\nComissão do Site: " + l.sitecommission + "\nValor Líquido: " + l.netprice}
-                  onLongPress={() => dbProductSellingWay.deleteProductSellingWay(l._id)}
-                  topDivider
-                  bottomDivider
+                  titleStyle={{ fontWeight: "bold", fontSize: 18 }}
+                  subtitle={"Valor de Venda: " + l.saleprice + "\nComissão do Site: " + l.sitecommission + "\nValor Líquido: " + l.netprice}                  
+                  onPress={() => this.props.navigation.navigate('EditProductSellingWay', {
+                    id: `${l._id}`
+                  })}                  
+                  bottomDivider 
+                  chevron                 
                 />
               ))
             }
           </View>        
-
-
-
         </Card>    
-        <Button
-            buttonStyle={styles.button}
-            icon={{name: 'edit', color: '#FFF'}}
-            title='Editar'
-            onPress={() => this.props.navigation.navigate('EditProduct', {
-              id: `${this.state.id}`
-            }) } />
-        <Button
-          buttonStyle={styles.deleteButton}
-          icon={{name: 'delete', color: '#FFF'}}
-          title='Deletar'
-          onPress={() => Alert.alert(
-            "Exclusão de Usuário",
-            `Você tem certeza que deseja excluir o produto ${this.state.product.name}?`,
-            [
-              {
-                text: "Sim", 
-                onPress: () => db.deleteProductById(this.state.id).then(() => this.props.navigation.navigate('Products', {
-                  update: true
-                })), 
-                icon: "done"
-              },
-              {
-                text: "Cancelar",                   
-              }
-            ],
-            { cancelable: true }
-          )}
-        />   
+   
         <Button
           icon={{name: 'add-circle-outline', color: '#FFF'}}                
           title="Incluir Valores"

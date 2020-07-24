@@ -103,6 +103,37 @@ export default class City {
     });  
   }
 
+  listCitiesByName(name) {
+    return new Promise((resolve) => {
+      const cities = [];
+      database.initDB().then((db) => {
+        db.transaction((tx) => {
+          tx.executeSql('SELECT * FROM city WHERE name MATCH ?  ORDER BY uf, name', [name]).then(([tx,results]) => {
+            console.log("Query completed on table city");
+            var len = results.rows.length;
+            for (let i = 0; i < len; i++) {
+              let row = results.rows.item(i);
+              //console.log(`ID City: ${row._id}, City Name: ${row.name}, City UF: ${row.uf}`);
+              const { _id, name, uf } = row;
+              cities.push({
+                id: _id,
+                item: name + " - " + uf,                
+              });
+            }
+            //console.log(cities);
+            resolve(cities);
+          });
+        }).then((result) => {
+          database.closeDatabase(db);
+        }).catch((err) => {
+          console.log(err);          
+        });
+      }).catch((err) => {
+        console.log(err);        
+      });
+    });  
+  }
+
   findCityById(id) {
     return new Promise((resolve) => {
       const city = [];

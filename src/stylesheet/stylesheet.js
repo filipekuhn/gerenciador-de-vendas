@@ -22,6 +22,28 @@ const styles = StyleSheet.create({
     marginRight: 70,
     borderRadius: 80
   },
+  editRowButton: {
+    alignItems: 'center',
+    backgroundColor: '#5390fe',
+    color: '#5390fe',
+    padding: 15,
+    marginTop: 20,
+    marginBottom: 10,
+    marginLeft: 10,
+    marginRight: 10,
+    borderRadius: 50,
+        
+  },
+  deleteRowButton: {
+    backgroundColor: '#FF0000',
+    alignItems: 'center',        
+    padding: 15,
+    marginTop: 20,
+    marginBottom: 10,
+    marginLeft: 10,
+    marginRight: 10,
+    borderRadius: 50
+  },
   text: {
     color: '#FFF',
   },
