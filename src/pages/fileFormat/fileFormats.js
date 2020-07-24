@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { FlatList, ActivityIndicator, View, Text } from 'react-native';
-import { ListItem, Button } from 'react-native-elements';
+import { ListItem, Button, SearchBar } from 'react-native-elements';
 import databaseFileFormats from '../../database/FileFormat';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from '../../stylesheet/stylesheet';
@@ -13,8 +13,10 @@ export default class FileFormats extends Component {
     this.state = {
       fileFormats: [],
       isLoading: true,
-      notFound: 'Please click (+) button to add it.'      
+      searc: '',
+      notFound: 'Nenhum Formato de Arquivo foi encontrado'      
     };    
+    this.arrayholder = [];
   }
 
   componentDidMount() {
@@ -31,7 +33,11 @@ export default class FileFormats extends Component {
       this.setState({
         fileFormats,
         isLoading: false,
-      });
+      },    
+        function() {
+          this.arrayholder = fileFormats;
+        }      
+      );
     }).catch((err) => {
       console.log(err);
       this.setState = {
@@ -43,6 +49,19 @@ export default class FileFormats extends Component {
   onRefresh() {
     this.setState({ isLoading: true }, function() { this.getFileFormats() });
  }
+
+  searchFilter(text) {
+    const newData = this.arrayholder.filter(function(item) {
+      const itemData = item.name ? item.name.toUpperCase() : ''.toUpperCase();      
+      const textData = text.toUpperCase();
+      return itemData.indexOf(textData) > -1;
+    });
+    this.setState({
+      fileFormats: newData,
+      search: text
+    });
+  }
+
 
   keyExtractor = (item, index) => index.toString()
 
@@ -75,14 +94,26 @@ export default class FileFormats extends Component {
     }
     if(this.state.fileFormats.length === 0){
       return(
-        <View>
-          <Text style={styles.message}>{this.state.notFound}</Text>          
+        <SafeAreaView style ={{ flex: 1 }}>
+          <SearchBar
+            containerStyle={{ backgroundColor: '#5390fe', 
+              borderBottomColor: '#5390fe', 
+              borderTopColor: '#5390fe',                                    
+            }}
+            inputContainerStyle={{ backgroundColor: '#FFF', marginLeft: 20, marginRight: 20, borderRadius: 30 }}          
+            placeholder="Buscar..."
+            onChangeText={(text) => this.searchFilter(text)}
+            value={this.state.search}                    
+          />
+          <View>
+          <Text style={{ textAlign: 'center', marginTop: 20, fontWeight: 'bold' }}>{this.state.notFound}</Text>
+          </View>
           <Button
+            icon={{name: 'add-circle-outline', color: '#FFF'}}
             buttonStyle={styles.button}
-            icon={{ name: 'add-circle-outline', color: '#FFF' }}
-            title="Adicionar Formatos de Arquivos"
+            title="Cadastrar Formato"
             onPress={ () => this.props.navigation.navigate('RegisterFileFormat')} />
-        </View>                  
+        </SafeAreaView>
       )
     }
     if(this.props.route.params.update){
@@ -91,6 +122,16 @@ export default class FileFormats extends Component {
     }
     return (
       <SafeAreaView style={{ flex: 1 }}>
+        <SearchBar
+          containerStyle={{ backgroundColor: '#5390fe', 
+            borderBottomColor: '#5390fe', 
+            borderTopColor: '#5390fe',                                    
+          }}
+          inputContainerStyle={{ backgroundColor: '#FFF', marginLeft: 20, marginRight: 20, borderRadius: 30 }}          
+          placeholder="Buscar..."
+          onChangeText={(text) => this.searchFilter(text)}
+          value={this.state.search}                    
+        />
         <FlatList
         keyExtractor={this.keyExtractor}
         data={this.state.fileFormats}

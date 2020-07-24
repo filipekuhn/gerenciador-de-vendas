@@ -99,19 +99,30 @@ export default class Cities extends Component {
         </View>
       )
     }
-    /*if(this.state.cities.length === 0){
+    if(this.state.cities.length === 0){
       return(
-        <View>
-          <Text style={styles.message}>{this.state.notFound}</Text>          
+        <SafeAreaView style ={{ flex: 1 }}>
+          <SearchBar
+            containerStyle={{ backgroundColor: '#5390fe', 
+              borderBottomColor: '#5390fe', 
+              borderTopColor: '#5390fe',                                    
+            }}
+            inputContainerStyle={{ backgroundColor: '#FFF', marginLeft: 20, marginRight: 20, borderRadius: 30 }}          
+            placeholder="Buscar..."
+            onChangeText={(text) => this.searchFilter(text)}
+            value={this.state.search}                    
+          />
+          <View>
+            <Text style={{ textAlign: 'center', marginTop: 20, fontWeight: 'bold' }}>Nenhum item foi encontrado</Text>
+          </View>
           <Button
+            icon={{name: 'add-circle-outline', color: '#FFF'}}
             buttonStyle={styles.button}
-            title="Adicionar Clientes"
-            onPress={ () => this.props.navigation.navigate('RegisterCustomer', {
-              onGoBack: () => this.getCustomers()
-            })} />
-        </View>                
+            title="Cadastrar Cidade"
+            onPress={ () => this.props.navigation.navigate('RegisterCity')} />
+        </SafeAreaView>
       )
-    }*/
+    }
     if(this.props.route.params.update){            
       this.props.route.params.update = false;
       this.getCities();
@@ -126,9 +137,7 @@ export default class Cities extends Component {
           inputContainerStyle={{ backgroundColor: '#FFF', marginLeft: 20, marginRight: 20, borderRadius: 30 }}          
           placeholder="Buscar..."
           onChangeText={(text) => this.searchFilter(text)}
-          value={this.state.search}
-          
-          
+          value={this.state.search}                    
         />
         <FlatList        
         keyExtractor={this.keyExtractor}

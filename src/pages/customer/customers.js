@@ -1,7 +1,7 @@
 //import React, { Component, useEffect } from 'react';
 import React, { Component } from 'react';
 import { FlatList, ActivityIndicator, View, Text } from 'react-native';
-import { ListItem, Button, Avatar } from 'react-native-elements';
+import { ListItem, Button, SearchBar } from 'react-native-elements';
 import databaseCustomer from '../../database/Customer';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from '../../stylesheet/stylesheet';
@@ -9,18 +9,16 @@ import styles from '../../stylesheet/stylesheet';
 const db = new databaseCustomer();
 export default class Customers extends Component {
 
-  static navigationOptions = {
-    title: 'Clientes'
-  }
-
   constructor(props) {
     super(props);
     this.state = {
       isLoading: true,
       update: false,
       customers: [],
-      notFound: 'Nenhum cliente encotrado'      
+      notFound: 'Nenhum cliente encotrado',
+      search: ''      
     };    
+    this.arrayholder = [];
   }
 
   componentDidMount() {        
@@ -38,13 +36,29 @@ export default class Customers extends Component {
       this.setState({
         customers,
         isLoading: false,
-      });
+      },
+      function() {
+        this.arrayholder = customers;
+        }
+      );
     }).catch((err) => {
       console.log(err);
       this.setState = {
         isLoading: false
       }
-    })
+    });    
+  }
+
+  searchFilter(text) {
+    const newData = this.arrayholder.filter(function(item) {
+      const itemData = item.name ? item.name.toUpperCase() : ''.toUpperCase();      
+      const textData = text.toUpperCase();
+      return itemData.indexOf(textData) > -1;
+    });
+    this.setState({
+      customers: newData,
+      search: text
+    });
   }
 
   keyExtractor = (item, index) => index.toString()
@@ -54,26 +68,24 @@ export default class Customers extends Component {
       title={item.name}
       subtitle={item.email}
       leftAvatar={{        
-        rounded: true,
-        showEditButton: true,
-        size: "medium",
-        //source: { uri: 'https://reactjs.org/logo-og.png'},        
+        rounded: true,        
+        size: "medium",               
         source: require('../../images/users.png'), 
         title: item.name[0],        
       }}
       onPress={() => {
         this.props.navigation.navigate('Customer', {
-          id: `${item._id}`,
-          onGoBack: () => this.getCustomers()                   
+          id: `${item._id}`,          
         });
       }}
       chevron
       bottomDivider
-    />
-    
+    />    
   )
 
   render() {
+    const { search } = this.state;
+
     if(this.state.isLoading){
       return(
         <View style={styles.activity}>
@@ -83,15 +95,26 @@ export default class Customers extends Component {
     }
     if(this.state.customers.length === 0){
       return(
-        <View>
-          <Text style={styles.message}>{this.state.notFound}</Text>          
+        <SafeAreaView style ={{ flex: 1 }}>
+          <SearchBar
+            containerStyle={{ backgroundColor: '#5390fe', 
+              borderBottomColor: '#5390fe', 
+              borderTopColor: '#5390fe',                                    
+            }}
+            inputContainerStyle={{ backgroundColor: '#FFF', marginLeft: 20, marginRight: 20, borderRadius: 30 }}          
+            placeholder="Buscar..."
+            onChangeText={(text) => this.searchFilter(text)}
+            value={this.state.search}                    
+          />
+          <View>
+          <Text style={{ textAlign: 'center', marginTop: 20, fontWeight: 'bold' }}>{this.state.notFound}</Text>
+          </View>
           <Button
+            icon={{name: 'account-circle', color: '#FFF'}}
             buttonStyle={styles.button}
-            title="Adicionar Clientes"
-            onPress={ () => this.props.navigation.navigate('RegisterCustomer', {
-              onGoBack: () => this.getCustomers()
-            })} />
-        </View>                
+            title="Cadastrar Cliente"
+            onPress={ () => this.props.navigation.navigate('RegisterCustomer')} />
+        </SafeAreaView>
       )
     }
     if(this.props.route.params.update){            
@@ -100,21 +123,28 @@ export default class Customers extends Component {
     }
     return (
       <SafeAreaView style={{ flex: 1 }}>
+        <SearchBar
+          containerStyle={{ backgroundColor: '#5390fe', 
+            borderBottomColor: '#5390fe', 
+            borderTopColor: '#5390fe',                                    
+          }}
+          inputContainerStyle={{ backgroundColor: '#FFF', marginLeft: 20, marginRight: 20, borderRadius: 30 }}          
+          placeholder="Buscar..."
+          onChangeText={(text) => this.searchFilter(text)}
+          value={this.state.search}                    
+        />
         <FlatList        
-        keyExtractor={this.keyExtractor}
-        data={this.state.customers}
-        //extraData={this.state}
-        refreshing={this.state.isLoading}
-        onRefresh={() => this.onRefresh()}        
-        renderItem={this.renderItem}
-      />
+          keyExtractor={this.keyExtractor}
+          data={this.state.customers}        
+          refreshing={this.state.isLoading}
+          onRefresh={() => this.onRefresh()}        
+          renderItem={this.renderItem}
+        />
         <Button
           icon={{name: 'account-circle', color: '#FFF'}}
           buttonStyle={styles.button}
           title="Cadastrar Cliente"
-          onPress={ () => this.props.navigation.navigate('RegisterCustomer', {
-            onGoBack: () => this.getCustomers()
-          })} />
+          onPress={ () => this.props.navigation.navigate('RegisterCustomer')} />
       </SafeAreaView>
       
       

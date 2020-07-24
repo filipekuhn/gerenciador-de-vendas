@@ -1,7 +1,7 @@
 //import React, { Component, useEffect } from 'react';
 import React, { Component } from 'react';
 import { FlatList, ActivityIndicator, View, Text } from 'react-native';
-import { ListItem, Button, Avatar } from 'react-native-elements';
+import { ListItem, Button, SearchBar } from 'react-native-elements';
 import database from '../../database/Product';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from '../../stylesheet/stylesheet';
@@ -15,8 +15,10 @@ export default class Products extends Component {
       isLoading: true,
       update: false,
       prodcuts: [],
-      notFound: 'Nenhum produto encotrado'      
+      search: '',
+      notFound: 'Nenhum produto encontrado'      
     };    
+    this.arrayholder = [];
   }
 
   componentDidMount() {        
@@ -34,13 +36,29 @@ export default class Products extends Component {
       this.setState({
         products,
         isLoading: false,
-      });
+      },
+        function() {
+          this.arrayholder = products;
+        }
+      );
     }).catch((err) => {
       console.log(err);
       this.setState = {
         isLoading: false
       }
     })
+  }
+
+  searchFilter(text) {
+    const newData = this.arrayholder.filter(function(item) {
+      const itemData = item.name ? item.name.toUpperCase() : ''.toUpperCase();      
+      const textData = text.toUpperCase();
+      return itemData.indexOf(textData) > -1;
+    });
+    this.setState({
+      products: newData,
+      search: text
+    });
   }
 
   keyExtractor = (item, index) => index.toString()
@@ -78,16 +96,26 @@ export default class Products extends Component {
     }
     if(this.state.products.length === 0){
       return(
-        <View>
-          <Text style={styles.message}>{this.state.notFound}</Text>          
+        <SafeAreaView style ={{ flex: 1 }}>
+          <SearchBar
+            containerStyle={{ backgroundColor: '#5390fe', 
+              borderBottomColor: '#5390fe', 
+              borderTopColor: '#5390fe',                                    
+            }}
+            inputContainerStyle={{ backgroundColor: '#FFF', marginLeft: 20, marginRight: 20, borderRadius: 30 }}          
+            placeholder="Buscar..."
+            onChangeText={(text) => this.searchFilter(text)}
+            value={this.state.search}                    
+          />
+          <View>
+          <Text style={{ textAlign: 'center', marginTop: 20, fontWeight: 'bold' }}>{this.state.notFound}</Text>
+          </View>
           <Button
+            icon={{name: 'add-circle-outline', color: '#FFF'}}
             buttonStyle={styles.button}
-            title="Adicionar Produtos"
-            icon={{ name: 'add-circle-outline', color: '#FFF' }}
-            onPress={ () => this.props.navigation.navigate('RegisterProduct', {
-              onGoBack: () => this.getProducts()
-            })} />
-        </View>                
+            title="Cadastrar Produto"
+            onPress={ () => this.props.navigation.navigate('RegisterProduct')} />
+        </SafeAreaView>
       )
     }
     if(this.props.route.params.update){            
@@ -96,10 +124,19 @@ export default class Products extends Component {
     }
     return (
       <SafeAreaView style={{ flex: 1 }}>
+        <SearchBar
+          containerStyle={{ backgroundColor: '#5390fe', 
+            borderBottomColor: '#5390fe', 
+            borderTopColor: '#5390fe',                                    
+          }}
+          inputContainerStyle={{ backgroundColor: '#FFF', marginLeft: 20, marginRight: 20, borderRadius: 30 }}          
+          placeholder="Buscar..."
+          onChangeText={(text) => this.searchFilter(text)}
+          value={this.state.search}                    
+        />
         <FlatList        
         keyExtractor={this.keyExtractor}
-        data={this.state.products}
-        //extraData={this.state}
+        data={this.state.products}        
         refreshing={this.state.isLoading}
         onRefresh={() => this.onRefresh()}        
         renderItem={this.renderItem}

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { StyleSheet, FlatList, ActivityIndicator, View, Text } from 'react-native';
-import { Card, Button, Icon } from 'react-native-elements';
+import { StyleSheet, FlatList, ActivityIndicator, View, Text, Alert } from 'react-native';
+import { Card, Button } from 'react-native-elements';
 import DatabaseFileFormat from '../../database/FileFormat';
 import { ScrollView } from 'react-native-gesture-handler';
 import styles from '../../stylesheet/stylesheet';
@@ -49,25 +49,46 @@ export default class FileFormat extends Component {
     return (
       <ScrollView>
         <Card>          
-          <View>  
-            <Text>Formato de Arquivo: {this.state.fileFormat.name}</Text>
-          </View>    
-          <Button
-            buttonStyle={styles.button}
-            icon={{name: 'edit', color: '#FFF'}}
-            title='Editar'
-            onPress={() => this.props.navigation.navigate('EditFileFormat', {
-              id: `${this.state.id}`
-            }) } />
-
-          <Button
-            buttonStyle={styles.deleteButton}
-            icon={{name: 'delete', color: '#FFF'}}
-            title='Deletar'
-            onPress={() => db.deleteFileFormatById(this.state.id)} />      
+          <View style={{ flexDirection: "row" }}>  
+            <Text style={{ fontWeight: "bold", fontSize: 16 }}>Formato de Arquivo: </Text>
+            <Text style={{ fontSize: 16 }}>{this.state.fileFormat.name}</Text>
+          </View>       
+          <View style={{ flexDirection: "row" }}>
+          <View style={{ width: 150 }}>
+            <Button
+              buttonStyle={styles.editRowButton}
+              icon={{name: 'edit', color: '#FFF'}}
+              title='Editar'
+              onPress={() => this.props.navigation.navigate('EditFileFormat', {
+                id: `${this.state.id}`
+              }) } />
+          </View>
+          <View style={{ width: 150 }}>
+            <Button
+              buttonStyle={styles.deleteRowButton}
+              icon={{name: 'delete', color: '#FFF'}}
+              title='Deletar'
+              onPress={() => Alert.alert(
+                "Exclusão de Formato de Arquivo",
+                `Você tem certeza que deseja excluir o formato ${this.state.fileFormat.name}?`,
+                [
+                  {
+                    text: "Sim", 
+                    onPress: () => db.deleteFileFormatById(this.state.id).then(() => this.props.navigation.navigate('FileFormats', {
+                      update: true
+                    })), 
+                    icon: "done"
+                  },
+                  {
+                    text: "Cancelar",                   
+                  }
+                ],
+                { cancelable: true }
+              )}
+            />
+          </View>
+        </View>
         </Card>
-
-
       </ScrollView>
     )
   } 

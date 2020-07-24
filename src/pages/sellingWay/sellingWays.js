@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { FlatList, ActivityIndicator, View, Text } from 'react-native';
-import { ListItem, Button } from 'react-native-elements';
+import { ListItem, Button, SearchBar } from 'react-native-elements';
 import databaseSellingWay from '../../database/SellingWay';
 import { ScrollView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -16,8 +16,10 @@ export default class SellingWays extends Component {
     super(props);
     this.state = {
       isLoading: true,
-      notFound: 'Please click (+) button to add it.'      
+      search: '',
+      notFound: 'Nenhuma forma de venda encontrada'      
     };    
+    this.arrayholder = [];
   }
 
   componentDidMount() {
@@ -31,7 +33,11 @@ export default class SellingWays extends Component {
       this.setState({
         sellingways,
         isLoading: false,
-      });
+      },
+        function() {
+          this.arrayholder = sellingways;
+        }
+      );
     }).catch((err) => {
       console.log(err);
       this.setState = {
@@ -39,6 +45,19 @@ export default class SellingWays extends Component {
       }
     })
   }
+
+  searchFilter(text) {
+    const newData = this.arrayholder.filter(function(item) {
+      const itemData = item.name ? item.name.toUpperCase() : ''.toUpperCase();      
+      const textData = text.toUpperCase();
+      return itemData.indexOf(textData) > -1;
+    });
+    this.setState({
+      sellingways: newData,
+      search: text
+    });
+  }
+
 
   onRefresh() {
     this.setState({ isLoading: true }, function() { this.getSellingWays() });
@@ -75,13 +94,26 @@ export default class SellingWays extends Component {
     }
     if(this.state.sellingways.length === 0){
       return(
-        <View>
-          <Text style={styles.message}>{this.state.notFound}</Text>          
+        <SafeAreaView style ={{ flex: 1 }}>
+          <SearchBar
+            containerStyle={{ backgroundColor: '#5390fe', 
+              borderBottomColor: '#5390fe', 
+              borderTopColor: '#5390fe',                                    
+            }}
+            inputContainerStyle={{ backgroundColor: '#FFF', marginLeft: 20, marginRight: 20, borderRadius: 30 }}          
+            placeholder="Buscar..."
+            onChangeText={(text) => this.searchFilter(text)}
+            value={this.state.search}                    
+          />
+          <View>
+          <Text style={{ textAlign: 'center', marginTop: 20, fontWeight: 'bold' }}>{this.state.notFound}</Text>
+          </View>
           <Button
+            icon={{name: 'add-circle-outline', color: '#FFF'}}
             buttonStyle={styles.button}
-            title="Adicionar Formas de Venda"
+            title="Forma de Venda"
             onPress={ () => this.props.navigation.navigate('RegisterSellingWay')} />
-        </View>            
+        </SafeAreaView>
       )
     }
     if(this.props.route.params.update){
@@ -90,6 +122,16 @@ export default class SellingWays extends Component {
     }
     return (
       <SafeAreaView style={{ flex: 1 }}>
+        <SearchBar
+          containerStyle={{ backgroundColor: '#5390fe', 
+            borderBottomColor: '#5390fe', 
+            borderTopColor: '#5390fe',                                    
+          }}
+          inputContainerStyle={{ backgroundColor: '#FFF', marginLeft: 20, marginRight: 20, borderRadius: 30 }}          
+          placeholder="Buscar..."
+          onChangeText={(text) => this.searchFilter(text)}
+          value={this.state.search}                    
+        />
         <FlatList
         keyExtractor={this.keyExtractor}
         data={this.state.sellingways}
@@ -100,7 +142,7 @@ export default class SellingWays extends Component {
         <Button
           buttonStyle={styles.button}
           icon={{name: 'add-circle-outline', color: '#FFF'}}
-          title="Cadastrar Forma de Venda"
+          title="Forma de Venda"
           onPress={ () => this.props.navigation.navigate('RegisterSellingWay')} />
       </SafeAreaView>
       
