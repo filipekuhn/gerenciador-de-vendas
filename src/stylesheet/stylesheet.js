@@ -106,6 +106,24 @@ const styles = StyleSheet.create({
     borderWidth: 1, 
     marginTop: 5 
   },
+  touchableOpacityStyle: {
+    position: 'absolute',
+    width: 50,
+    height: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+    right: 30,
+    bottom: 30,    
+  },
+
+  floatingButtonStyle: {
+    resizeMode: "stretch",    
+    padding: 15,
+    width: 70,
+    height: 70,
+    //backgroundColor:'#5390fe',    
+    borderRadius: 50,        
+  },
 });
 
 export default styles;

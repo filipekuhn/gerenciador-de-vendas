@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { FlatList, ActivityIndicator, View, Text } from 'react-native';
-import { ListItem, Button, SearchBar } from 'react-native-elements';
+import { FlatList, ActivityIndicator, View, Text, Image, TouchableOpacity } from 'react-native';
+import { ListItem, SearchBar } from 'react-native-elements';
 import databaseSellingWay from '../../database/SellingWay';
 import { ScrollView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -108,11 +108,16 @@ export default class SellingWays extends Component {
           <View>
           <Text style={{ textAlign: 'center', marginTop: 20, fontWeight: 'bold' }}>{this.state.notFound}</Text>
           </View>
-          <Button
-            icon={{name: 'add-circle-outline', color: '#FFF'}}
-            buttonStyle={styles.button}
-            title="Forma de Venda"
-            onPress={ () => this.props.navigation.navigate('RegisterSellingWay')} />
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={() => this.props.navigation.navigate('RegisterSellingWay')}
+            title="+"
+            style={styles.touchableOpacityStyle}>
+              <Image
+                source={require('../../images/add2.png')}
+                style={styles.floatingButtonStyle}
+                />
+        </TouchableOpacity>
         </SafeAreaView>
       )
     }
@@ -138,12 +143,17 @@ export default class SellingWays extends Component {
         refreshing={this.state.isLoading}
         onRefresh={() => this.onRefresh()}
         renderItem={this.renderItem}
-      />
-        <Button
-          buttonStyle={styles.button}
-          icon={{name: 'add-circle-outline', color: '#FFF'}}
-          title="Forma de Venda"
-          onPress={ () => this.props.navigation.navigate('RegisterSellingWay')} />
+        />
+        <TouchableOpacity
+          activeOpacity={0.7}
+          onPress={() => this.props.navigation.navigate('RegisterSellingWay')}
+          title="+"
+          style={styles.touchableOpacityStyle}>
+            <Image
+              source={require('../../images/add2.png')}
+              style={styles.floatingButtonStyle}
+              />
+        </TouchableOpacity>
       </SafeAreaView>
       
       

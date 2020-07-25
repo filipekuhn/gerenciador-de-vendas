@@ -1,7 +1,7 @@
 //import React, { Component, useEffect } from 'react';
 import React, { Component } from 'react';
-import { FlatList, ActivityIndicator, View, Text } from 'react-native';
-import { ListItem, Button, SearchBar } from 'react-native-elements';
+import { FlatList, ActivityIndicator, View, Text, Image, TouchableOpacity } from 'react-native';
+import { ListItem, SearchBar } from 'react-native-elements';
 import Database from '../../database/City';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from '../../stylesheet/stylesheet';
@@ -115,11 +115,16 @@ export default class Cities extends Component {
           <View>
             <Text style={{ textAlign: 'center', marginTop: 20, fontWeight: 'bold' }}>Nenhum item foi encontrado</Text>
           </View>
-          <Button
-            icon={{name: 'add-circle-outline', color: '#FFF'}}
-            buttonStyle={styles.button}
-            title="Cadastrar Cidade"
-            onPress={ () => this.props.navigation.navigate('RegisterCity')} />
+            <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={() => this.props.navigation.navigate('RegisterCity')}
+            title="+"
+            style={styles.touchableOpacityStyle}>
+              <Image
+                source={require('../../images/add2.png')}
+                style={styles.floatingButtonStyle}
+                />
+            </TouchableOpacity>
         </SafeAreaView>
       )
     }
@@ -145,13 +150,17 @@ export default class Cities extends Component {
         refreshing={this.state.isLoading}
         onRefresh={() => this.onRefresh()}        
         renderItem={this.renderItem}
-      />
-        <Button
-          icon={{name: 'add-circle-outline', color: '#FFF'}}
-          buttonStyle={styles.button}
-          title="Cadastrar Cidade"
-          onPress={ () => this.props.navigation.navigate('RegisterCity', {            
-          })} />
+        />
+        <TouchableOpacity
+          activeOpacity={0.7}
+          onPress={() => this.props.navigation.navigate('RegisterCity')}
+          title="+"
+          style={styles.touchableOpacityStyle}>
+            <Image
+              source={require('../../images/add2.png')}
+              style={styles.floatingButtonStyle}
+              />
+        </TouchableOpacity>
       </SafeAreaView>            
     );
   }

@@ -1,10 +1,11 @@
 //import React, { Component, useEffect } from 'react';
 import React, { Component } from 'react';
-import { FlatList, ActivityIndicator, View, Text } from 'react-native';
-import { ListItem, Button, SearchBar } from 'react-native-elements';
+import { FlatList, ActivityIndicator, View, Text, TouchableOpacity, Image } from 'react-native';
+import { ListItem, SearchBar } from 'react-native-elements';
 import databaseCustomer from '../../database/Customer';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from '../../stylesheet/stylesheet';
+//import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const db = new databaseCustomer();
 export default class Customers extends Component {
@@ -109,11 +110,16 @@ export default class Customers extends Component {
           <View>
           <Text style={{ textAlign: 'center', marginTop: 20, fontWeight: 'bold' }}>{this.state.notFound}</Text>
           </View>
-          <Button
-            icon={{name: 'account-circle', color: '#FFF'}}
-            buttonStyle={styles.button}
-            title="Cadastrar Cliente"
-            onPress={ () => this.props.navigation.navigate('RegisterCustomer')} />
+            <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={() => this.props.navigation.navigate('RegisterCustomer')}
+            title="+"
+            style={styles.touchableOpacityStyle}>
+              <Image
+                source={require('../../images/add2.png')}
+                style={styles.floatingButtonStyle}
+                />
+            </TouchableOpacity>
         </SafeAreaView>
       )
     }
@@ -139,15 +145,31 @@ export default class Customers extends Component {
           refreshing={this.state.isLoading}
           onRefresh={() => this.onRefresh()}        
           renderItem={this.renderItem}
-        />
-        <Button
-          icon={{name: 'account-circle', color: '#FFF'}}
-          buttonStyle={styles.button}
-          title="Cadastrar Cliente"
-          onPress={ () => this.props.navigation.navigate('RegisterCustomer')} />
-      </SafeAreaView>
-      
-      
+        />        
+        <TouchableOpacity
+          activeOpacity={0.7}
+          onPress={() => this.props.navigation.navigate('RegisterCustomer')}
+          title="+"
+          style={styles.touchableOpacityStyle}>
+            <Image
+              source={require('../../images/add2.png')}
+              style={styles.floatingButtonStyle}
+              />
+        </TouchableOpacity>
+      </SafeAreaView>            
     );
   }
 }
+
+
+/*<Button
+icon={{name: 'account-circle', color: '#FFF'}}
+buttonStyle={styles.button}
+title="Cadastrar Cliente"
+onPress={ () => this.props.navigation.navigate('RegisterCustomer')} />
+
+<Icon
+name="add-circle-outline"              
+color="#FFF"       
+style={styles.floatingButtonStyle}       
+/> */
