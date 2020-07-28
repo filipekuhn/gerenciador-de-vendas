@@ -1,15 +1,16 @@
 import React from 'react';
 import { View, Text } from 'react-native'
-import { NavigationContainer, DrawerActions, DrawerRouter } from '@react-navigation/native';
+import { NavigationContainer, DrawerActions } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { createDrawerNavigator, DrawerContent } from '@react-navigation/drawer'
+import { createDrawerNavigator } from '@react-navigation/drawer'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+
+import SalesRoutes from './routes/sales.routes';
 
 import Main from './pages/main';
 import Customer from './pages/customer/customer';
 import Customers from './pages/customer/customers';
 import EditCustomer from './pages/customer/editCustomer';
-import Sale from './pages/sale';
 import RegisterCustomer from './pages/customer/registerCustomer';
 import SellingWay from './pages/sellingWay/sellingWay';
 import SellingWays from './pages/sellingWay/sellingWays';
@@ -26,15 +27,15 @@ import Cities from './pages/city/cities';
 import City from './pages/city/city';
 import RegisterCity from './pages/city/registerCity';
 import RegisterProductSellingWay from './pages/product/registerProductSellingWay';
+import RegisterSale from './pages/sale/registerSale';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
-createDrawer = ({ route }) =>
-  <Drawer.Navigator initialRouteName="Menu">
-    <Drawer.Screen name="Menu" component={Main} options={{ titleName: 'Cadastros' }} />
-    <Drawer.Screen name="Orçamentos" component={Sale} initialParams={{ update: false }}/>
-    <Drawer.Screen name="Vendas" component={Sale} initialParams={{ update: false, title: 'Vendas' }} />    
+createDrawer = ({ navigation }) =>
+  <Drawer.Navigator initialRouteName="Cadastros">
+    <Drawer.Screen name="Cadastros" component={Main} initialParams={{ titleName: 'Cadastros' }} />    
+    <Drawer.Screen name="Vendas" component={SalesRoutes} initialParams={{ update: false }} />    
     <Drawer.Screen name="Financeiro" component={Products} />
     <Drawer.Screen name="Backup" component={FileFormats}  />    
   </Drawer.Navigator>
@@ -47,39 +48,32 @@ function App() {
       <Stack.Navigator initialRouteName="Menu">
         <Stack.Screen 
           name="Menu"
-          //children={this.createDrawer}                    
-          component={this.createDrawer}
-          options={({ navigation, route }) => ({            
-            title: route.params?.titleName,
+          children={this.createDrawer}                    
+          //component={this.createDrawer}
+          options={({ navigation, route }) => ({                                    
+            title: 'JSI',
             headerStyle: {backgroundColor: '#5390fe'}, 
             headerTintColor: '#FFF', 
-            headerTitleAlign: 'left',
+            headerTitleAlign: 'center',
             headerLeft: () =>
               <Icon
                 onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
-                style={[{ color: 'white', marginLeft: 12 }]}
-                size={24}
+                style={[{ color: 'white', marginLeft: 16 }]}
+                size={28}
                 name={'menu'}
               />
           })
-          }
-        />
-
-        <Stack.Screen name="Main" 
-          component={Main} 
-          initialParams={{ titleName: 'Teste123' }}
-          options={{  title: "Menu Principal", headerStyle: {backgroundColor: '#5390fe'}, 
-                  headerTintColor: '#FFF', headerTitleAlign: 'left' }} />         
+          }          
+        />             
 
         <Stack.Screen name="Customer" 
           component={Customer} 
           options={{  title: "Clientes", headerStyle: {backgroundColor: '#5390fe'}, 
                   headerTintColor: '#FFF', headerTitleAlign: 'left' }} /> 
         
-        <Stack.Screen name="Sales" 
-          component={Sale} 
-          initialParams={{ titleName: 'SALES' }}
-          options={{ title: "Vendas", headerStyle: {backgroundColor: '#5390fe'}, 
+        <Stack.Screen name="RegisterSale" 
+          component={RegisterSale} 
+          options={{ title: "Venda", headerStyle: {backgroundColor: '#5390fe'}, 
                   headerTintColor: '#FFF', headerTitleAlign: 'left' }} />
         
         <Stack.Screen name="RegisterCustomer" 

@@ -1,5 +1,6 @@
 import SQLite from "react-native-sqlite-storage";
 import Cities from '../utils/cities.json';
+import Customers from '../utils/customersteste.json';
 
 SQLite.DEBUG(true);
 SQLite.enablePromise(true);
@@ -9,6 +10,7 @@ const database_version = "1.0";
 const database_displayname = "Banco de Dados Gerenciador de Vendas";
 const database_size = 200000;
 const cities = Cities.cities
+const customresTeste = Customers.customers
 
 export default class Database {
 
@@ -38,12 +40,12 @@ export default class Database {
                   db.transaction((tx) => {
                       tx.executeSql('CREATE TABLE IF NOT EXISTS product (_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, code TEXT, measures TEXT);');
                       tx.executeSql('CREATE TABLE IF NOT EXISTS sellingway (_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL);');
-                      tx.executeSql('CREATE TABLE IF NOT EXISTS productsellingway (_id INTEGER PRIMARY KEY AUTOINCREMENT, idproduct INTEGER NOT NULL, idsellingway INTEGER NOT NULL, siteinclusiondate TEXT, saleprice DOUBLE, sitecommission DOUBLE, netprice DOUBLE, FOREIGN KEY (idproduct) REFERENCES product(_id) ON DELETE CASCADE, FOREIGN KEY(idsellingway) REFERENCES sellingway(_id) ON DELETE CASCADE);');
+                      tx.executeSql('CREATE TABLE IF NOT EXISTS productsellingway (_id INTEGER PRIMARY KEY AUTOINCREMENT, idproduct INTEGER NOT NULL, idsellingway INTEGER NOT NULL, siteinclusiondate TEXT, saleprice DOUBLE, sitecommission DOUBLE, netprice DOUBLE, FOREIGN KEY (idproduct) REFERENCES product(_id) ON DELETE CASCADE, FOREIGN KEY(idsellingway) REFERENCES sellingway(_id));');
                       tx.executeSql('CREATE TABLE IF NOT EXISTS city (_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, uf VARCHAR(2) NOT NULL);');
                       tx.executeSql('CREATE TABLE IF NOT EXISTS fileformat (_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL);');
                       tx.executeSql('CREATE TABLE IF NOT EXISTS customer (_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, email TEXT, phone TEXT, idfileformat INTEGER, idcity INTEGER, idsellingway INTEGER, comments TEXT, registrationdate TEXT NOT NULL, FOREIGN KEY(idfileformat) REFERENCES fileformat(_id), FOREIGN KEY(idcity) REFERENCES city(_id), FOREIGN KEY(idsellingway) REFERENCES sellingway(_id));');
                       tx.executeSql('CREATE TABLE IF NOT EXISTS payment (_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, bank TEXT, agency TEXT, account TEXT);');
-                      tx.executeSql('CREATE TABLE IF NOT EXISTS sale (_id INTEGER PRIMARY KEY AUTOINCREMENT, idproductsale INTEGER, idcustomer INTEGER, idsellingway INTEGER, observations TEXT, saleprice DOUBLE, finalprice DOUBLE, pendingpayment BOOLEAN NOT NULL, idpayment INTEGER, FOREIGN KEY(idproductsale) REFERENCES productsale(_id), FOREIGN KEY (idcustomer) REFERENCES customer (_id), FOREIGN KEY (idsellingway) REFERENCES sellingway (_id), FOREIGN KEY (idpayment) REFERENCES payment (_id));');
+                      tx.executeSql('CREATE TABLE IF NOT EXISTS sale (_id INTEGER PRIMARY KEY AUTOINCREMENT, date TEXT, idcustomer INTEGER, idsellingway INTEGER, observations TEXT, saleprice DOUBLE, finalprice DOUBLE, pendingpayment BOOLEAN NOT NULL, FOREIGN KEY (idcustomer) REFERENCES customer (_id), FOREIGN KEY (idsellingway) REFERENCES sellingway (_id));');
                       tx.executeSql('CREATE TABLE IF NOT EXISTS productsale (_id INTEGER PRIMARY KEY AUTOINCREMENT, idproduct INTEGER, idsale INTEGER, idproductsellingway INTEGER, productprice DOUBLE, netprice DOUBLE, FOREIGN KEY (idproduct) REFERENCES product (_id), FOREIGN KEY (idsale) REFERENCES sale (_id), FOREIGN KEY (idproductsellingway) REFERENCES productsellingway (_id));');
                   }).then(() => {
                       console.log("Tables created successfully");                      
@@ -65,6 +67,16 @@ export default class Database {
                   });
                 });
               });
+              /*db.transaction((tx) => {
+                customresTeste.forEach(element => {
+                  tx.executeSql('INSERT INTO customer (name, email, phone, registrationdate) VALUES (?, ?, ?, ?)', [
+                    element.name,
+                    element.email,
+                    element.phone,
+                    '28-07-2020'
+                  ]);
+                });
+              });*/
               resolve(db);
             })
             .catch(error => {

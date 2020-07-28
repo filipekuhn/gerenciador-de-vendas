@@ -1,11 +1,9 @@
-//import React, { Component, useEffect } from 'react';
 import React, { Component } from 'react';
 import { FlatList, ActivityIndicator, View, Text, TouchableOpacity, Image } from 'react-native';
 import { ListItem, SearchBar } from 'react-native-elements';
 import databaseCustomer from '../../database/Customer';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from '../../stylesheet/stylesheet';
-//import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const db = new databaseCustomer();
 export default class Customers extends Component {

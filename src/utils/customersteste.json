@@ -1,0 +1,19 @@
+{
+"customers": [
+  {"name":	"Célia Ferreira", "email":	"enviar por Whatsapp", "phone" :"(71) 9  8734-8642"},
+  {"name":	"Amanda Andréia Caetanos", "email":	"mandy_andreia17@hotmail.com", "phone" :"(87) 9 9611-8944"},
+  {"name":	"Lilian Rios", "email":	"liahrios@gmail.com", "phone" :"(67) 9 9111-8711"},
+  {"name":	"Zeniuda de Souza Aguiar", "email":	"zezaeju@gmail.com", "phone" :"(19) 9 8766-8267"},
+  {"name":	"Simone Carvalho", "email":	"enviar por Whatsapp", "phone" :"(41) 9 9982-4505"},
+  {"name":	"Marilsa Condi", "email":	"marilsacondi@yahoo.com.br", "phone" :"(19) 9 9262-4836"},
+  {"name":	"Felipe Sena", "email":	"feuugs@gmail.com", "phone" :"(33) 3532-1001"},
+  {"name":	"Andreia S. Longen", "email":	"andreia-schmitz@hotmail.com", "phone" :"(47) 9 9940-7457"},
+  {"name":	"Patricia Santana Medeiros", "email":	"patriciamedeiros4@hotmail.com", "phone" :"(77) 9 9167-2086"},
+  {"name":	"Lizandra Corredo de Albuquerque", "email":	"lizacorredo@hotmail.com", "phone" :"(14) 9 9790-1419"},
+  {"name":	"Leizimara V. Ramos", "email":	"mara.lvr14@gmail.com", "phone" :"(19) 9 9751-4608"},
+  {"name":	"Lilian Florio da Silva Gomes", "email":	"lilianflorio34@gmail.com", "phone" :"(83) 9 8686-1405"},
+  {"name":	"Cicera Sampaio", "email":	"cicera_dmc@hotmail.com", "phone" :"(11) 9 5492-1969"},
+  {"name":	"Lucimar do Nascimento", "email":	"artefiosuniformes@hotmail.com", "phone" :"(24) 9 8817-3072"},
+  {"name":	"Suzne Rodrigues De Araujo", "email":	"suzyfashion@hotmail.com", "phone" :"(62) 9 9512-9009"}
+  ]
+}

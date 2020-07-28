@@ -1,45 +1,43 @@
-//import React, { Component, useEffect } from 'react';
 import React, { Component } from 'react';
-import { FlatList, ActivityIndicator, View, Text, Image, TouchableOpacity } from 'react-native';
+import { FlatList, ActivityIndicator, View, Text, TouchableOpacity, Image } from 'react-native';
 import { ListItem, SearchBar } from 'react-native-elements';
-import Database from '../../database/City';
+import databaseCustomer from '../../database/Sale';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from '../../stylesheet/stylesheet';
-import { TextInput } from 'react-native-gesture-handler';
 
-const db = new Database();
-export default class Cities extends Component {
+const db = new databaseCustomer();
+export default class Sales extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
       isLoading: true,
       update: false,
-      cities: [],
-      search: '',
-      notFound: 'Nenhuma cidade encontrada'      
-    };   
-    this.arrayholder = []; 
+      sales: [],
+      notFound: 'Nenhuma venda encotrada',
+      search: ''      
+    };    
+    this.arrayholder = [];
   }
 
   componentDidMount() {        
-    this.getCities();  
+    this.getSales();  
   }  
 
   onRefresh() {
-    this.setState({ isLoading: true }, function() { this.getCities() });
+    this.setState({ isLoading: true }, function() { this.getSales() });
  }
   
-  getCities() {
-    let cities = [];
-    db.listCities().then((data) => {
-      cities = data;
+  getSales() {
+    let sales = [];
+    db.listSales().then((data) => {
+      sales = data;
       this.setState({
-        cities,        
+        sales,
         isLoading: false,
       },
-        function() {
-          this.arrayholder= cities;
+      function() {
+        this.arrayholder = sales;
         }
       );
     }).catch((err) => {
@@ -47,39 +45,40 @@ export default class Cities extends Component {
       this.setState = {
         isLoading: false
       }
-    })
+    });    
   }
 
   searchFilter(text) {
     const newData = this.arrayholder.filter(function(item) {
-      const itemData = item.item ? item.item.toUpperCase() : ''.toUpperCase();
+      const itemData = item.customer.name ? item.customer.name.toUpperCase() : ''.toUpperCase();      
       const textData = text.toUpperCase();
       return itemData.indexOf(textData) > -1;
     });
     this.setState({
-      cities: newData,
+      sales: newData,
       search: text
     });
-  }
-
-  updateSearch = (search) => {
-    this.setState({ search });    
   }
 
   keyExtractor = (item, index) => index.toString()
 
   renderItem = ({ item }) => (
     <ListItem      
-      title={item.item}      
+      title={item.customer.name}
+      subtitle={item.date}
       leftAvatar={{        
-        rounded: true,
-        showEditButton: true,
-        size: "large",        
-        icon: { name: 'location-city', color: 'black'}
+        rounded: true,        
+        size: "medium",               
+        //source: require('../../images/users.png'), 
+        icon: { name: 'shopping-cart', color: '#5390fe'},        
+      }}
+      rightAvatar={{
+        //source: item.pendingpayment === 1 ? require('../../images/city.png') : require('../../images/users.png')
+        icon: item.pendingpayment === 1 ? { name: 'money-off', color: 'red' } : { name: 'attach-money', color: 'green' }
       }}
       onPress={() => {
-        this.props.navigation.navigate('City', {
-          id: `${item.id}`,                           
+        this.props.navigation.navigate('Sale', {
+          id: `${item._id}`,          
         });
       }}
       chevron
@@ -97,7 +96,7 @@ export default class Cities extends Component {
         </View>
       )
     }
-    if(this.state.cities.length === 0){
+    if(this.state.sales.length === 0){
       return(
         <SafeAreaView style ={{ flex: 1 }}>
           <SearchBar
@@ -111,11 +110,11 @@ export default class Cities extends Component {
             value={this.state.search}                    
           />
           <View>
-            <Text style={{ textAlign: 'center', marginTop: 20, fontWeight: 'bold' }}>Nenhum item foi encontrado</Text>
+          <Text style={{ textAlign: 'center', marginTop: 20, fontWeight: 'bold' }}>{this.state.notFound}</Text>
           </View>
             <TouchableOpacity
             activeOpacity={0.7}
-            onPress={() => this.props.navigation.navigate('RegisterCity')}
+            onPress={() => this.props.navigation.navigate('RegisterSale')}
             title="+"
             style={styles.touchableOpacityStyle}>
               <Image
@@ -128,7 +127,7 @@ export default class Cities extends Component {
     }
     if(this.props.route.params.update){            
       this.props.route.params.update = false;
-      this.getCities();
+      this.getSales();
     }
     return (
       <SafeAreaView style={{ flex: 1 }}>
@@ -143,15 +142,15 @@ export default class Cities extends Component {
           value={this.state.search}                    
         />
         <FlatList        
-        keyExtractor={this.keyExtractor}
-        data={this.state.cities}        
-        refreshing={this.state.isLoading}
-        onRefresh={() => this.onRefresh()}        
-        renderItem={this.renderItem}
-        />
+          keyExtractor={this.keyExtractor}
+          data={this.state.sales}        
+          refreshing={this.state.isLoading}
+          onRefresh={() => this.onRefresh()}        
+          renderItem={this.renderItem}
+        />        
         <TouchableOpacity
           activeOpacity={0.7}
-          onPress={() => this.props.navigation.navigate('RegisterCity')}
+          onPress={() => this.props.navigation.navigate('RegisterSale')}
           title="+"
           style={styles.touchableOpacityStyle}>
             <Image

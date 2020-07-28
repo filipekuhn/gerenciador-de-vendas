@@ -143,6 +143,37 @@ export default class Customer {
     });  
   }
 
+  listCustomerItems() {
+    return new Promise((resolve) => {
+      const customers = [];
+      database.initDB().then((db) => {
+        db.transaction((tx) => {
+          tx.executeSql('SELECT _id, name FROM customer ORDER BY name ASC', []).then(([tx,results]) => {
+            console.log("Query completed");
+            var len = results.rows.length;
+            for (let i = 0; i < len; i++) {
+              let row = results.rows.item(i);
+              console.log(results);
+              const { _id, name } = row;
+              customers.push({
+                id: _id,
+                item: name
+              });
+            }
+            console.log(customers);
+            resolve(customers);
+          });
+        }).then((result) => {
+          database.closeDatabase(db);
+        }).catch((err) => {
+          console.log(err);
+        });
+      }).catch((err) => {
+        console.log(err);
+      });
+    });  
+  }
+
   deleteAllCustomer() {
     return new Promise((resolve) => {
       database.initDB().then((db) => {
