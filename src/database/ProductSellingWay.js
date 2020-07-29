@@ -60,7 +60,7 @@ export default class ProductSellingWay {
       database.initDB().then((db) => {
         db.transaction((tx) => {
           tx.executeSql('DELETE FROM productsellingway WHERE _id = ?', [id]).then(([tx, results]) => {
-            console.log("Product Selling Way deleted!");
+            console.log(results);
             resolve(results);            
           });
         }).then((result) => {
@@ -132,10 +132,12 @@ export default class ProductSellingWay {
 
   listProductSellingWay(id) {
     return new Promise((resolve) => {
-      const products = [];
+      const productSellingWay = [];
       database.initDB().then((db) => {
         db.transaction((tx) => {
-        tx.executeSql('SELECT * FROM productsellingway AS psw JOIN product AS p ON psw.idproduct = p._id JOIN sellingway AS sw ON psw.idsellingway = sw._id WHERE idproduct = ? ', [id]).then(([tx,results]) => {
+        tx.executeSql('SELECT psw._id AS _id, psw.siteinclusiondate, psw.saleprice, psw.sitecommission, ' +
+                      'psw.netprice, p._id AS idproduct, p.code, p.measures, sw._id AS idsellingway, ' +
+                      'sw.name FROM productsellingway AS psw JOIN product AS p ON psw.idproduct = p._id JOIN sellingway AS sw ON psw.idsellingway = sw._id WHERE idproduct = ? ', [id]).then(([tx,results]) => {
             console.log("Query completed", results.rows.length);
             var len = results.rows.length;
             for (let i = 0; i < len; i++) {
@@ -143,7 +145,7 @@ export default class ProductSellingWay {
               //console.log(`ID ProductSellingWay: ${row._id}, ProductSellingWay SalePrice: ${row.saleprice}`);
               console.log("ESSE", results.rows.item(0));
               const { _id, idproduct, idsellingway, siteinclusiondate, saleprice, sitecommission, netprice, code, measures, name } = row;
-              products.push({
+              productSellingWay.push({
                 _id,
                 product: {
                   idproduct: idproduct,
@@ -160,8 +162,8 @@ export default class ProductSellingWay {
                 netprice
               });
             }
-            console.log(products);
-            resolve(products);
+            console.log(productSellingWay);
+            resolve(productSellingWay);
           });
         }).then((result) => {
           database.closeDatabase(db);

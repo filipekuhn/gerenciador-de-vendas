@@ -85,13 +85,15 @@ export default class RegisterProductSellingWay extends Component {
         { cancelable: true }
       )
     }
+    let netPriceValue = this.salePriceField.getRawValue() - this.comissionField.getRawValue();
+    netPriceValue = netPriceValue.toFixed(2);
     let data = {      
       idProduct: this.state.idProduct,
       idSellingWay: this.state.selectedSellingWay,
       siteInclusionDate: this.state.siteInclusionDate,
       salePrice: this.salePriceField.getRawValue(),
       siteCommission: this.comissionField.getRawValue(),
-      netPrice: this.salePriceField.getRawValue() - this.comissionField.getRawValue()
+      netPrice: netPriceValue
     }
     db.addProductSellingWay(data).then((result) => {
       console.log(result);
@@ -164,7 +166,7 @@ export default class RegisterProductSellingWay extends Component {
                   precision: 2,
                   separator: ',',
                   delimiter: '.',
-                  unit: 'R$',
+                  unit: 'R$ ',
                   suffixUnit: ''
                 }}                
                 value={this.state.salePrice}
@@ -180,7 +182,7 @@ export default class RegisterProductSellingWay extends Component {
                   precision: 2,
                   separator: ',',
                   delimiter: '.',
-                  unit: 'R$',
+                  unit: 'R$ ',
                   suffixUnit: ''
                 }}                
                 value={this.state.siteCommission}

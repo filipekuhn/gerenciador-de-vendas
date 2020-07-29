@@ -156,9 +156,7 @@ export default class Products extends Component {
               style={styles.floatingButtonStyle}
               />
         </TouchableOpacity>
-      </SafeAreaView>
-      
-      
+      </SafeAreaView>            
     );
   }
 }
