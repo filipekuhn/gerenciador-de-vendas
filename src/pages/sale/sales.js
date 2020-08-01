@@ -14,7 +14,7 @@ export default class Sales extends Component {
       isLoading: true,
       update: false,
       sales: [],
-      notFound: 'Nenhuma venda encotrada',
+      notFound: 'Nenhuma venda encontrada',
       search: ''      
     };    
     this.arrayholder = [];

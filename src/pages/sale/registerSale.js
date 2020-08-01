@@ -34,6 +34,7 @@ export default class RegisterSale extends Component {
       observations: '', 
       saleprice: '', 
       finalprice: '', 
+      amountpaid: '',
       pendingpayment: '',       
       isLoading: '',      
       selectedCustomer: {},
@@ -92,15 +93,46 @@ export default class RegisterSale extends Component {
   saveSale() {      
     this.setState({
       isLoading: true,      
-    });    
+    });          
+
+    let pending = true;
+    let pendigPaymentValue = this.amountPaidField.getRawValue() - this.salePriceField.getRawValue()
+    pendigPaymentValue = pendigPaymentValue.toFixed(2)
+    console.log("valor pendente: ", pendigPaymentValue)
+    if( pendigPaymentValue < 0) {
+      
+      console.log("CAIU NO IF!!!!");
+    } else {
+      pending = false
+      console.log("CAIU NO ELSE!!!!");
+    }
+    console.log("ESTADO DO PAGAMENTO: ", this.state.pendingpayment);
+
+    let finalPrice = 0;
+    let salePrice = 0;
+    let amountPaid = 0;
+
+    if(this.salePriceField.getRawValue() !== null) {
+      salePrice = this.salePriceField.getRawValue();
+    }
+
+    if(this.finalPriceField.getRawValue() !== null) {
+      finalPrice = this.finalPriceField.getRawValue();
+    }
+    
+    if(this.amountPaidField.getRawValue() !== null) {
+      amountPaid =  this.amountPaidField.getRawValue();
+    }
+
       let data = {      
       date: this.state.date,       
       idcustomer: this.state.selectedCustomer, 
       idsellingway: this.state.selectedSellingWay, 
       observations: this.state.observations, 
-      saleprice: this.salePriceField.getRawValue(), 
-      finalprice: this.finalPriceField.getRawValue(), 
-      pendingpayment: true       
+      saleprice: salePrice, 
+      finalprice: finalPrice, 
+      amountpaid: amountPaid,
+      pendingpayment: pending
     }
     Sale.addSale(data).then((result) => {
       console.log(result);
@@ -114,21 +146,19 @@ export default class RegisterSale extends Component {
           [
             {
               text: "OK", 
-              onPress: () => this.props.navigation.navigate('Sales', { update: true }), 
-              icon: "done"
+              onPress: () => this.props.navigation.navigate('Sales', { update: true }),              
             }
           ],
           { cancelable: false }
         );
-      }else {
+      } else {
         Alert.alert(
           "Cadastro de Venda",
-          "Não foi possível realizar o cadastro!",
+          `Não foi possível realizar o cadastro!\n O seguinte erro foi retornado: ${result}`,
           [
             {
               text: "OK", 
-              onPress: () => this.props.navigation.navigate('RegisterSale'), 
-              icon: "done"
+              onPress: () => this.props.navigation.navigate('RegisterSale'),               
             }
           ],
           { cancelable: false }
@@ -219,7 +249,7 @@ export default class RegisterSale extends Component {
                 onChangeText={(text) => this.updateTextInput(text, 'saleprice')}                  
                 ref={(ref) => this.salePriceField = ref}              
               />
-              <Text style={{ marginLeft: 20, marginTop: 10 }}>Valor Final</Text>
+              <Text style={{ marginLeft: 20, marginTop: 10 }}>Valor Líquido Final</Text>
               <TextInputMask                   
                 placeholder="R$ 0,00"                             
                 style={styles.textInput}
@@ -234,7 +264,23 @@ export default class RegisterSale extends Component {
                 value={this.state.finalprice}
                 onChangeText={(text) => this.updateTextInput(text, 'finalprice')}                
                 ref={(ref) => this.finalPriceField = ref}
-              />            
+              />       
+              <Text style={{ marginLeft: 20, marginTop: 10 }}>Valor Pago</Text>
+              <TextInputMask                   
+                placeholder="R$ 0,00"                             
+                style={styles.textInput}
+                type={'money'}
+                options={{
+                  precision: 2,
+                  separator: ',',
+                  delimiter: '.',
+                  unit: 'R$',
+                  suffixUnit: ''
+                }}                
+                value={this.state.amountpaid}
+                onChangeText={(text) => this.updateTextInput(text, 'amountpaid')}                
+                ref={(ref) => this.amountPaidField = ref}
+              />           
               <Text style={{ marginLeft: 20, marginTop: 10 }}>Observações</Text>
               <TextInput
                 placeholder="Observações"

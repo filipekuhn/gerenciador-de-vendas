@@ -9,8 +9,8 @@ export default class Sale {
       database.initDB().then((db) => {
         db.transaction((tx) => {
           tx.executeSql('INSERT INTO sale (date, idcustomer, ' +
-          'idsellingway, observations, saleprice, finalprice, pendingpayment) ' +
-          'VALUES (?, ?, ?, ?, ?, ?, ?)', 
+          'idsellingway, observations, saleprice, finalprice, amountpaid, pendingpayment) ' +
+          'VALUES (?, ?, ?, ?, ?, ?, ?, ?)', 
           [
             s.date,            
             s.idcustomer,
@@ -18,14 +18,17 @@ export default class Sale {
             s.observations,
             s.saleprice,
             s.finalprice,
+            s.amountpaid,
             s.pendingpayment,                       
-          ]).then(([tx, results]) => {
-            resolve(results);
+          ]).then(([tx, results]) => {            
+            resolve(true);
           });
         }).then((result) => {
           database.closeDatabase(db);
         }).catch((err) => {
           console.log(err);
+          database.closeDatabase(db);
+          resolve(err);
         });
       }).catch((err) => {
         console.log(err);
@@ -140,7 +143,7 @@ export default class Sale {
         db.transaction((tx) => {
           tx.executeSql('SELECT s.*, c._id, c.name AS customername, sw._id, sw.name AS sellingwayname FROM sale AS s ' +
             'JOIN customer AS c ON s.idcustomer = c._id JOIN sellingway AS sw ON s.idsellingway = sw._id ' +
-            'ORDER BY "date" DESC;', []).then(([tx,results]) => {
+            'ORDER BY _id DESC;', []).then(([tx,results]) => {
             console.log("Query completed");
             var len = results.rows.length;
             for (let i = 0; i < len; i++) {
@@ -152,6 +155,7 @@ export default class Sale {
                 observations, 
                 saleprice, 
                 finalprice, 
+                amountpaid,
                 pendingpayment,
                 idcustomer, 
                 customername, 
@@ -164,6 +168,7 @@ export default class Sale {
                 observations, 
                 saleprice, 
                 finalprice, 
+                amountpaid,
                 pendingpayment,
                 customer: { _id: idcustomer, name: customername},
                 sellingway: { _id: idsellingway, name: sellingwayname }                 
