@@ -28,7 +28,7 @@ export default class Sale {
         }).catch((err) => {
           console.log(err);
           database.closeDatabase(db);
-          resolve(err);
+          resolve(false);
         });
       }).catch((err) => {
         console.log(err);

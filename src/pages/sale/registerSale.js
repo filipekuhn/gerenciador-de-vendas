@@ -90,6 +90,10 @@ export default class RegisterSale extends Component {
     this.setState(state);
   }
 
+  log() {
+    console.log("AQUI O VALOR DO CAMPO SEM NADA: ", this.salePriceField.getRawValue(), " E AQUI o estado: ", this.state.saleprice);
+  }
+
   saveSale() {      
     this.setState({
       isLoading: true,      
@@ -99,33 +103,35 @@ export default class RegisterSale extends Component {
     let pendigPaymentValue = this.amountPaidField.getRawValue() - this.salePriceField.getRawValue()
     pendigPaymentValue = pendigPaymentValue.toFixed(2)
     console.log("valor pendente: ", pendigPaymentValue)
-    if( pendigPaymentValue < 0) {
-      
-      console.log("CAIU NO IF!!!!");
-    } else {
+    if( pendigPaymentValue >= 0) {
       pending = false
-      console.log("CAIU NO ELSE!!!!");
-    }
-    console.log("ESTADO DO PAGAMENTO: ", this.state.pendingpayment);
-
-    let finalPrice = 0;
-    let salePrice = 0;
-    let amountPaid = 0;
-
-    if(this.salePriceField.getRawValue() !== null) {
-      salePrice = this.salePriceField.getRawValue();
     }
 
-    if(this.finalPriceField.getRawValue() !== null) {
-      finalPrice = this.finalPriceField.getRawValue();
+    console.log("ESTADO DO PAGAMENTO: ", this.state.finalprice);
+    console.log("Raw Value vazio: ", this.salePriceField.getRawValue());
+    let finalPrice = this.finalPriceField.getRawValue();
+    let salePrice = this.salePriceField.getRawValue();
+    let amountPaid = this.amountPaidField.getRawValue();
+    let date = null ;
+
+    if(this.state.saleprice === '') {
+      salePrice = null;
+    }
+
+    if(this.state.finalprice === '') {
+      finalPrice = null;
     }
     
-    if(this.amountPaidField.getRawValue() !== null) {
-      amountPaid =  this.amountPaidField.getRawValue();
+    if(this.state.amountpaid === '') {
+      amountPaid = null;
+    }
+
+    if(this.state.date !== '') {
+      date = this.state.date
     }
 
       let data = {      
-      date: this.state.date,       
+      date: date,       
       idcustomer: this.state.selectedCustomer, 
       idsellingway: this.state.selectedSellingWay, 
       observations: this.state.observations, 
@@ -151,21 +157,7 @@ export default class RegisterSale extends Component {
           ],
           { cancelable: false }
         );
-      } else {
-        Alert.alert(
-          "Cadastro de Venda",
-          `Não foi possível realizar o cadastro!\n O seguinte erro foi retornado: ${result}`,
-          [
-            {
-              text: "OK", 
-              onPress: () => this.props.navigation.navigate('RegisterSale'),               
-            }
-          ],
-          { cancelable: false }
-        );
-      }
-      
-      //this.props.navigation.navigate('Main');
+      }      
     }).catch((err) => {
       console.log(err);
       this.setState({
@@ -173,12 +165,11 @@ export default class RegisterSale extends Component {
       });
       Alert.alert(
         "Cadastro de Venda",
-        "Não foi possível realizar o cadastro! - " + err,
+        "Não foi possível realizar o cadastro!\nVerifique se todos os campos foram preenchidos e se a data é válida!",
         [
           {
             text: "OK", 
-            onPress: () => this.props.navigation.navigate('Sales', { update: true }), 
-            icon: "done"
+            onPress: () => this.props.navigation.navigate('RegisterSale'),               
           }
         ],
         { cancelable: false }
@@ -186,8 +177,8 @@ export default class RegisterSale extends Component {
     });
   }
 
-  render() {    
-    return(      
+  render() {        
+    return(            
       <View style={{ backgroundColor: 'white', flex: 1 }}>
         <ScrollView keyboardShouldPersistTaps="handled">
           <KeyboardAvoidingView
@@ -242,7 +233,7 @@ export default class RegisterSale extends Component {
                   precision: 2,
                   separator: ',',
                   delimiter: '.',
-                  unit: 'R$',
+                  unit: 'R$ ',
                   suffixUnit: ''
                 }}                
                 value={this.state.saleprice}
@@ -258,7 +249,7 @@ export default class RegisterSale extends Component {
                   precision: 2,
                   separator: ',',
                   delimiter: '.',
-                  unit: 'R$',
+                  unit: 'R$ ',
                   suffixUnit: ''
                 }}                
                 value={this.state.finalprice}
@@ -274,7 +265,7 @@ export default class RegisterSale extends Component {
                   precision: 2,
                   separator: ',',
                   delimiter: '.',
-                  unit: 'R$',
+                  unit: 'R$ ',
                   suffixUnit: ''
                 }}                
                 value={this.state.amountpaid}
@@ -296,6 +287,13 @@ export default class RegisterSale extends Component {
             title="Cadastrar"
             buttonStyle={styles.button}                
             onPress={() => this.saveSale()}
+          />
+
+<Button
+            icon={{name: 'save', color: '#FFF'}}         
+            title="LOG"
+            buttonStyle={styles.button}                
+            onPress={() => this.log()}
           />
         </ScrollView>
       </View>
