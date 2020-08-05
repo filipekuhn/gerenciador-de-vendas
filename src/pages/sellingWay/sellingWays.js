@@ -70,8 +70,8 @@ export default class SellingWays extends Component {
       title={item.name}      
       leftAvatar={{
         rounded: false,
-        source: require('../../images/sellingway.png'),
-        title: item.name[0],        
+        size: "large",
+        icon: { name: 'store', color: 'black'}    
       }}
       onPress={() => {
         this.props.navigation.navigate('SellingWay', {

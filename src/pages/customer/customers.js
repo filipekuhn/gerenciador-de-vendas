@@ -68,15 +68,15 @@ export default class Customers extends Component {
       subtitle={item.email}
       leftAvatar={{        
         rounded: true,        
-        size: "medium",               
-        source: require('../../images/users.png'), 
-        title: item.name[0],        
+        size: "large",               
+        //source: require('../../images/users.png'), 
+        icon: { name: 'person', color: 'black'}             
       }}
       onPress={() => {
         this.props.navigation.navigate('Customer', {
           id: `${item._id}`,          
         });
-      }}
+      }}      
       chevron
       bottomDivider
     />    

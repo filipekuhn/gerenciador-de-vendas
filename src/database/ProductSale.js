@@ -2,13 +2,13 @@ import Database from './Database';
 
 const database = new Database();
 
-export default class ProductSellingWay {
+export default class ProductSale {
 
-  addProductSellingWay(p) {
+  addProductSale(p) {
     return new Promise((resolve) => {
       database.initDB().then((db) => {
         db.transaction((tx) => {
-          tx.executeSql('INSERT INTO productsellingway (idproduct, idsellingway, siteinclusiondate, saleprice, sitecommission, netprice) VALUES (?, ?, ?, ?, ?, ?)', 
+          tx.executeSql('INSERT INTO productsale (idproduct, idsellingway, siteinclusiondate, saleprice, sitecommission, netprice) VALUES (?, ?, ?, ?, ?, ?)', 
           [
             p.idProduct,
             p.idSellingWay,
@@ -80,10 +80,7 @@ export default class ProductSellingWay {
       const product = [];
       database.initDB().then((db) => {
         db.transaction((tx) => {
-          tx.executeSql('SELECT psw._id, psw.netprice, psw.saleprice, psw.sitecommission, psw.siteinclusiondate, ' +
-                        'p._id AS idproduct, p.name, sw._id AS idsellingway, sw.name AS sellingwayname ' +
-                        'FROM productsellingway AS psw JOIN product AS p ON psw.idproduct = p._id ' +
-                        'JOIN sellingway AS sw ON psw.idsellingway = sw._id WHERE psw._id = ?', [id]).then(([tx, results]) => {
+          tx.executeSql('SELECT * FROM productsellingway WHERE idproduct = ?', [id]).then(([tx, results]) => {
             console.log(results);
             if(results.rows.length > 0) {
               let row = results.rows.item(0);
@@ -107,31 +104,16 @@ export default class ProductSellingWay {
       const products = [];
       database.initDB().then((db) => {
         db.transaction((tx) => {
-          tx.executeSql('SELECT p._id AS idproduct, p.name, sw._id AS idsellingway, sw.name AS sellingwayname, psw._id, ' +
-                        'psw.siteinclusiondate, psw.saleprice, psw.sitecommission, psw.netprice ' + 
-                        'FROM productsellingway AS psw JOIN product AS p ON psw.idproduct = p._id ' + 
-                        'JOIN sellingway AS sw ON psw.idsellingway = sw._id', []).then(([tx,results]) => {
+          tx.executeSql('SELECT * FROM product ', []).then(([tx,results]) => {
             console.log("Query completed");
             var len = results.rows.length;
             for (let i = 0; i < len; i++) {
               let row = results.rows.item(i);
               console.log(`ID Product: ${row._id}, Product Name: ${row.name}`);
-              const { _id, name, idproduct, idsellingway, sellingwayname, siteinclusiondate, saleprice, sitecommission, netprice } = row;
+              const { _id, name } = row;
               products.push({
                 id: _id,
-                item: name + " - " + sellingwayname,
-                product: {
-                  id: idproduct,
-                  name: name
-                },
-                sellingWay: {
-                  id: idsellingway,
-                  name: sellingwayname
-                },
-                siteinclusiondate: siteinclusiondate,
-                saleprice: saleprice,
-                sitecommission: sitecommission,
-                netprice: netprice
+                item: name,                
               });
             }
             console.log(products);
@@ -148,23 +130,29 @@ export default class ProductSellingWay {
     });  
   }
 
-  listProductSellingWay(id) {
+  listProductSale(id) {
     return new Promise((resolve) => {
-      const productSellingWay = [];
+      const productSale = [];
       database.initDB().then((db) => {
         db.transaction((tx) => {
-        tx.executeSql('SELECT psw._id AS _id, psw.siteinclusiondate, psw.saleprice, psw.sitecommission, ' +
-                      'psw.netprice, p._id AS idproduct, p.code, p.measures, sw._id AS idsellingway, ' +
-                      'sw.name FROM productsellingway AS psw JOIN product AS p ON psw.idproduct = p._id JOIN sellingway AS sw ON psw.idsellingway = sw._id WHERE idproduct = ? ', [id]).then(([tx,results]) => {
+        tx.executeSql('SELECT ps._id AS _id, ps.productprice, ps.netprice, ' +
+                      's._id AS idsale, ' +
+                      'p._id AS idproduct, ' +
+                      'p.code, p.measures, sw._id AS idsellingway, sw.name ' +
+                      'FROM productsale AS ps JOIN productsellingway AS psw ON ps.idproductsellingway = psw._id ' +
+                      'JOIN product AS p ON psw.idproduct = p._id ' +
+                      'JOIN sellingway AS sw ON psw.idsellingway = sw._id WHERE idsale = ? ', [id]).then(([tx,results]) => {
             console.log("Query completed", results.rows.length);
             var len = results.rows.length;
             for (let i = 0; i < len; i++) {
-              let row = results.rows.item(i);
-              //console.log(`ID ProductSellingWay: ${row._id}, ProductSellingWay SalePrice: ${row.saleprice}`);
+              let row = results.rows.item(i);              
               console.log("ESSE", results.rows.item(0));
-              const { _id, idproduct, idsellingway, siteinclusiondate, saleprice, sitecommission, netprice, code, measures, name } = row;
-              productSellingWay.push({
+              const { _id, productprice, idsale, idproduct, idsellingway, netprice, code, measures, name } = row;
+              productSale.push({
                 _id,
+                sale: {
+                  idsale: idsale,
+                },
                 product: {
                   idproduct: idproduct,
                   code: code,
@@ -173,15 +161,13 @@ export default class ProductSellingWay {
                 sellingWay: {
                   idsellingway: idsellingway,
                   name: name
-                },
-                siteinclusiondate, 
-                saleprice, 
-                sitecommission, 
+                },                
+                productprice, 
                 netprice
               });
             }
-            console.log(productSellingWay);
-            resolve(productSellingWay);
+            console.log(productSale);
+            resolve(productSale);
           });
         }).then((result) => {
           database.closeDatabase(db);

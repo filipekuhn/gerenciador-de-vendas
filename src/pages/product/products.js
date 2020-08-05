@@ -70,10 +70,9 @@ export default class Products extends Component {
       leftAvatar={{        
         rounded: true,
         showEditButton: true,
-        size: "medium",
-        //source: { uri: 'https://reactjs.org/logo-og.png'},        
-        source: require('../../images/product.png'), 
-        title: item.name[0],              
+        size: "large",
+        icon: { name: 'computer', color: 'black' }
+        
       }}
       onPress={() => {
         this.props.navigation.navigate('Product', {

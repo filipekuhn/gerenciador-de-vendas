@@ -66,8 +66,7 @@ export default class RegisterProductSellingWay extends Component {
     });
   }
 
-  saveProductSellingWay() {
-    console.log("OPABAO", this.state.selectedSellingWay);
+  saveProductSellingWay() {    
     this.setState({
       isLoading: true,      
     });    
@@ -188,22 +187,7 @@ export default class RegisterProductSellingWay extends Component {
                 value={this.state.siteCommission}
                 onChangeText={(text) => this.updateTextInput(text, 'siteCommission')}                
                 ref={(ref) => this.comissionField = ref}
-              /> 
-              <Text>Valor líquido</Text>
-              <TextInputMask                
-                style={styles.textInput}
-                type={'money'}  
-                options={{
-                  precision: 2,
-                  separator: ',',
-                  delimiter: '.',
-                  unit: 'R$',
-                  suffixUnit: ''
-                }}   
-                value={this.state.netPrice}
-                enabled={false}              
-              />                       
-     
+              />          
               <Button
                 icon={{name: 'save', color: '#FFF'}}                
                 title="Cadastrar"

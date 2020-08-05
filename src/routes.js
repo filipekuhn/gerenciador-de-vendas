@@ -28,6 +28,7 @@ import City from './pages/city/city';
 import RegisterCity from './pages/city/registerCity';
 import RegisterProductSellingWay from './pages/product/registerProductSellingWay';
 import RegisterSale from './pages/sale/registerSale';
+import RegisterSaleProduct from './pages/sale/registerSaleProduct';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -72,9 +73,15 @@ function App() {
                   headerTintColor: '#FFF', headerTitleAlign: 'left' }} /> 
         
         <Stack.Screen name="RegisterSale" 
-          component={RegisterSale} 
+          component={RegisterSale}
+          initialParams={{ update: false }} 
           options={{ title: "Venda", headerStyle: {backgroundColor: '#5390fe'}, 
                   headerTintColor: '#FFF', headerTitleAlign: 'left' }} />
+
+        <Stack.Screen name="RegisterSaleProduct" 
+          component={RegisterSaleProduct} 
+          options={{ title: "Produto", headerStyle: {backgroundColor: '#5390fe'}, 
+                  headerTintColor: '#FFF', headerTitleAlign: 'left' }} />                  
         
         <Stack.Screen name="RegisterCustomer" 
           component={RegisterCustomer} 

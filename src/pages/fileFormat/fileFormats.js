@@ -70,8 +70,8 @@ export default class FileFormats extends Component {
       title={item.name}      
       leftAvatar={{
         rounded: false,        
-        source: require('../../images/fileformat.png'),
-        title: item.name[0],                
+        size: "large",
+        icon: { name: 'description', color: 'black'}              
       }}
       onPress={() => {
         this.props.navigation.navigate('FileFormat', {
