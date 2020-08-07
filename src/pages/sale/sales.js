@@ -77,7 +77,7 @@ export default class Sales extends Component {
         icon: item.pendingpayment === 1 ? { name: 'money-off', color: 'red' } : { name: 'attach-money', color: 'green' }
       }}
       onPress={() => {
-        this.props.navigation.navigate('Sale', {
+        this.props.navigation.navigate('RegisterSale', {
           id: `${item._id}`,          
         });
       }}

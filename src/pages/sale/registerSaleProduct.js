@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
-import { View, Text, Picker, ScrollView, KeyboardAvoidingView } from 'react-native';
+import { View, Text, ScrollView, KeyboardAvoidingView, Alert } from 'react-native';
+import { Picker } from '@react-native-community/picker'
 import { Button } from 'react-native-elements';
 import { TextInputMask } from 'react-native-masked-text';
 import styles from '../../stylesheet/stylesheet';
-import Product from '../../database/Product';
+import ProductSale from '../../database/ProductSale';
 import ProductSellingWay from '../../database/ProductSellingWay';
 
-const ProductDB = new Product();
+const ProductSaleDB = new ProductSale();
 const ProductSellingWayDB = new ProductSellingWay();
 
 export default class RegisterProductSale extends Component {
@@ -18,6 +19,7 @@ export default class RegisterProductSale extends Component {
       selectedProduct: {},
       product: {},
       productSellingWays: [],
+      idsale: '',
       salePrice: '',
       siteCommission: '',
       netPrice: ''
@@ -26,6 +28,7 @@ export default class RegisterProductSale extends Component {
 
   componentDidMount() {
     this.getProduct();
+    this.setState({ idsale: this.props.route.params.id });
   }
 
   updateTextInput = (text, field) => {
@@ -67,27 +70,47 @@ export default class RegisterProductSale extends Component {
     })    
   }
 
-  includeProduct() {
-    let productSellingWaySale = {
-      id: this.state.product._id,
-      product: {
-        id: this.state.product.idproduct,
-        name: this.state.product.name,        
-      },
-      sellingWay: {
-        id: this.state.product.idsellingway,
-        name: this.state.product.sellingwayname
-      },
-      siteCommission: this.state.siteCommission,
-      salePrice: this.state.salePrice,
-      netPrice: this.state.netPrice
-    };
+  saveSaleProduct() {
+    this.setState({
+      isLoading: true,      
+    });    
+        
+    let netPriceValue = this.salePriceField.getRawValue() - this.comissionField.getRawValue();
+    netPriceValue = netPriceValue.toFixed(2);
 
-    this.props.navigation.goBack({
-      update: true,
-      productSellingWaySale
+    let data = {    
+      idSale: this.state.idsale,        
+      idProductSellingWay: this.state.selectedProduct,
+      productPrice: this.salePriceField.getRawValue(),      
+      netPrice: netPriceValue
+    }
+    console.log("AQUI O DATA DO PRODUCT SALE", data);
+    ProductSaleDB.addProductSale(data).then((result) => {
+      console.log(result);
+      this.setState({
+        isLoading: false,
+      });
+      Alert.alert(
+        "Inclusão de Produto",
+        "O produto foi incluído com sucesso!",
+        [
+          {
+            text: "OK",             
+            onPress: () => this.props.navigation.navigate('RegisterSale', {
+              id: this.state.idSale,              
+              update: true
+            })
+          }
+        ],
+        { cancelable: false }
+      );      
+    }).catch((err) => {
+      console.log(err);
+      this.setState({
+        isLoading: false,
+      });
     });
-  }
+  }  
 
   render() {
     return(
@@ -164,7 +187,7 @@ export default class RegisterProductSale extends Component {
                   icon={{ name: 'save', color: '#FFF' }}                
                   title="Salvar"
                   buttonStyle={styles.button}                               
-                  onPress={() => this.includeProduct()}                
+                  onPress={() => this.saveSaleProduct()}                
                 /> 
               </View>
             </KeyboardAvoidingView>

@@ -7,6 +7,7 @@ export default class Sale {
   addSale(s) {
     return new Promise((resolve) => {
       database.initDB().then((db) => {
+        console.log("ABRIU TRANSAÇÃO");
         db.transaction((tx) => {
           tx.executeSql('INSERT INTO sale (date, idcustomer, ' +
           'idsellingway, observations, saleprice, finalprice, amountpaid, pendingpayment) ' +
@@ -21,13 +22,14 @@ export default class Sale {
             s.amountpaid,
             s.pendingpayment,                       
           ]).then(([tx, results]) => {            
-            resolve(true);
+            console.log(results);
+            resolve(results);
           });
         }).then((result) => {
           database.closeDatabase(db);
         }).catch((err) => {
           console.log(err);
-          database.closeDatabase(db);
+          //database.closeDatabase(db);
           resolve(false);
         });
       }).catch((err) => {
@@ -36,16 +38,24 @@ export default class Sale {
     });  
   }
 
-  editSale(p) {
+  editSale(s) {
     return new Promise((resolve) => {
       database.initDB().then((db) => {
         db.transaction((tx) => {
-          tx.executeSql('UPDATE sale SET name = ?, code = ?, measures = ? WHERE _id = ?', 
+          tx.executeSql('UPDATE sale SET date = ?, idcustomer = ?, ' +
+                        'idsellingway = ?, observations = ?, saleprice = ?, ' +
+                        'finalprice = ?, amountpaid = ? , pendingpayment = ? '+
+                        'WHERE _id = ?', 
           [
-            p.name,
-            p.code,
-            p.measures,             
-            p._id
+            s.date,            
+            s.idcustomer,
+            s.idsellingway,
+            s.observations,
+            s.saleprice,
+            s.finalprice,
+            s.amountpaid,
+            s.pendingpayment,   
+            s.id
           ]).then(([tx, results]) => {
             resolve(true);
           });
@@ -90,6 +100,7 @@ export default class Sale {
             console.log(results);
             if(results.rows.length > 0) {
               let row = results.rows.item(0);
+              console.log("AQUI A VENDA: ", row);
               resolve(row);
             }                          
           });
@@ -141,7 +152,7 @@ export default class Sale {
       const sales = [];
       database.initDB().then((db) => {
         db.transaction((tx) => {
-          tx.executeSql('SELECT s.*, c._id, c.name AS customername, sw._id, sw.name AS sellingwayname FROM sale AS s ' +
+          tx.executeSql('SELECT s.*, c._id AS idcustomer, c.name AS customername, sw._id AS idsellingway, sw.name AS sellingwayname FROM sale AS s ' +
             'JOIN customer AS c ON s.idcustomer = c._id JOIN sellingway AS sw ON s.idsellingway = sw._id ' +
             'ORDER BY _id DESC;', []).then(([tx,results]) => {
             console.log("Query completed");

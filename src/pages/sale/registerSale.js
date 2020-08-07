@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
-import { View, FlatList, Image, KeyboardAvoidingView, Alert, Text, Picker, ActivityIndicator, TouchableOpacity } from 'react-native';
-import { Button } from 'react-native-elements';
+import { View, FlatList, Image, KeyboardAvoidingView, Alert, Text, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { Picker } from '@react-native-community/picker'
+import { Button, ListItem } from 'react-native-elements';
+import { TextMask } from 'react-native-masked-text'
 import styles from '../../stylesheet/stylesheet';
 import moment from 'moment';
 import { TextInput } from 'react-native-gesture-handler';
@@ -40,24 +42,35 @@ export default class RegisterSale extends Component {
       finalprice: '', 
       amountpaid: '',
       pendingpayment: '',                  
-      selectedCustomer: {},
-      selectedSellingWay: {},
+      selectedCustomer: { id: 0, item: 'Cliente' },
+      selectedSellingWay: { id: 0, item: 'Meio de Venda' },
       selectedProduct: {},
       productSale: [],
       sellingWays: [],
       customers: [],
+      sale: {},
       productNotFound: 'Nenhum produto foi adicionado'
     };          
   }
 
   componentDidMount() {  
-    let todayDate = moment(new Date()).format("DD-MM-YYYY");
-    this.setState({
-      date: todayDate
-    });  
-    this.getCustomers();
-    this.getSellingWays();
-    //this.getProducts();
+    console.log("ALOOOO");
+    if(this.props.route.params.id === '') {
+      console.log("VENDA NOVA");
+      let todayDate = moment(new Date()).format("DD/MM/YYYY");
+      this.setState({
+        date: todayDate
+      });  
+      this.getCustomers();
+      this.getSellingWays();
+    } else {
+      console.log("BUSCANDO A VENDA: ", this.state.id);
+      this.setState({
+        id: this.props.route.params.id
+      });
+      this.getSale();      
+    }
+        
   }
 
   getCustomers() {
@@ -65,7 +78,8 @@ export default class RegisterSale extends Component {
     Customer.listCustomerItems().then((data) => {
       customers = data;      
       this.setState({
-        customers,        
+        customers,   
+        selectedCustomer: customers,     
         isLoading: false,
       });      
     }).catch((err) => {
@@ -81,7 +95,8 @@ export default class RegisterSale extends Component {
     SellingWay.listSellingWaysItems().then((data) => {
       sellingWays = data;      
       this.setState({
-        sellingWays,                
+        sellingWays,   
+        selectedSellingWay: sellingWays,             
         isLoading: false,
       });      
     }).catch((err) => {
@@ -97,16 +112,83 @@ export default class RegisterSale extends Component {
     ProductSale.listProductSale(this.state.id).then((data) => {
       productSale = data;
       this.setState({
-        productSale,
-        isLoading: false,
+        productSale,        
       });
     }).catch((err) => {
       console.log(err);
       this.setState = {
         isLoading: false
       }
-    })
+    });
+  }
 
+  getSale() {    
+    Sale.findSaleById(this.state.id).then((data) => {   
+      let sale = data;   
+      this.setState({
+        date: sale.date,       
+        idcustomer: sale.idcustomer, 
+        idsellingway: sale.idsellingway, 
+        observations: sale.observations, 
+        saleprice: sale.saleprice, 
+        finalprice: sale.finalprice, 
+        amountpaid: sale.amountpaid,
+        pendingpayment: sale.pendingpayment,         
+      });      
+    }).catch((err) => {
+      console.log(err);
+      this.setState = {
+        isLoading: false
+      }
+    });
+    Customer.findCustomerById(this.state.idcustomer).then((data) => { 
+      let customer = data;     
+      this.setState({
+        selectedCustomer: [{
+          id: customer._id,
+          item: customer.name
+        }],
+        customers: [{
+          id: customer._id,
+          item: customer.name
+        }]
+      });
+    }).catch((err) => {
+      console.log(err);
+      this.setState = {
+        isLoading: false
+      }
+    });    
+    SellingWay.findSellingWayById(this.state.idsellingway).then((data) => {
+      let sellingWay = data;
+      this.setState({
+        selectedSellingWay: [{
+          id: sellingWay._id,
+          item: sellingWay.name,          
+        }],
+        sellingWays: [{
+          id: sellingWay._id,
+          item: sellingWay.name,          
+        }]
+      })
+    }).catch((err) => {
+      console.log(err);
+      this.setState = {
+        isLoading: false
+      }
+    });
+    ProductSale.listProductSale(this.state.id).then((data) => {
+      let productSale = data;
+      this.setState({
+        productSale,
+        isLoading: false
+      })
+    }).catch((err) => {
+      console.log(err);
+      this.setState = {
+        isLoading: false
+      }
+    });    
   }
 
   updateTextInput = (text, field) => {
@@ -119,7 +201,7 @@ export default class RegisterSale extends Component {
     this.setState({
       isLoading: true,      
     });          
-
+    
     let pending = true;
     let pendigPaymentValue = this.amountPaidField.getRawValue() - this.salePriceField.getRawValue()
     pendigPaymentValue = pendigPaymentValue.toFixed(2)
@@ -162,8 +244,9 @@ export default class RegisterSale extends Component {
       )
       return false
     }
-
-      let data = {      
+    console.log("CHEGOU ANTES DO MÉTODO DE INSERIR A VENDA!", + this.state.date, + "date: " + date);
+      let data = { 
+      id: this.state.id,           
       date: date,       
       idcustomer: this.state.selectedCustomer, 
       idsellingway: this.state.selectedSellingWay, 
@@ -172,128 +255,169 @@ export default class RegisterSale extends Component {
       finalprice: finalPrice, 
       amountpaid: amountPaid,
       pendingpayment: pending
-    }
-
-    Sale.addSale(data).then((result) => {
-      console.log(result);
-      this.setState({
-        isLoading: false,
-      });
-      if(result) {
+    }    
+    console.log("ESSA É O OBJETO DATA: ", data);
+    if(this.state.id === '') {      
+      Sale.addSale(data).then((result) => {      
+        this.setState({
+          isLoading: false,
+        });
+        
+        console.log("Resposta do método de inserir");
+        if(result.insertId > 0) {          
+          this.setState({ id: result.insertId });     
+          Alert.alert(
+            "Cadastro de Venda",
+            "O Cadastro foi salvo com sucesso!",
+            [
+              {
+                text: "OK",                          
+              }
+            ],
+            { cancelable: true }
+          );
+        }      
+      }).catch((err) => {
+        console.log(err);
+        this.setState({
+          isLoading: false,
+        });
         Alert.alert(
           "Cadastro de Venda",
-          "O Cadastro foi salvo com sucesso!",
+          "Não foi possível realizar o cadastro!\nVerifique se todos os campos foram preenchidos e se a data é válida!",
           [
             {
               text: "OK", 
-              onPress: () => this.props.navigation.navigate('Sales', { update: true }),              
+              onPress: () => this.props.navigation.navigate('RegisterSale'),               
             }
           ],
           { cancelable: false }
         );
-      }      
-    }).catch((err) => {
-      console.log(err);
-      this.setState({
-        isLoading: false,
       });
-      Alert.alert(
-        "Cadastro de Venda",
-        "Não foi possível realizar o cadastro!\nVerifique se todos os campos foram preenchidos e se a data é válida!",
-        [
-          {
-            text: "OK", 
-            onPress: () => this.props.navigation.navigate('RegisterSale'),               
-          }
-        ],
-        { cancelable: false }
-      );
-    });
+    } else {
+      Sale.editSale(data).then((result) => {      
+        this.setState({
+          isLoading: false,
+        });
+        if(true) {                  
+          Alert.alert(
+            "Cadastro de Venda",
+            "As alterações foram salvas com sucesso!",
+            [
+              {
+                text: "OK",
+                onPress: () => this.props.navigation.navigate('Sales', {
+                  update: true
+                })                          
+              }
+            ],
+            { cancelable: true }
+          );
+        }      
+      }).catch((err) => {
+        console.log(err);
+        this.setState({
+          isLoading: false,
+        });
+        Alert.alert(
+          "Cadastro de Venda",
+          "Não foi possível realizar as alterações!\nVerifique se todos os campos foram preenchidos e se a data é válida!",
+          [
+            {
+              text: "OK"                
+            }
+          ],
+          { cancelable: false }
+        );
+      });
+    }
+    
   }
 
   onRefresh() {
-    this.setState({ isLoading: true }, function() { this.getProductSale() });
+    this.setState({ isLoading: true }, function() { this.getSale() });
   }
 
   keyExtractor = (item, index) => index.toString()
 
   renderItem = ({ item }) => (
-    <ListItem                        
-      title={item.product.name}
-      titleStyle={{ fontWeight: "bold", fontSize: 18 }}                                     
-      subtitle={
-        <View>
-          <View style={{ flexDirection: 'row'}}>
-            <Text style={{ fontWeight: 'bold'}}>Valor de Venda: </Text>
-            <TextMask
-            value={item.saleprice}
-            type={'money'}
-            options={{
-                obfuscated: true,
-                precision: 2,
-                separator: ',',
-                delimiter: '.',
-                unit: 'R$ ',
-                suffixUnit: ''
-            }}
-            />
+    <View style={{ marginLeft: 10, marginRight: 10 }}>
+      <ListItem                        
+        title={item.product.name}
+        titleStyle={{ fontWeight: "bold", fontSize: 18 }}                                     
+        subtitle={
+          <View>
+            <View style={{ flexDirection: 'row'}}>
+              <Text style={{ fontWeight: 'bold'}}>Valor de Venda: </Text>
+              <TextMask
+              value={item.saleprice}
+              type={'money'}
+              options={{
+                  obfuscated: true,
+                  precision: 2,
+                  separator: ',',
+                  delimiter: '.',
+                  unit: 'R$ ',
+                  suffixUnit: ''
+              }}
+              />
+            </View>
+            <View style={{ flexDirection: 'row'}}>
+              <Text style={{ fontWeight: 'bold'}}>Comissão do Site: </Text>
+              <TextMask
+              value={item.sitecommission}
+              type={'money'}
+              options={{
+                  obfuscated: true,
+                  precision: 2,
+                  separator: ',',
+                  delimiter: '.',
+                  unit: 'R$ ',
+                  suffixUnit: ''
+              }}
+              />
+            </View>
+            <View style={{ flexDirection: 'row'}}>
+              <Text style={{ fontWeight: 'bold'}}>Valor Líquido: </Text>
+              <TextMask
+              value={item.netprice}
+              type={'money'}
+              options={{
+                  obfuscated: true,
+                  precision: 2,
+                  separator: ',',
+                  delimiter: '.',
+                  unit: 'R$ ',
+                  suffixUnit: ''
+              }}
+              />
+            </View>
           </View>
-          <View style={{ flexDirection: 'row'}}>
-            <Text style={{ fontWeight: 'bold'}}>Comissão do Site: </Text>
-            <TextMask
-            value={item.sitecommission}
-            type={'money'}
-            options={{
-                obfuscated: true,
-                precision: 2,
-                separator: ',',
-                delimiter: '.',
-                unit: 'R$ ',
-                suffixUnit: ''
-            }}
-            />
-          </View>
-          <View style={{ flexDirection: 'row'}}>
-            <Text style={{ fontWeight: 'bold'}}>Valor Líquido: </Text>
-            <TextMask
-            value={item.netprice}
-            type={'money'}
-            options={{
-                obfuscated: true,
-                precision: 2,
-                separator: ',',
-                delimiter: '.',
-                unit: 'R$ ',
-                suffixUnit: ''
-            }}
-            />
-          </View>
-        </View>
-      }
-      rightAvatar={{
-        icon: { name: 'delete', color: 'red'}                     
-      }}
-      onPress={() => this.props.navigation.navigate('EditProductSale', {
-        id: `${item._id}`
-      })}                  
-      onLongPress={() => Alert.alert(
-        "Exclusão Produto",
-        `Você tem certeza que deseja excluir dessa venda o Produto ${item.sellingWay.name}?`,
-        [
-          {
-            text: "Sim", 
-            onPress: () => dbProductSellingWay.deleteProductSellingWay(`${item._id}`).then(() => this.onRefresh()),                         
-          },
-          {
-            text: "Cancelar",                   
-          }
-        ],
-        { cancelable: true }
-      )}
-      delayLongPress={1000}
-      bottomDivider 
-      chevron                 
-    />    
+        }
+        rightAvatar={{
+          icon: { name: 'delete', color: 'red'}                     
+        }}
+        onPress={() => this.props.navigation.navigate('EditProductSale', {
+          id: `${item._id}`
+        })}                  
+        onLongPress={() => Alert.alert(
+          "Exclusão Produto",
+          `Você tem certeza que deseja excluir dessa venda o Produto ${item.sellingWay.name}?`,
+          [
+            {
+              text: "Sim", 
+              onPress: () => ProductSale.deleteProductSale(`${item._id}`).then(() => this.onRefresh()),                         
+            },
+            {
+              text: "Cancelar",                   
+            }
+          ],
+          { cancelable: true }
+        )}
+        delayLongPress={1000}
+        bottomDivider                      
+      />                    
+    </View>
   )
 
   render() {       
@@ -412,6 +536,12 @@ export default class RegisterSale extends Component {
             buttonStyle={styles.button}                
             onPress={() => this.saveSale()}
           /> 
+          <Button
+            icon={{ name: 'arrow-back', color: 'white'}}
+            title="Vendas"
+            buttonStyle={{ marginLeft: 100, marginRight: 100, marginTop: 10, padding: 10, borderRadius: 80 }}
+            onPress={() => this.props.navigation.navigate('Sales', { update: true })}
+          />    
         </KeyboardAvoidingView>
       </View>        
     };
@@ -424,8 +554,10 @@ export default class RegisterSale extends Component {
             icon={{ name: 'add-circle-outline', color: 'white'}}
             title="Adicionar"
             buttonStyle={{ marginLeft: 100, marginRight: 100, marginTop: 10, padding: 10, borderRadius: 80 }}
-            onPress={() => this.props.navigation.navigate('RegisterSaleProduct')}
-          />          
+            onPress={() => this.props.navigation.navigate('RegisterSaleProduct', {
+              id: `${this.state.id}`
+            })}
+          />      
         </View>
       )
     }
@@ -437,11 +569,12 @@ export default class RegisterSale extends Component {
         </View>
       )
     }
-    if(this.props.route.params.update){
-      this.props.route.params.update = false;
-      productSale.push(
-        this.props.params.productSallingWaySale
-      )
+    if(this.props.route.params.id !== '') {      
+      this.setState({
+        id: this.props.route.params.id
+      });
+      this.props.route.params.id = '';
+      this.getSale();
     }
 
     return(            
@@ -456,12 +589,11 @@ export default class RegisterSale extends Component {
           ListFooterComponent={getFooter} 
           ListEmptyComponent={emptyList}         
         /> 
-        {!this.state.productSale.length === 0 && (
+        {!this.state.productSale.length == 0 && (
           <TouchableOpacity
           activeOpacity={0.7}
           onPress={() => this.props.navigation.navigate('RegisterSaleProduct', {
-            id: `${this.state.id}`,
-            name: `${this.state.selectedCustomer.name}`
+            id: `${this.state.id}`            
           })}
           title="+"
           style={styles.touchableOpacityStyle}>

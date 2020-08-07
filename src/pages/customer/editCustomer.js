@@ -76,9 +76,7 @@ export default class EditCostumer extends Component {
           city,
           selectedLocations: [{ item: city.name + " - " + city.uf, id: city._id }],
           isLoading: false          
-        });
-        console.log("Ó AQUI Ó: ", city.name);
-        
+        });                
       }).catch((err) => {
         console.log(err);
         this.setState = ({

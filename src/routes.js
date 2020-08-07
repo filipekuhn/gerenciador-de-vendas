@@ -74,7 +74,7 @@ function App() {
         
         <Stack.Screen name="RegisterSale" 
           component={RegisterSale}
-          initialParams={{ update: false }} 
+          initialParams={{ id: '', update: false }} 
           options={{ title: "Venda", headerStyle: {backgroundColor: '#5390fe'}, 
                   headerTintColor: '#FFF', headerTitleAlign: 'left' }} />
 

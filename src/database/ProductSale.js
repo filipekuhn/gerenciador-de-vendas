@@ -4,19 +4,17 @@ const database = new Database();
 
 export default class ProductSale {
 
-  addProductSale(p) {
+  addProductSale(p) {    
     return new Promise((resolve) => {
       database.initDB().then((db) => {
-        db.transaction((tx) => {
-          tx.executeSql('INSERT INTO productsale (idproduct, idsellingway, siteinclusiondate, saleprice, sitecommission, netprice) VALUES (?, ?, ?, ?, ?, ?)', 
+        db.transaction((tx) => {          
+          tx.executeSql('INSERT INTO productsale (idsale, idproductsellingway, productprice, netprice) VALUES (?, ?, ?, ?)', 
           [
-            p.idProduct,
-            p.idSellingWay,
-            p.siteInclusionDate,
-            p.salePrice,
-            p.siteCommission,
+            p.idSale,
+            p.idProductSellingWay,            
+            p.productPrice,            
             p.netPrice            
-          ]).then(([tx, results]) => {
+          ]).then(([tx, results]) => {            
             resolve(results);
           });
         }).then((result) => {
@@ -55,11 +53,11 @@ export default class ProductSale {
     });  
   }
 
-  deleteProductSellingWay(id) {
+  deleteProductSale(id) {
     return new Promise((resolve) =>{
       database.initDB().then((db) => {
         db.transaction((tx) => {
-          tx.executeSql('DELETE FROM productsellingway WHERE _id = ?', [id]).then(([tx, results]) => {
+          tx.executeSql('DELETE FROM productsale WHERE _id = ?', [id]).then(([tx, results]) => {
             console.log(results);
             resolve(results);            
           });
@@ -138,16 +136,17 @@ export default class ProductSale {
         tx.executeSql('SELECT ps._id AS _id, ps.productprice, ps.netprice, ' +
                       's._id AS idsale, ' +
                       'p._id AS idproduct, ' +
-                      'p.code, p.measures, sw._id AS idsellingway, sw.name ' +
+                      'p.code, p.name AS productname, p.measures, sw._id AS idsellingway, sw.name ' +
                       'FROM productsale AS ps JOIN productsellingway AS psw ON ps.idproductsellingway = psw._id ' +
                       'JOIN product AS p ON psw.idproduct = p._id ' +
-                      'JOIN sellingway AS sw ON psw.idsellingway = sw._id WHERE idsale = ? ', [id]).then(([tx,results]) => {
+                      'JOIN sellingway AS sw ON psw.idsellingway = sw._id ' +
+                      'JOIN sale AS s ON ps.idsale = s._id WHERE ps.idsale = ? ', [id]).then(([tx,results]) => {
             console.log("Query completed", results.rows.length);
             var len = results.rows.length;
             for (let i = 0; i < len; i++) {
               let row = results.rows.item(i);              
               console.log("ESSE", results.rows.item(0));
-              const { _id, productprice, idsale, idproduct, idsellingway, netprice, code, measures, name } = row;
+              const { _id, productprice, idsale, idproduct, productname, idsellingway, netprice, code, measures, name } = row;
               productSale.push({
                 _id,
                 sale: {
@@ -155,6 +154,7 @@ export default class ProductSale {
                 },
                 product: {
                   idproduct: idproduct,
+                  name: productname,
                   code: code,
                   measures: measures
                 },
