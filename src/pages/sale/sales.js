@@ -78,7 +78,8 @@ export default class Sales extends Component {
       }}
       onPress={() => {
         this.props.navigation.navigate('RegisterSale', {
-          id: `${item._id}`,          
+          id: `${item._id}`, 
+          update: true         
         });
       }}
       chevron
