@@ -167,7 +167,7 @@ export default class RegisterProductSale extends Component {
                 onChangeText={(text) => this.updateTextInput(text, 'siteCommission')}                
                 ref={(ref) => this.comissionField = ref}
               /> 
-              <Text style={{  marginLeft: 20 }}>Valor líquido</Text>
+              {/* <Text style={{  marginLeft: 20 }}>Valor líquido</Text>
               <TextInputMask 
                 placeholder="R$ 0,00"               
                 style={styles.textInput}
@@ -181,7 +181,7 @@ export default class RegisterProductSale extends Component {
                 }}   
                 value={this.state.netPrice}
                 enabled={false}              
-              />                       
+              />      */                 }
               <View style={{ marginLeft: 20}}>
                 <Button
                   icon={{ name: 'save', color: '#FFF' }}                
@@ -189,7 +189,7 @@ export default class RegisterProductSale extends Component {
                   buttonStyle={styles.button}                               
                   onPress={() => this.saveSaleProduct()}                
                 /> 
-              </View>
+              </View> 
             </KeyboardAvoidingView>
         </ScrollView>
       </View>

@@ -114,7 +114,7 @@ export default class Sale {
         console.log(err);
       });
     });
-  }
+  }  
 
   listSalesItems() {
     return new Promise((resolve) => {
@@ -198,4 +198,6 @@ export default class Sale {
       });
     });  
   }
+
+
 }

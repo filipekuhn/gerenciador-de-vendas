@@ -29,6 +29,7 @@ import RegisterCity from './pages/city/registerCity';
 import RegisterProductSellingWay from './pages/product/registerProductSellingWay';
 import RegisterSale from './pages/sale/registerSale';
 import RegisterSaleProduct from './pages/sale/registerSaleProduct';
+import SaleProducts from './pages/sale/saleProducts';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -77,6 +78,12 @@ function App() {
           initialParams={{ id: '', update: false }} 
           options={{ title: "Venda", headerStyle: {backgroundColor: '#5390fe'}, 
                   headerTintColor: '#FFF', headerTitleAlign: 'left' }} />
+
+        <Stack.Screen name="SaleProducts" 
+          component={SaleProducts}
+          initialParams={{ update: false }} 
+          options={{ title: "Carrinho de Produtos", headerStyle: {backgroundColor: '#5390fe'}, 
+                  headerTintColor: '#FFF', headerTitleAlign: 'left' }} />                  
 
         <Stack.Screen name="RegisterSaleProduct" 
           component={RegisterSaleProduct} 
