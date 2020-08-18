@@ -75,10 +75,11 @@ export default class Sale {
     return new Promise((resolve) =>{
       database.initDB().then((db) => {
         db.transaction((tx) => {
+          tx.executeSql('DELETE FROM productsale WHERE idsale = ?', [id]);
           tx.executeSql('DELETE FROM sale WHERE _id = ?', [id]).then(([tx, results]) => {
             console.log("Sale deleted!");
             resolve(results);            
-          });
+          });          
         }).then((result) => {
           database.closeDatabase(db);                
         }).catch((err) => {

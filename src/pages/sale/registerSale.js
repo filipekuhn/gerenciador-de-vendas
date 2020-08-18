@@ -85,18 +85,27 @@ export default class RegisterSale extends Component {
       this.props.route.params.remove = false;
       let updateSalePrice = parseFloat(this.state.saleprice) - parseFloat(this.props.route.params.productPrice);
       let updateFinalPrice = parseFloat(this.state.finalprice) - parseFloat(this.props.route.params.netPrice);
-      let updateQuantity = this.state.productQuantity - 1
+      
       updateSalePrice = parseFloat(updateSalePrice).toFixed(2);
       updateFinalPrice = parseFloat(updateFinalPrice).toFixed(2);
 
-      if(updateQuantity < 0) {
-        updateQuantity = 0;
+      // if(updateQuantity < 0){
+      //   updateQuantity = 0;
+      // }
+      
+      if(updateSalePrice < 0){
+        updateSalePrice = 0;
       }
-      //this.getSaleProductsQuantity();
+
+      if(updateFinalPrice < 0){
+        updateFinalPrice = 0;
+      }
+
+
+      this.getSaleProductsQuantity(this.props.route.params.id);
       this.setState({
         saleprice: updateSalePrice,
-        finalprice: updateFinalPrice,
-        productQuantity: updateQuantity
+        finalprice: updateFinalPrice,        
       })
     } 
 
@@ -118,16 +127,13 @@ export default class RegisterSale extends Component {
       let sumFinalPrice = parseFloat(finalPrice) + parseFloat(this.props.route.params.netPrice);   
       sumSalePrice = parseFloat(sumSalePrice).toFixed(2);
       sumFinalPrice = parseFloat(sumFinalPrice).toFixed(2);
-      console.log("Aqui o sumSalePrice", sumSalePrice);
-      this.getSaleProductsQuantity();
+      
+      this.getSaleProductsQuantity(this.props.route.params.id);
       this.setState({
         saleprice: sumSalePrice,
-        finalprice: sumFinalPrice, 
-        productQuantity: this.state.productQuantity + 1       
+        finalprice: sumFinalPrice,         
       })
-    }
-
-    
+    }    
   }
 
   getCustomers() {
@@ -162,12 +168,10 @@ export default class RegisterSale extends Component {
     })
   }
 
-  getSellingWays() {
-    
+  getSellingWays() {    
     let sellingWays = [{ id: 0, item: '' }];
     SellingWay.listSellingWaysItems().then((data) => {            
-      Array.prototype.push.apply(sellingWays, data);
-      console.log("ConcatENOU: ", sellingWays);
+      Array.prototype.push.apply(sellingWays, data);      
       this.setState({
         sellingWays,                       
         isLoading: false,
@@ -312,8 +316,6 @@ export default class RegisterSale extends Component {
       isLoading: true,      
     });          
     
-
-    
     //let finalPrice = this.finalPriceField.getRawValue();
     //let salePrice = this.salePriceField.getRawValue();
     //let amountPaid = this.amountPaidField.getRawValue();
@@ -348,7 +350,7 @@ export default class RegisterSale extends Component {
     if(!this.state.amountpaid > 0) {
       amountPaid = null;
     }
-    console.log("OLHA AQUI A DATE: ", this.state.date);
+
     if(this.state.date !== '') {
       date = this.state.date;
     }
@@ -369,6 +371,21 @@ export default class RegisterSale extends Component {
       idSellingway = this.state.selectedSellingWay;
     }
     
+    if(!idCustomer > 0 || !idSellingway > 0){
+      Alert.alert(
+        "Erro",
+        "É necessário selecionar um cliente e uma forma de venda",
+        [
+          {
+            text: "OK",
+            onPress: () => this.setState({ isLoading: false })            
+          }
+        ],
+        { cancelable: true }
+      )      
+      return false
+    }
+
     if(!this.dateField === null){
       if(!this.dateField.isValid()){    
         Alert.alert(
@@ -384,8 +401,7 @@ export default class RegisterSale extends Component {
         return false
       }    
     }
-    
-    console.log("CHEGOU ANTES DO MÉTODO DE INSERIR A VENDA!", + this.state.date, + "date: " + date);
+        
       let data = { 
       id: this.state.id,           
       date: date,       
@@ -396,14 +412,12 @@ export default class RegisterSale extends Component {
       finalprice: finalPrice, 
       amountpaid: amountPaid,
       pendingpayment: pending
-    }    
-    console.log("ESSA É O OBJETO DATA: ", data);      
+    }        
       Sale.addSale(data).then((result) => {      
         this.setState({
           isLoading: false,
         });
         
-        console.log("Resposta do método de inserir");
         if(result.insertId > 0) {          
           this.setState({ id: result.insertId });     
           Alert.alert(
@@ -554,73 +568,6 @@ export default class RegisterSale extends Component {
     this.setState({ isLoading: true }, function() { this.getSale() });
   }
 
-  keyExtractor = (item, index) => index.toString()
-
-  renderItem = ({ item }) => (
-    <View style={{ marginLeft: 10, marginRight: 10 }}>
-      <ListItem                        
-        title={item.product.name}
-        titleStyle={{ fontWeight: "bold", fontSize: 18 }}                                     
-        subtitle={
-          <View>
-            <View style={{ flexDirection: 'row' }}>
-              <Text style={{ fontWeight: 'bold' }}>Valor de Venda: </Text>
-              <TextMask
-              value={item.productprice}
-              type={'money'}
-              options={{
-                  obfuscated: true,
-                  precision: 2,
-                  separator: ',',
-                  delimiter: '.',
-                  unit: 'R$ ',
-                  suffixUnit: ''
-              }}
-              />
-            </View>
-            <View style={{ flexDirection: 'row'}}>
-              <Text style={{ fontWeight: 'bold'}}>Valor Líquido: </Text>
-              <TextMask
-              value={item.netprice}
-              type={'money'}
-              options={{
-                  obfuscated: true,
-                  precision: 2,
-                  separator: ',',
-                  delimiter: '.',
-                  unit: 'R$ ',
-                  suffixUnit: ''
-              }}
-              />
-            </View>
-          </View>
-        }
-        rightAvatar={{
-          icon: { name: 'delete', color: 'red'}                     
-        }}
-        onPress={() => this.props.navigation.navigate('EditProductSale', {
-          id: `${item._id}`
-        })}                  
-        onLongPress={() => Alert.alert(
-          "Exclusão Produto",
-          `Você tem certeza que deseja excluir dessa venda o Produto ${item.sellingWay.name}?`,
-          [
-            {
-              text: "Sim", 
-              onPress: () => ProductSale.deleteProductSale(`${item._id}`).then(() => this.onRefresh()),                         
-            },
-            {
-              text: "Cancelar",                   
-            }
-          ],
-          { cancelable: true }
-        )}
-        delayLongPress={1000}
-        bottomDivider                      
-      />                    
-    </View>
-  )
-
   render() {       
     if(this.state.isLoading){
       return (
@@ -758,7 +705,24 @@ export default class RegisterSale extends Component {
             icon={{ name: 'delete', color: '#FFF' }}
             title="Deletar"
             buttonStyle={styles.deleteButton}
-            onPress={() => console.log("O ESTADO DE FINAL PRICE: ", this.state.finalprice)} />
+            onPress={() => {
+              Alert.alert(
+                "Exclusão de Venda",
+                `Você tem certeza que deseja excluir a venda do cliente ${this.state.selectedCustomer[0].item}?`,
+                [
+                  {
+                    text: "Sim",
+                    onPress: () => Sale.deleteSaleById(this.state.id).then(() => this.props.navigation.navigate('Sales', {
+                      update: true
+                    }))
+                  },
+                  {
+                    text: "Não"
+                  }
+                ],
+                { cancelable: true }
+              )
+            }} />
             </View>
         )}
           {/* <Button

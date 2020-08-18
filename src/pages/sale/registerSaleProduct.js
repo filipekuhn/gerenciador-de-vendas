@@ -74,14 +74,19 @@ export default class RegisterProductSale extends Component {
     this.setState({
       isLoading: true,      
     });    
-        
-    let netPriceValue = this.salePriceField.getRawValue() - this.comissionField.getRawValue();
+
+    let salePriceValue = this.state.salePrice;
+    salePriceValue = String(salePriceValue).replace("R$ ", "").replace(",", ".");
+    let siteCommissionValue = this.state.siteCommission;
+    siteCommissionValue = String(siteCommissionValue).replace("R$ ", "").replace(",", ".");        
+
+    let netPriceValue = parseFloat(salePriceValue) - parseFloat(siteCommissionValue);
     netPriceValue = netPriceValue.toFixed(2);
 
     let data = {    
       idSale: this.state.idsale,        
       idProductSellingWay: this.state.selectedProduct,
-      productPrice: this.salePriceField.getRawValue(),      
+      productPrice: salePriceValue,      
       netPrice: netPriceValue
     }
     console.log("AQUI O DATA DO PRODUCT SALE", data);
@@ -97,8 +102,8 @@ export default class RegisterProductSale extends Component {
           {
             text: "OK",             
             onPress: () => this.props.navigation.navigate('RegisterSale', {
-              id: `${this.state.idSale}`,  
-              productPrice: `${this.salePriceField.getRawValue()}`,
+              id: `${this.state.idsale}`,  
+              productPrice: `${salePriceValue}`,
               netPrice: `${netPriceValue}`,                          
               add: true,
               update: false
