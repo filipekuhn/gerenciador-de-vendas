@@ -97,8 +97,11 @@ export default class RegisterProductSale extends Component {
           {
             text: "OK",             
             onPress: () => this.props.navigation.navigate('RegisterSale', {
-              id: this.state.idSale,              
-              update: true
+              id: `${this.state.idSale}`,  
+              productPrice: `${this.salePriceField.getRawValue()}`,
+              netPrice: `${netPriceValue}`,                          
+              add: true,
+              update: false
             })
           }
         ],

@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { View, ScrollView ,FlatList, Image, KeyboardAvoidingView, Alert, Text, ActivityIndicator, TouchableOpacity, Keyboard } from 'react-native';
 import { Picker } from '@react-native-community/picker'
-import { KeyboardAwareFlatList } from 'react-native-keyboard-aware-scroll-view';
 import { Button, ListItem } from 'react-native-elements';
 import { TextMask } from 'react-native-masked-text'
 import styles from '../../stylesheet/stylesheet';
@@ -12,8 +11,8 @@ import CustomerDb from '../../database/Customer';
 import ProductDb from '../../database/Product';
 import ProductSaleDb from '../../database/ProductSale';
 import SellingWayDb from '../../database/SellingWay';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { TextInputMask } from 'react-native-masked-text';
+import { or } from 'react-native-reanimated';
 
 const Colors = {
   primary: '#078489',
@@ -61,7 +60,8 @@ export default class RegisterSale extends Component {
       console.log("VENDA NOVA");
       let todayDate = moment(new Date()).format("DD/MM/YYYY");
       this.setState({
-        date: todayDate
+        date: todayDate,
+        dateField: todayDate
       });  
       this.getCustomers();
       this.getSellingWays();
@@ -83,22 +83,51 @@ export default class RegisterSale extends Component {
 
     if(this.props.route.params?.remove === true) {
       this.props.route.params.remove = false;
-      let updateSalePrice = this.state.saleprice - this.props.route.params.productPrice
-      let updateFinalPrice = this.state.finalprice - this.props.route.params.netPrice
+      let updateSalePrice = parseFloat(this.state.saleprice) - parseFloat(this.props.route.params.productPrice);
+      let updateFinalPrice = parseFloat(this.state.finalprice) - parseFloat(this.props.route.params.netPrice);
       let updateQuantity = this.state.productQuantity - 1
-      updateSalePrice = updateSalePrice.toFixed(2)
-      updateFinalPrice = updateFinalPrice.toFixed(2)
+      updateSalePrice = parseFloat(updateSalePrice).toFixed(2);
+      updateFinalPrice = parseFloat(updateFinalPrice).toFixed(2);
 
       if(updateQuantity < 0) {
         updateQuantity = 0;
       }
-
+      //this.getSaleProductsQuantity();
       this.setState({
         saleprice: updateSalePrice,
         finalprice: updateFinalPrice,
         productQuantity: updateQuantity
       })
+    } 
+
+    if(this.props.route.params?.add === true) {
+      this.props.route.params.add = false;
+      let salePrice = 0;
+      let finalPrice = 0;
+
+      console.log("SALE PRICE: ", this.state.saleprice, "..E AQUI a rota", this.props.route.params.productPrice);
+      if(this.state.saleprice !== null){
+        salePrice = this.state.saleprice;
+      }
+
+      if(this.state.finalprice !== null){
+        finalPrice = this.state.finalprice;
+      }
+
+      let sumSalePrice = parseFloat(salePrice) + parseFloat(this.props.route.params.productPrice);
+      let sumFinalPrice = parseFloat(finalPrice) + parseFloat(this.props.route.params.netPrice);   
+      sumSalePrice = parseFloat(sumSalePrice).toFixed(2);
+      sumFinalPrice = parseFloat(sumFinalPrice).toFixed(2);
+      console.log("Aqui o sumSalePrice", sumSalePrice);
+      this.getSaleProductsQuantity();
+      this.setState({
+        saleprice: sumSalePrice,
+        finalprice: sumFinalPrice, 
+        productQuantity: this.state.productQuantity + 1       
+      })
     }
+
+    
   }
 
   getCustomers() {
@@ -248,6 +277,28 @@ export default class RegisterSale extends Component {
     });   
   }
  
+  shoppingCart() {
+    if(this.state.id === '') {
+      Alert.alert(
+        "Carrinho",
+        "Para adicionar produtos ao carrinho, é necessário que a venda esteja salva.\n\n Deseja salvar?",
+        [
+          {
+            text: "Sim",
+            onPress: () => this.saveSale(),                          
+          },
+          {
+            text: "Não"
+          }
+        ],
+        { cancelable: true }
+      );          
+    } else {
+      this.props.navigation.navigate('SaleProducts', {
+        id: `${this.state.id}`
+      })
+    }
+  }
   
 
   updateTextInput = (text, field) => {
@@ -297,7 +348,7 @@ export default class RegisterSale extends Component {
     if(!this.state.amountpaid > 0) {
       amountPaid = null;
     }
-
+    console.log("OLHA AQUI A DATE: ", this.state.date);
     if(this.state.date !== '') {
       date = this.state.date;
     }
@@ -318,19 +369,22 @@ export default class RegisterSale extends Component {
       idSellingway = this.state.selectedSellingWay;
     }
     
-    if(!this.dateField.isValid()){    
-      Alert.alert(
-        "ERRO",
-        "A data inserida como data de venda é inválida!",
-        [
-          {
-            text: "OK"
-          }
-        ],
-        { cancelable: true }
-      )
-      return false
+    if(!this.dateField === null){
+      if(!this.dateField.isValid()){    
+        Alert.alert(
+          "ERRO",
+          "A data inserida como data de venda é inválida!",
+          [
+            {
+              text: "OK"
+            }
+          ],
+          { cancelable: true }
+        )
+        return false
+      }    
     }
+    
     console.log("CHEGOU ANTES DO MÉTODO DE INSERIR A VENDA!", + this.state.date, + "date: " + date);
       let data = { 
       id: this.state.id,           
@@ -581,7 +635,7 @@ export default class RegisterSale extends Component {
           behavior="padding"
           style={{ flex: 1, justifyContent: 'space-between' }}>
           <View style={{ backgroundColor: 'white', flex: 1 }}>              
-          <Text style={{ marginLeft: 20, marginTop: 10 }}>
+          <Text style={{ marginLeft: 20, marginTop: 10, fontWeight: "bold" }}>
             Selecione o Cliente
           </Text>
           <Picker                                             
@@ -681,9 +735,7 @@ export default class RegisterSale extends Component {
           icon={{ name: 'shopping-cart', color: 'white'}}
           title={`Carrinho (${this.state.productQuantity})`}
           buttonStyle={styles.button}
-          onPress={() => this.props.navigation.navigate('SaleProducts', {
-            id: `${this.state.id}`
-          })}
+          onPress={() => this.shoppingCart()}
         />     
         {this.state.id === '' && (
           <Button
@@ -709,11 +761,11 @@ export default class RegisterSale extends Component {
             onPress={() => console.log("O ESTADO DE FINAL PRICE: ", this.state.finalprice)} />
             </View>
         )}
-          <Button
+          {/* <Button
             icon={{ name: 'delete', color: '#FFF' }}
             title="Deletar"
             buttonStyle={styles.deleteButton}
-            onPress={() => console.log("O ESTADO DE FINAL PRICE: ", this.state.selectedCustomer)} />
+            onPress={() => console.log("O ESTADO DE FINAL PRICE: ", this.state.selectedCustomer)} /> */}
 
         {/* <Button
           icon={{ name: 'arrow-back', color: 'white'}}
