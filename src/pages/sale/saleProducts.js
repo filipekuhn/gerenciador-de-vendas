@@ -115,7 +115,11 @@ export default class SaleProducts extends Component {
         icon: { name: 'delete', color: 'red'}                     
       }}
       onPress={() => this.props.navigation.navigate('EditSaleProduct', {
-        id: `${item._id}`
+        id: `${item._id}`,
+        idSale: `${item.sale.idSale}`,
+        idProduct: `${item.product.idproduct}`,
+        idSellingWay: `${item.sellingWay.idsellingway}`,
+        productSellingWayName: `${item.product.name + " - " + item.sellingWay.name}`        
       })}                  
       onLongPress={() => Alert.alert(
         "Remover Produto",

@@ -34,12 +34,13 @@ export default class ProductSellingWay {
     return new Promise((resolve) => {
       database.initDB().then((db) => {
         db.transaction((tx) => {
-          tx.executeSql('UPDATE product SET name = ?, code = ?, measures = ? WHERE _id = ?', 
+          tx.executeSql('UPDATE productsellingway SET siteinclusiondate = ?, saleprice = ?, sitecommission = ?, netprice = ? WHERE _id = ?', 
           [
-            p.name,
-            p.code,
-            p.measures,             
-            p._id
+            p.siteInclusionDate,
+            p.salePrice,
+            p.siteCommission,   
+            p.netPrice,          
+            p.id
           ]).then(([tx, results]) => {
             resolve(true);
           });
@@ -67,7 +68,7 @@ export default class ProductSellingWay {
           database.closeDatabase(db);                
         }).catch((err) => {
           console.log(err);
-          resolve(err);          
+          resolve(false);          
         });        
       }).catch((err) => {
         console.log(err);

@@ -64,7 +64,7 @@ export default class Product {
           database.closeDatabase(db);                
         }).catch((err) => {
           console.log(err);
-          resolve(err);          
+          resolve(false);          
         });        
       }).catch((err) => {
         console.log(err);

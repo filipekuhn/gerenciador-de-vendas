@@ -88,10 +88,6 @@ export default class RegisterSale extends Component {
       
       updateSalePrice = parseFloat(updateSalePrice).toFixed(2);
       updateFinalPrice = parseFloat(updateFinalPrice).toFixed(2);
-
-      // if(updateQuantity < 0){
-      //   updateQuantity = 0;
-      // }
       
       if(updateSalePrice < 0){
         updateSalePrice = 0;
@@ -133,7 +129,44 @@ export default class RegisterSale extends Component {
         saleprice: sumSalePrice,
         finalprice: sumFinalPrice,         
       })
-    }    
+    } 
+    
+    if(this.props.route.params?.edit === true) {
+      this.props.route.params.edit = false;
+      let salePrice = 0;
+      let finalPrice = 0;
+
+      if(this.state.saleprice !== null){
+        salePrice = this.state.saleprice;
+      }
+
+      if(this.state.finalprice !== null){
+        finalPrice = this.state.finalprice;
+      }
+
+      let sumSalePrice = 0;
+      let sumFinalPrice = 0;
+      
+      if(salePrice === 0) {
+        sumSalePrice = salePrice + parseFloat(this.props.route.params.productPrice)
+      } else {
+        sumSalePrice = (salePrice - parseFloat(this.props.route.params.originalSalePrice)) + parseFloat(this.props.route.params.productPrice)
+      }
+
+      if(finalPrice === 0) {
+        sumFinalPrice = finalPrice + parseFloat(this.props.route.params.netPrice)
+      } else {
+        sumFinalPrice = (finalPrice - parseFloat(this.props.route.params.originalNetPrice)) + parseFloat(this.props.route.params.netPrice)
+      }
+      
+      sumSalePrice = parseFloat(sumSalePrice).toFixed(2);
+      sumFinalPrice = parseFloat(sumFinalPrice).toFixed(2);
+      
+      this.setState({
+        saleprice: sumSalePrice,
+        finalprice: sumFinalPrice,         
+      })
+    }
   }
 
   getCustomers() {
@@ -373,7 +406,7 @@ export default class RegisterSale extends Component {
     
     if(!idCustomer > 0 || !idSellingway > 0){
       Alert.alert(
-        "Erro",
+        "ERRO",
         "É necessário selecionar um cliente e uma forma de venda",
         [
           {
@@ -724,19 +757,7 @@ export default class RegisterSale extends Component {
               )
             }} />
             </View>
-        )}
-          {/* <Button
-            icon={{ name: 'delete', color: '#FFF' }}
-            title="Deletar"
-            buttonStyle={styles.deleteButton}
-            onPress={() => console.log("O ESTADO DE FINAL PRICE: ", this.state.selectedCustomer)} /> */}
-
-        {/* <Button
-          icon={{ name: 'arrow-back', color: 'white'}}
-          title="Vendas"
-          buttonStyle={{ marginLeft: 100, marginRight: 100, marginTop: 10, padding: 10, borderRadius: 80 }}
-          onPress={() => this.props.navigation.navigate('Sales', { update: true })}
-        />       */}                            
+        )}                           
       </View> 
       </KeyboardAvoidingView>
     </ScrollView>

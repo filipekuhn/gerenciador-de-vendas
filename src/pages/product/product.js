@@ -118,7 +118,9 @@ export default class Product extends Component {
         icon: { name: 'delete', color: 'red'}                     
       }}
       onPress={() => this.props.navigation.navigate('EditProductSellingWay', {
-        id: `${item._id}`
+        id: `${item._id}`,
+        idProduct: `${item.product.idproduct}`,
+        sellingWay: `${item.sellingWay.name}`
       })}                  
       onLongPress={() => Alert.alert(
         "Exclusão de Valores de Produto",
@@ -126,7 +128,22 @@ export default class Product extends Component {
         [
           {
             text: "Sim", 
-            onPress: () => dbProductSellingWay.deleteProductSellingWay(`${item._id}`).then(() => this.onRefresh()),                         
+            onPress: () => dbProductSellingWay.deleteProductSellingWay(`${item._id}`).then((result) => {
+              if(result){
+                this.onRefresh()
+              } else {
+                Alert.alert(
+                  "Exclusão de Valor de Produto",
+                  `O Valor de Produto ${item.sellingWay.name} não pode ser excluído pois já participa de pelo menos uma venda`,
+                  [
+                    {
+                      text: "OK"
+                    },                    
+                  ],
+                  { cancelable: false }
+                )
+              }
+            }),                         
           },
           {
             text: "Cancelar",                   
@@ -177,9 +194,24 @@ export default class Product extends Component {
                   [
                     {
                       text: "Sim", 
-                      onPress: () => db.deleteProductById(this.state.id).then(() => this.props.navigation.navigate('Products', {
-                        update: true
-                      })), 
+                      onPress: () => db.deleteProductById(this.state.id).then((result) =>  {
+                        if(result){
+                          this.props.navigation.navigate('Products', {
+                            update: true
+                          })
+                        } else {
+                          Alert.alert(
+                            "Exclusão de Produto",
+                            `O produto ${this.state.product.name} não pode ser excluído pois já participa de pelo menos uma venda`,
+                            [
+                              {
+                                text: "OK"
+                              }
+                            ],
+                            { cancelable: false }
+                          )
+                        }
+                      }), 
                       icon: "done"
                     },
                     {

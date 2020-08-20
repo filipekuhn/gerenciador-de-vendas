@@ -5,30 +5,46 @@ import { Button } from 'react-native-elements';
 import { TextInputMask } from 'react-native-masked-text';
 import styles from '../../stylesheet/stylesheet';
 import ProductSale from '../../database/ProductSale';
-import ProductSellingWay from '../../database/ProductSellingWay';
+import Product from '../../database/Product';
+import SellingWay from '../../database/SellingWay'
 
 const ProductSaleDB = new ProductSale();
-const ProductSellingWayDB = new ProductSellingWay();
+const ProductDB = new Product();
+const SellingWayDB = new SellingWay();
 
-export default class RegisterProductSale extends Component {
+export default class EditProductSale extends Component {
 
   constructor(props) {
     super(props)
     this.state = {
       isLoading: true,
-      selectedProduct: {},
-      product: {},
-      productSellingWays: [],
+      idProductSale: '',
+      idSellingWay: '',      
+      idProduct: '',
       idsale: '',
+      product: {},
+      sellingWay: {},
       salePrice: '',
       siteCommission: '',
-      netPrice: ''
+      netPrice: '',
+      originalSalePrice: '',
+      originalSiteCommission: '',
+      originalNetPrice: '',
+      productSellingWayName: ''
     }
   }
 
-  componentDidMount() {
-    this.getProduct();
-    this.setState({ idsale: this.props.route.params.id });
+  componentDidMount() {    
+    this.setState({ 
+      idsale: this.props.route.params.idSale,
+      idProductSale: this.props.route.params.id,
+      idSellingWay: this.props.route.params.idSellingWay,
+      idProduct: this.props.route.params.idProduct,
+      productSellingWayName: this.props.route.params.productSellingWayName
+    });
+    console.log("AQUIII ", this.props.route.params.idProduct);
+    console.log("AQUIII ", this.state.idProduct);
+    this.getProductSale();
   }
 
   updateTextInput = (text, field) => {
@@ -37,37 +53,38 @@ export default class RegisterProductSale extends Component {
     this.setState(state);
   }
 
-  getProduct() {
-    let productSellingWays = [];
-    ProductSellingWayDB.listProductsItems().then((data) => {
-      productSellingWays = data;
+  getProductSale() {
+    let product = {};
+    ProductDB.findProductById(this.props.route.params.idProduct).then((data) => {
+      product = data;
       this.setState({
-        productSellingWays,
-        isLoading: false
+        product        
       });
-      console.log("OLHA AQUI CARAI: ", productSellingWays);
-    }).catch((err) => {
-      console.log(err);
-    })
-  }
-
-  getValues(item) {
-    this.setState({
-      selectedProduct: item
-    });
-
-    let productValues = {};
-    ProductSellingWayDB.findProductSellingWay(item).then((data) => {
+      let sellingWay = {};
+      SellingWayDB.findSellingWayById(this.props.route.params.idSellingWay).then((data) => {
+        sellingWay = data;
+        this.setState({
+          sellingWay          
+        })
+      })        
+      let productValues = {};      
+      ProductSaleDB.findProductSale(this.props.route.params.id).then((data) => {
       productValues = data;
-      console.log("Tá aquiiiiiiiiiiii: ", productValues)
+      let originalSiteCommission = parseFloat(productValues.productprice).toFixed(2) - parseFloat(productValues.netprice).toFixed(2)      
       this.setState({
         product: productValues,
-        salePrice: productValues.saleprice,
-        siteCommission: productValues.sitecommission,
+        originalSalePrice: productValues.productprice,
+        originalSiteCommission: originalSiteCommission,
+        originalNetPrice: productValues.netprice,
+        salePrice: productValues.productprice,
+        siteCommission: originalSiteCommission,
         netPrice: productValues.netprice,
         isLoading: false        
-      });
-    })    
+        });
+      });            
+    }).catch((err) => {
+      console.log(err);
+    });    
   }
 
   saveSaleProduct() {
@@ -77,35 +94,38 @@ export default class RegisterProductSale extends Component {
 
     let salePriceValue = this.state.salePrice;
     salePriceValue = String(salePriceValue).replace("R$ ", "").replace(",", ".");
+    salePriceValue = parseFloat(salePriceValue).toFixed(2);
     let siteCommissionValue = this.state.siteCommission;
     siteCommissionValue = String(siteCommissionValue).replace("R$ ", "").replace(",", ".");        
+    siteCommissionValue = parseFloat(siteCommissionValue).toFixed(2);
 
     let netPriceValue = parseFloat(salePriceValue) - parseFloat(siteCommissionValue);
     netPriceValue = netPriceValue.toFixed(2);
 
-    let data = {    
-      idSale: this.state.idsale,        
-      idProductSellingWay: this.state.selectedProduct,
+    let data = {   
+      id: this.props.route.params.id,       
       productPrice: salePriceValue,      
       netPrice: netPriceValue
     }
     console.log("AQUI O DATA DO PRODUCT SALE", data);
-    ProductSaleDB.addProductSale(data).then((result) => {
+    ProductSaleDB.editProductSale(data).then((result) => {
       console.log(result);
       this.setState({
         isLoading: false,
       });
       Alert.alert(
-        "Inclusão de Produto",
-        "O produto foi incluído com sucesso!",
+        "Alteração de Produto",
+        "O produto foi alterado com sucesso!",
         [
           {
             text: "OK",             
             onPress: () => this.props.navigation.navigate('RegisterSale', {
               id: `${this.state.idsale}`,  
+              originalSalePrice: `${this.state.originalSalePrice}`,
+              originalNetPrice: `${this.state.originalNetPrice}`,
               productPrice: `${salePriceValue}`,
               netPrice: `${netPriceValue}`,                          
-              add: true,
+              edit: true,
               update: false
             })
           }
@@ -128,21 +148,9 @@ export default class RegisterProductSale extends Component {
             behavior="padding"
             style={{ flex: 1, justifyContent: 'space-between' }}>
               
-              <Text style={{ marginLeft: 20, marginTop: 10 }}>
-                Selecione o Produto
-              </Text>
-              <Picker                                             
-                style={{ width: 250, marginLeft: 15 }}
-                selectedValue={this.state.selectedProduct}                              
-                onValueChange={(itemValue, itemIndex, salePrice) =>
-                  this.getValues(itemValue)
-                }>            
-                {
-                  this.state.productSellingWays.map((item) => {
-                    return <Picker.Item label={item.item} value={item.id} key={item.id} />                    
-                  })                  
-                }             
-              </Picker>
+              <Text style={{ textAlign: "center", fontSize: 24, fontWeight: "bold", marginTop: 20, marginBottom: 10 }}>
+                {this.props.route.params.productSellingWayName}
+              </Text>            
               <Text style={{  marginLeft: 20 }}>Valor de Venda</Text>
               <TextInputMask       
                 placeholder="R$ 0,00"         
@@ -175,25 +183,10 @@ export default class RegisterProductSale extends Component {
                 onChangeText={(text) => this.updateTextInput(text, 'siteCommission')}                
                 ref={(ref) => this.comissionField = ref}
               /> 
-              {/* <Text style={{  marginLeft: 20 }}>Valor líquido</Text>
-              <TextInputMask 
-                placeholder="R$ 0,00"               
-                style={styles.textInput}
-                type={'money'}  
-                options={{
-                  precision: 2,
-                  separator: ',',
-                  delimiter: '.',
-                  unit: 'R$ ',
-                  suffixUnit: ''
-                }}   
-                value={this.state.netPrice}
-                enabled={false}              
-              />      */                 }
               <View style={{ marginLeft: 20}}>
                 <Button
-                  icon={{ name: 'add', color: '#FFF' }}                
-                  title="Incluir Produto"
+                  icon={{ name: 'save', color: '#FFF' }}                
+                  title="Salvar"
                   buttonStyle={styles.button}                               
                   onPress={() => this.saveSaleProduct()}                
                 /> 

@@ -28,16 +28,15 @@ export default class ProductSale {
     });  
   }
 
-  editProductSellingWay(p) {
+  editProductSale(p) {
     return new Promise((resolve) => {
       database.initDB().then((db) => {
         db.transaction((tx) => {
-          tx.executeSql('UPDATE product SET name = ?, code = ?, measures = ? WHERE _id = ?', 
-          [
-            p.name,
-            p.code,
-            p.measures,             
-            p._id
+          tx.executeSql('UPDATE productsale SET productprice = ?, netprice = ? WHERE _id = ?', 
+          [            
+            p.productPrice,             
+            p.netPrice,
+            p.id
           ]).then(([tx, results]) => {
             resolve(true);
           });
@@ -73,17 +72,50 @@ export default class ProductSale {
     });
   }
 
-  findProductSellingWay(id) {
+  findProductSale(id) {
     return new Promise((resolve) => {
-      const product = [];
+      const productSale = [];
       database.initDB().then((db) => {
         db.transaction((tx) => {
-          tx.executeSql('SELECT * FROM productsellingway WHERE idproduct = ?', [id]).then(([tx, results]) => {
-            console.log(results);
+        tx.executeSql('SELECT ps._id AS _id, ps.productprice, ps.netprice, ' +
+                      's._id AS idsale, ' +
+                      'p._id AS idproduct, ' +
+                      'p.code, p.name AS productname, p.measures, sw._id AS idsellingway, sw.name ' +
+                      'FROM productsale AS ps JOIN productsellingway AS psw ON ps.idproductsellingway = psw._id ' +
+                      'JOIN product AS p ON psw.idproduct = p._id ' +
+                      'JOIN sellingway AS sw ON psw.idsellingway = sw._id ' +
+                      'JOIN sale AS s ON ps.idsale = s._id WHERE ps._id = ? ', [id]).then(([tx,results]) => {
+            console.log("Query completed", results.rows.length);
+            // var len = results.rows.length;
+            // for (let i = 0; i < len; i++) {
+            //   let row = results.rows.item(i);              
+            //   console.log("ESSE", results.rows.item(0));
+            //   const { _id, productprice, idsale, idproduct, productname, idsellingway, netprice, code, measures, name } = row;
+            //   productSale.push({
+            //     _id,
+            //     sale: {
+            //       idsale: idsale,
+            //     },
+            //     product: {
+            //       idproduct: idproduct,
+            //       name: productname,
+            //       code: code,
+            //       measures: measures
+            //     },
+            //     sellingWay: {
+            //       idsellingway: idsellingway,
+            //       name: name
+            //     },                
+            //     productprice, 
+            //     netprice
+            //   });
+            // }
             if(results.rows.length > 0) {
               let row = results.rows.item(0);
               resolve(row);
-            }                          
+            }
+            //console.log(productSale);
+            //resolve(productSale);                        
           });
         }).then(result => {
           database.closeDatabase(db)

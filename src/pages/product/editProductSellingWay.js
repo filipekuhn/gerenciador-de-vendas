@@ -1,35 +1,26 @@
 import React, { Component } from 'react';
 import { View, ScrollView, KeyboardAvoidingView, Alert, Text } from 'react-native';
-import { Button, Icon } from 'react-native-elements';
-import { TextInput } from 'react-native-gesture-handler';
+import { Button } from 'react-native-elements';
 import { TextInputMask } from 'react-native-masked-text';
 import styles from '../../stylesheet/stylesheet';
-import { Picker } from '@react-native-community/picker';
 import ProductSellingWay from '../../database/ProductSellingWay';
-import Product from '../../database/Product';
-import SellingWay from '../../database/SellingWay';
 import moment from 'moment';
 
 const db = new ProductSellingWay();
-const dbProduct = new Product();
-const dbSellingWay = new SellingWay();
 
 export default class RegisterProductSellingWay extends Component {
 
   constructor(props) {
     super(props);    
     this.state = {
-      isLoading: true,
-      currentLabel: 'Seleciona o meio de venda',
-      idProduct: '',
-      idSellingWay: '',      
+      isLoading: true,      
+      productSellingWay: {},
+      idProductSellingWay: '',  
+      sellingWay: '',    
       siteInclusionDate: '',
       salePrice: '',
       siteCommission: '',
-      netPrice: '',
-      product: {},
-      selectedSellingWay: '',
-      sellingWays: []
+      netPrice: '',      
     };      
     
   }
@@ -45,23 +36,19 @@ export default class RegisterProductSellingWay extends Component {
   }
 
   getProductSellingWay() {
-    let product = {};
-    let sellingWays = [];
-    let idProduct = this.props.route.params.id
-
-    dbProduct.findProductById(idProduct).then((data) => {
-      product = data;
+    let idProductSellingWay = this.props.route.params.id
+    let productSellingWay = {};    
+    console.log("ID ", idProductSellingWay);
+    db.findProductSellingWay(idProductSellingWay).then((data) => {
+      productSellingWay = data;
       this.setState({
-        product: product,
-        idProduct: idProduct
-      });
-    });
-
-    dbSellingWay.listSellingWaysItems().then((data) => {
-      sellingWays = data;
-      this.setState({
-        sellingWays: sellingWays,
-        isLoading: false
+        productSellingWay,
+        siteInclusionDate: productSellingWay.siteinclusiondate,
+        salePrice: productSellingWay.saleprice,
+        siteCommission: productSellingWay.sitecommission,
+        netPrice: productSellingWay.netprice,
+        idProductSellingWay: idProductSellingWay,
+        isLoading: false        
       });
     });
   }
@@ -84,30 +71,37 @@ export default class RegisterProductSellingWay extends Component {
         { cancelable: true }
       )
     }
-    let netPriceValue = this.salePriceField.getRawValue() - this.comissionField.getRawValue();
+
+    let salePrice = this.state.salePrice;
+    salePrice = String(salePrice).replace("R$ ", "").replace(",", ".");
+    salePrice = parseFloat(salePrice).toFixed(2);
+    let siteCommission = this.state.siteCommission;
+    siteCommission = String(siteCommission).replace("R$ ", "").replace(",", ".");    
+    siteCommission = parseFloat(siteCommission).toFixed(2);
+
+    let netPriceValue = salePrice - siteCommission;
     netPriceValue = netPriceValue.toFixed(2);
     let data = {      
-      idProduct: this.state.idProduct,
-      idSellingWay: this.state.selectedSellingWay,
+      id: this.state.idProductSellingWay,
       siteInclusionDate: this.state.siteInclusionDate,
-      salePrice: this.salePriceField.getRawValue(),
-      siteCommission: this.comissionField.getRawValue(),
+      salePrice: salePrice,
+      siteCommission: siteCommission,
       netPrice: netPriceValue
     }
-    db.addProductSellingWay(data).then((result) => {
+    db.editProductSellingWay(data).then((result) => {
       console.log(result);
       this.setState({
         isLoading: false,
       });
       Alert.alert(
-        "Cadastro de Produtos",
+        "Cadastro de Valores do Produto",
         "O Cadastro foi salvo com sucesso!",
         [
           {
             text: "OK", 
             icon: "done",
             onPress: () => this.props.navigation.navigate('Product', {
-              id: this.state.idProduct,
+              id: this.props.route.params.idProduct,
               update: true
             }),            
           }
@@ -130,20 +124,9 @@ export default class RegisterProductSellingWay extends Component {
             behavior="padding"
             style={{ flex: 1, justifyContent: 'space-between' }}>
               
-              <Text style={{ marginLeft: 20, marginTop: 10, fontWeight: 'bold' }}>
-                Selecione o Meio de Venda
-              </Text>
-              <Picker                                             
-                style={{ width: 250, marginLeft: 15 }}
-                selectedValue={this.state.selectedSellingWay}                              
-                onValueChange={(itemValue, itemIndex) =>
-                  this.setState({ selectedSellingWay: itemValue })}>            
-                {
-                  this.state.sellingWays.map((item) => {
-                    return <Picker.Item label={item.item} value={item.id} key={item.id} />
-                  })   
-                }             
-              </Picker>
+              <Text style={{ marginLeft: 20, marginTop: 10, fontWeight: "bold", fontSize: 24, textAlign: "center" }}>
+                {this.props.route.params.sellingWay}
+              </Text>              
               <Text style={{ marginLeft: 20, marginTop: 10, fontWeight: "bold" }}>Data de inclusão no Site</Text>
               <TextInputMask
                 placeholder={moment(new Date()).format("DD/MM/YYYY")}
@@ -193,10 +176,7 @@ export default class RegisterProductSellingWay extends Component {
                 title="Cadastrar"
                 buttonStyle={styles.button}                
                 onPress={() => this.saveProductSellingWay()}                
-              />
-              <Text>
-                {this.state.selectedSellingWay.id}
-              </Text>  
+              />              
             </KeyboardAvoidingView>
         </ScrollView>
       </View>

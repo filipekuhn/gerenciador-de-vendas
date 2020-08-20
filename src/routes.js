@@ -27,8 +27,10 @@ import Cities from './pages/city/cities';
 import City from './pages/city/city';
 import RegisterCity from './pages/city/registerCity';
 import RegisterProductSellingWay from './pages/product/registerProductSellingWay';
+import EditProductSellingWay from './pages/product/editProductSellingWay';
 import RegisterSale from './pages/sale/registerSale';
 import RegisterSaleProduct from './pages/sale/registerSaleProduct';
+import EditSaleProduct from './pages/sale/editSaleProduct';
 import SaleProducts from './pages/sale/saleProducts';
 
 const Stack = createStackNavigator();
@@ -89,7 +91,12 @@ function App() {
           component={RegisterSaleProduct} 
           options={{ title: "Produto", headerStyle: {backgroundColor: '#5390fe'}, 
                   headerTintColor: '#FFF', headerTitleAlign: 'left' }} />                  
-        
+
+        <Stack.Screen name="EditSaleProduct" 
+          component={EditSaleProduct} 
+          options={{ title: "Produto", headerStyle: {backgroundColor: '#5390fe'}, 
+                  headerTintColor: '#FFF', headerTitleAlign: 'left' }} />                          
+
         <Stack.Screen name="RegisterCustomer" 
           component={RegisterCustomer} 
           options={{ title: "Cliente", headerStyle: {backgroundColor: '#5390fe'}, 
@@ -182,6 +189,11 @@ function App() {
 
         <Stack.Screen name="RegisterProductSellingWay"   
           component={RegisterProductSellingWay} 
+          options={{ title: "Formas de Venda do Produto", headerStyle: {backgroundColor: '#5390fe'}, 
+                  headerTintColor: '#FFF', headerTitleAlign: 'left' }} />      
+
+        <Stack.Screen name="EditProductSellingWay"   
+          component={EditProductSellingWay} 
           options={{ title: "Formas de Venda do Produto", headerStyle: {backgroundColor: '#5390fe'}, 
                   headerTintColor: '#FFF', headerTitleAlign: 'left' }} />      
       </Stack.Navigator>                  
